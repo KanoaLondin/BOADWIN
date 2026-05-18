@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ChevronRight, Sparkles, Flame, Zap } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { levels } from "@/lib/course-data";
@@ -21,11 +22,32 @@ const TIPS = [
   "Tip of the day: Specific beats vague every time 🎯",
 ];
 
+function formatRemaining(ms: number): string {
+  if (ms <= 0) return "0s";
+  const total = Math.floor(ms / 1000);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
 function Home() {
   const name = useAppState((s) => s.name);
   const xp = useAppState((s) => s.xp);
   const streak = useAppState((s) => s.streak);
   const completed = useAppState((s) => s.completedLessons);
+  const boostUntil = useAppState((s) => s.xpBoostUntil);
+
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!boostUntil) return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [boostUntil]);
+  const boostActive = !!boostUntil && boostUntil > now;
+  const remainingMs = boostActive ? boostUntil! - now : 0;
 
   const dailyGoal = 50;
   const dailyXp = 30;
