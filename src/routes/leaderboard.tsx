@@ -113,13 +113,10 @@ function Leaderboard() {
       <div className="space-y-2">
         {rest.map((u, i) => {
           const rank = i + 4;
-          return (
+          const row = (
             <div
-              key={u.name}
               className={`flex items-center gap-3 rounded-2xl border-2 p-3 transition-all ${
-                u.you
-                  ? "border-primary bg-primary/10 shadow-glow"
-                  : "border-border bg-card"
+                u.you ? "border-primary bg-primary/10 shadow-glow" : "border-border bg-card"
               }`}
             >
               <div className="grid h-9 w-9 place-items-center rounded-xl bg-secondary text-sm font-black text-muted-foreground">
@@ -140,6 +137,13 @@ function Leaderboard() {
                 <p className="text-[9px] uppercase text-muted-foreground">XP</p>
               </div>
             </div>
+          );
+          return u.id && !u.you ? (
+            <Link key={u.name} to="/friend/$friendId" params={{ friendId: u.id }} className="block">
+              {row}
+            </Link>
+          ) : (
+            <div key={u.name}>{row}</div>
           );
         })}
       </div>
