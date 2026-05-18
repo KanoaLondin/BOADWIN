@@ -131,6 +131,11 @@ function Settings() {
           right={<Toggle on={sound} onChange={() => setSound((v) => !v)} />}
         />
         <Row
+          icon={<Sparkles className="h-5 w-5" />}
+          label="Background animations"
+          right={<Toggle on={!bgAnimOff} onChange={() => setBgAnimationsOff(!bgAnimOff)} />}
+        />
+        <Row
           icon={<Globe className="h-5 w-5" />}
           label="Language"
           right={<span className="text-sm font-bold text-muted-foreground">English</span>}
