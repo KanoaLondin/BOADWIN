@@ -157,8 +157,55 @@
   0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
   30% { transform: translateY(-4px); opacity: 1; }
 }
+@keyframes al-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.72 0.14 210 / 0.45); }
+  50% { box-shadow: 0 0 0 8px oklch(0.72 0.14 210 / 0); }
+}
+@keyframes ping-slow {
+  0% { transform: scale(1); opacity: 0.9; }
+  75%, 100% { transform: scale(2); opacity: 0; }
+}
+@keyframes chest-shake {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(-8deg) scale(1.04); }
+  30% { transform: rotate(8deg) scale(1.04); }
+  45% { transform: rotate(-6deg); }
+  60% { transform: rotate(6deg); }
+  75% { transform: rotate(-3deg); }
+}
+@keyframes chest-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+}
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scale-in {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
 .animate-pop { animation: pop 0.4s ease-out; }
 .animate-shake { animation: shake 0.4s ease-out; }
 .animate-float { animation: float 3s ease-in-out infinite; }
-.animate-slide-up { animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+.animate-slide-up { animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .animate-pulse-glow { animation: pulse-glow 2s ease-out infinite; }
+.animate-al-pulse { animation: al-pulse 2.6s ease-out infinite; }
+.animate-ping-slow { animation: ping-slow 1.8s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.animate-chest-shake { animation: chest-shake 1.2s ease-in-out; }
+.animate-chest-float { animation: chest-float 2.2s ease-in-out infinite; }
+.animate-fade-in { animation: fade-in 0.25s ease-out; }
+.animate-scale-in { animation: scale-in 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+.animate-twinkle { animation: twinkle 2.4s ease-in-out infinite; }
+
+.bg-parchment {
+  background-color: #f8efd9;
+  background-image:
+    radial-gradient(ellipse at 20% 10%, rgba(180, 130, 70, 0.10), transparent 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(120, 80, 40, 0.10), transparent 55%),
+    repeating-linear-gradient(45deg, rgba(160, 110, 60, 0.04) 0 2px, transparent 2px 8px);
+}
