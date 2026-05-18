@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WardrobeRouteImport } from './routes/wardrobe'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -23,6 +24,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LessonLessonIdRouteImport } from './routes/lesson.$lessonId'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
+const WardrobeRoute = WardrobeRouteImport.update({
+  id: '/wardrobe',
+  path: '/wardrobe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SubscriptionRoute = SubscriptionRouteImport.update({
   id: '/subscription',
   path: '/subscription',
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/subscription': typeof SubscriptionRoute
+  '/wardrobe': typeof WardrobeRoute
   '/api/chat': typeof ApiChatRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
 }
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/subscription': typeof SubscriptionRoute
+  '/wardrobe': typeof WardrobeRoute
   '/api/chat': typeof ApiChatRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
 }
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/subscription': typeof SubscriptionRoute
+  '/wardrobe': typeof WardrobeRoute
   '/api/chat': typeof ApiChatRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
 }
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/shop'
     | '/subscription'
+    | '/wardrobe'
     | '/api/chat'
     | '/lesson/$lessonId'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/shop'
     | '/subscription'
+    | '/wardrobe'
     | '/api/chat'
     | '/lesson/$lessonId'
   id:
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/shop'
     | '/subscription'
+    | '/wardrobe'
     | '/api/chat'
     | '/lesson/$lessonId'
   fileRoutesById: FileRoutesById
@@ -195,12 +207,20 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
   SubscriptionRoute: typeof SubscriptionRoute
+  WardrobeRoute: typeof WardrobeRoute
   ApiChatRoute: typeof ApiChatRoute
   LessonLessonIdRoute: typeof LessonLessonIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wardrobe': {
+      id: '/wardrobe'
+      path: '/wardrobe'
+      fullPath: '/wardrobe'
+      preLoaderRoute: typeof WardrobeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/subscription': {
       id: '/subscription'
       path: '/subscription'
@@ -307,6 +327,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
   SubscriptionRoute: SubscriptionRoute,
+  WardrobeRoute: WardrobeRoute,
   ApiChatRoute: ApiChatRoute,
   LessonLessonIdRoute: LessonLessonIdRoute,
 }
