@@ -167,10 +167,54 @@ export const levels: Level[] = [
               },
             ],
           },
-          lesson("u1l2", "How Does AI Think?"),
-          lesson("u1l3", "Talking to AI"),
-          lesson("u1l4", "Your First Prompt"),
-          quiz("u1q", "Unit 1 Check"),
+          {
+            id: "u1l2",
+            title: "How Does AI Think?",
+            xp: 20,
+            content:
+              "AI doesn't think like humans. It looks at patterns in the words you give it and predicts what should come next. The more clearly you describe what you want, the better its prediction.",
+            exercises: [
+              { type: "multiple-choice", question: "How does AI generate answers?", options: ["By guessing randomly", "By predicting patterns from training data", "By searching Google", "By copying other AIs"], correctIndex: 1 },
+              { type: "true-false", statement: "AI thinks exactly like a human brain.", answer: false, explanation: "AI predicts patterns — it does not feel or reason like a human." },
+              { type: "fill-blank", prompt: "AI predicts the next ____ in a sequence.", answer: "word", acceptableAnswers: ["word", "token"] },
+              { type: "multiple-choice", question: "Why are clear prompts important?", options: ["They look nicer", "They help AI predict better answers", "They use less energy", "They are required by law"], correctIndex: 1 },
+            ],
+          },
+          {
+            id: "u1l3",
+            title: "Talking to AI",
+            xp: 20,
+            content: "Talking to AI is like texting a helpful friend. Say hi, be polite, and ask for what you actually want.",
+            exercises: [
+              { type: "multiple-choice", question: "Which is a better prompt?", options: ["stuff about space", "Write 3 fun facts about Mars for a 10-year-old", "space??", "tell me"], correctIndex: 1 },
+              { type: "drag-drop", instruction: "Order the parts of a strong request:", words: ["Greeting", "Task", "Details", "Format"] },
+              { type: "true-false", statement: "Giving AI more specific details usually leads to better answers.", answer: true },
+            ],
+          },
+          {
+            id: "u1l4",
+            title: "Your First Prompt",
+            xp: 20,
+            content: "Now you'll write your own. A great first prompt has 3 parts: who you are, what you want, and how you want it.",
+            exercises: [
+              { type: "short-answer", question: "Write a prompt asking AI to plan a birthday party for a 9-year-old.", minWords: 8 },
+              { type: "multiple-choice", question: "Which detail makes a prompt clearer?", options: ["The color of your screen", "The audience and format", "The time of day", "Your favorite food"], correctIndex: 1 },
+              { type: "fill-blank", prompt: "A great prompt tells AI the who, the what, and the ____.", answer: "how" },
+            ],
+          },
+          {
+            id: "u1q",
+            title: "Unit 1 Check",
+            xp: 50,
+            isQuiz: true,
+            exercises: [
+              { type: "multiple-choice", question: "What does AI stand for?", options: ["Automatic Internet", "Artificial Intelligence", "Awesome Info", "Active Interface"], correctIndex: 1 },
+              { type: "multiple-choice", question: "A prompt is...", options: ["A button", "The message you send AI", "A robot", "An error"], correctIndex: 1 },
+              { type: "true-false", statement: "Clearer prompts get better answers.", answer: true },
+              { type: "fill-blank", prompt: "AI predicts the next ____.", answer: "word" },
+              { type: "multiple-choice", question: "Which prompt is best?", options: ["help", "explain photosynthesis to a 5th grader in 3 short bullets", "science??", "do it"], correctIndex: 1 },
+            ],
+          },
         ],
       },
       {
@@ -178,11 +222,32 @@ export const levels: Level[] = [
         title: "Building Simple Prompts",
         description: "Learn to be clear and specific",
         lessons: [
-          lesson("u2l1", "Ask a Clear Question"),
-          lesson("u2l2", "Be Specific"),
-          lesson("u2l3", "Give AI Context"),
-          lesson("u2l4", "Check Your Results"),
-          quiz("u2q", "Unit 2 Check"),
+          {
+            id: "u2l1", title: "Ask a Clear Question", xp: 20,
+            content: "Vague prompts get vague answers. Clear prompts get clear answers.",
+            exercises: [
+              { type: "multiple-choice", question: "Which is clearer?", options: ["tell me about dogs", "List 5 facts about Labrador Retrievers", "dogs??", "info"], correctIndex: 1 },
+              { type: "true-false", statement: "Adding numbers (like '5 facts') makes prompts clearer.", answer: true },
+              { type: "fill-blank", prompt: "Clear prompts get clear ____.", answer: "answers" },
+            ],
+          },
+          { id: "u2l2", title: "Be Specific", xp: 20, content: "Specifics tell AI exactly what you want.", exercises: [
+            { type: "multiple-choice", question: "Pick the specific prompt.", options: ["write a poem", "Write a 4-line haiku about autumn leaves", "poem please", "haiku?"], correctIndex: 1 },
+            { type: "drag-drop", instruction: "Order from least to most specific:", words: ["story", "fantasy story", "300-word fantasy story", "300-word fantasy story for ages 8-10"] },
+          ]},
+          { id: "u2l3", title: "Give AI Context", xp: 20, content: "Context is the background info AI needs to help you well.", exercises: [
+            { type: "multiple-choice", question: "Why give AI context?", options: ["It looks nice", "So AI knows your situation", "Required by law", "Saves time"], correctIndex: 1 },
+            { type: "short-answer", question: "Add context: 'help me write an email'. Rewrite with context.", minWords: 10 },
+          ]},
+          { id: "u2l4", title: "Check Your Results", xp: 20, content: "Always read AI's answer carefully. AI can be wrong!", exercises: [
+            { type: "true-false", statement: "AI is always 100% correct.", answer: false, explanation: "AI can make mistakes — always verify." },
+            { type: "multiple-choice", question: "If AI's answer is wrong, you should...", options: ["Trust it anyway", "Refine your prompt and retry", "Give up", "Yell at it"], correctIndex: 1 },
+          ]},
+          { id: "u2q", title: "Unit 2 Check", xp: 50, isQuiz: true, exercises: [
+            { type: "multiple-choice", question: "Best prompt?", options: ["food", "Suggest 3 quick weeknight dinners using chicken", "yum", "?"], correctIndex: 1 },
+            { type: "true-false", statement: "Always verify AI's answers.", answer: true },
+            { type: "fill-blank", prompt: "Context tells AI your ____.", answer: "situation" },
+          ]},
         ],
       },
     ],
