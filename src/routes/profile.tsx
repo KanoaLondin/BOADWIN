@@ -3,6 +3,7 @@ import { Flame, Zap, Settings, GraduationCap, Lock, Share2, Pencil, Trophy, Spar
 import { AppShell } from "@/components/AppShell";
 import { Mascot } from "@/components/Mascot";
 import { LevelBadge } from "@/components/LevelBadge";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 import {
   useAppState, equipOutfit, equipStreakColor, equipProfileBg, equipBadgeFrame,
 } from "@/lib/app-state";
