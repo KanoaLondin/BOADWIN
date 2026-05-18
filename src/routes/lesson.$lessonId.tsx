@@ -302,12 +302,14 @@ type Status = "idle" | "correct" | "close" | "wrong";
 
 function ExerciseStep({
   exercise,
+  exerciseId,
   onCorrect,
   onClose,
   onWrong,
   onContinue,
 }: {
   exercise: Exercise;
+  exerciseId: string;
   onCorrect: () => void;
   onClose: () => void;
   onWrong: () => void;
@@ -371,6 +373,10 @@ function ExerciseStep({
           status={status}
           onCheck={(s) => mark(s)}
         />
+      )}
+
+      {status === "idle" && (
+        <HintButton exercise={exercise} exerciseId={exerciseId} />
       )}
 
       {status !== "idle" && (
