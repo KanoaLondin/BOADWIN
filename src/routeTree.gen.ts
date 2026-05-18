@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LessonLessonIdRouteImport } from './routes/lesson.$lessonId'
 
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeaderboardRoute = LeaderboardRouteImport.update({
   id: '/leaderboard',
   path: '/leaderboard',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/courses': typeof CoursesRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/profile': typeof ProfileRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/courses': typeof CoursesRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/profile': typeof ProfileRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
 }
 export interface FileRoutesById {
@@ -52,25 +60,45 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/courses': typeof CoursesRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/profile': typeof ProfileRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/courses' | '/leaderboard' | '/lesson/$lessonId'
+  fullPaths:
+    | '/'
+    | '/courses'
+    | '/leaderboard'
+    | '/profile'
+    | '/lesson/$lessonId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/courses' | '/leaderboard' | '/lesson/$lessonId'
-  id: '__root__' | '/' | '/courses' | '/leaderboard' | '/lesson/$lessonId'
+  to: '/' | '/courses' | '/leaderboard' | '/profile' | '/lesson/$lessonId'
+  id:
+    | '__root__'
+    | '/'
+    | '/courses'
+    | '/leaderboard'
+    | '/profile'
+    | '/lesson/$lessonId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CoursesRoute: typeof CoursesRoute
   LeaderboardRoute: typeof LeaderboardRoute
+  ProfileRoute: typeof ProfileRoute
   LessonLessonIdRoute: typeof LessonLessonIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leaderboard': {
       id: '/leaderboard'
       path: '/leaderboard'
@@ -106,6 +134,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CoursesRoute: CoursesRoute,
   LeaderboardRoute: LeaderboardRoute,
+  ProfileRoute: ProfileRoute,
   LessonLessonIdRoute: LessonLessonIdRoute,
 }
 export const routeTree = rootRouteImport
