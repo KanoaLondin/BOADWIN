@@ -96,28 +96,31 @@ function Profile() {
       </Link>
 
       {/* Hero card */}
-      <section className={`mt-4 overflow-hidden rounded-3xl border-2 border-border p-6 text-center shadow-card ${profileBg !== "none" ? `bg-${profileBg}` : "bg-gradient-to-br from-purple/15 via-card to-cyan/15"}`}>
-        <div className="relative mx-auto w-fit">
-          <Mascot size={88} outfit={outfit} />
-          <button aria-label="Edit" className="absolute -bottom-1 right-0 grid h-7 w-7 place-items-center rounded-full bg-card border border-border shadow-soft">
-            <Pencil className="h-3.5 w-3.5" />
-          </button>
-        </div>
-        <h2 className={`mt-4 text-2xl font-black ${profileBg !== "none" ? "text-white" : ""}`}>{name}</h2>
-        <div className="mt-1 flex items-center justify-center gap-2">
-          <LevelBadge xp={xp} />
-          <p className={`text-xs font-bold uppercase tracking-widest ${profileBg !== "none" ? "text-white/80" : "text-muted-foreground"}`}>
-            {userLevel.name} · {ageGroup}
-          </p>
-        </div>
-        {/* Level progress */}
-        <div className={`mx-auto mt-3 max-w-xs rounded-full px-3 py-1 text-[10px] font-bold ${profileBg !== "none" ? "bg-white/15 text-white" : "bg-muted text-muted-foreground"}`}>
-          {lvlProgress.current}/{lvlProgress.needed} XP to next level
-        </div>
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          <Stat icon={<Zap className="h-4 w-4" />} value={xp.toLocaleString()} label="Total XP" />
-          <Stat icon={<Flame className="h-4 w-4" />} value={streak} label="Day streak" />
-          <Stat icon={<Sparkles className="h-4 w-4" />} value={`💎 ${gems}`} label="Gems" />
+      <section className={`relative mt-4 overflow-hidden rounded-3xl border-2 border-border p-6 text-center shadow-card ${profileBg === "none" ? "bg-gradient-to-br from-purple/15 via-card to-cyan/15" : ""}`}>
+        {profileBg !== "none" && <AnimatedBackground variant={profileBg} contained />}
+        <div className="relative">
+          <div className="relative mx-auto w-fit">
+            <Mascot size={88} outfit={outfit} />
+            <button aria-label="Edit" className="absolute -bottom-1 right-0 grid h-7 w-7 place-items-center rounded-full bg-card border border-border shadow-soft">
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <h2 className={`mt-4 text-2xl font-black ${profileBg !== "none" ? "text-white drop-shadow" : ""}`}>{name}</h2>
+          <div className="mt-1 flex items-center justify-center gap-2">
+            <LevelBadge xp={xp} />
+            <p className={`text-xs font-bold uppercase tracking-widest ${profileBg !== "none" ? "text-white/90" : "text-muted-foreground"}`}>
+              {userLevel.name} · {ageGroup}
+            </p>
+          </div>
+          {/* Level progress */}
+          <div className={`mx-auto mt-3 max-w-xs rounded-full px-3 py-1 text-[10px] font-bold ${profileBg !== "none" ? "bg-white/20 text-white backdrop-blur" : "bg-muted text-muted-foreground"}`}>
+            {lvlProgress.current}/{lvlProgress.needed} XP to next level
+          </div>
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            <Stat icon={<Zap className="h-4 w-4" />} value={xp.toLocaleString()} label="Total XP" />
+            <Stat icon={<Flame className="h-4 w-4" />} value={streak} label="Day streak" />
+            <Stat icon={<Sparkles className="h-4 w-4" />} value={`💎 ${gems}`} label="Gems" />
+          </div>
         </div>
       </section>
 
