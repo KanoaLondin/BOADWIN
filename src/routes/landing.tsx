@@ -338,9 +338,6 @@ function CTA() {
           <StoreBtnLg store="ios" inverted />
           <StoreBtnLg store="android" inverted />
         </div>
-        <Link to="/" className="mt-6 inline-flex items-center gap-1 text-sm font-bold opacity-90 hover:opacity-100">
-          Try web preview <ChevronRight className="h-4 w-4" />
-        </Link>
       </div>
     </section>
   );
