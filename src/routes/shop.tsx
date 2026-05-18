@@ -19,6 +19,7 @@ import {
   type StreakColor, type ProfileBg, type BadgeFrame,
 } from "@/lib/app-state";
 import { Mascot } from "@/components/Mascot";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 export const Route = createFileRoute("/shop")({
   component: Shop,
