@@ -18,7 +18,7 @@ const users = [
   { name: "Ivy W.", xp: 510, streak: 5, you: false },
 ];
 
-export default function Leaderboard() {
+function Leaderboard() {
   const sorted = [...users].sort((a, b) => b.xp - a.xp);
   return (
     <AppShell>
