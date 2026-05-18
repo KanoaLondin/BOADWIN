@@ -69,14 +69,12 @@ function Leaderboard() {
             "from-warning to-amber-200",
             "from-amber-600/70 to-amber-400/60",
           ];
-          return (
-            <div key={p.name + i} className="flex flex-col items-center">
+          const inner = (
+            <>
               {place === 1 && <Crown className="mb-1 h-5 w-5 text-warning fill-current animate-twinkle" />}
               <div
                 className={`grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br text-xl font-black text-white shadow-glow ${
-                  p.you
-                    ? "from-primary to-cyan ring-4 ring-primary/40"
-                    : "from-purple to-cyan"
+                  p.you ? "from-primary to-cyan ring-4 ring-primary/40" : "from-purple to-cyan"
                 }`}
               >
                 {p.name[0]}
@@ -90,7 +88,14 @@ function Leaderboard() {
               >
                 {place}
               </div>
-            </div>
+            </>
+          );
+          return p.id && !p.you ? (
+            <Link key={p.name + i} to="/friend/$friendId" params={{ friendId: p.id }} className="flex flex-col items-center">
+              {inner}
+            </Link>
+          ) : (
+            <div key={p.name + i} className="flex flex-col items-center">{inner}</div>
           );
         })}
       </section>
