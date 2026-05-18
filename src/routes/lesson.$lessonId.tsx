@@ -12,8 +12,23 @@ function LessonPage() {
   const { lessonId } = Route.useParams();
   const navigate = useNavigate();
   const data = findLesson(lessonId);
+  const lesson = data?.lesson;
 
-  if (!data) {
+  const steps = useMemo(() => {
+    if (!lesson) return [] as ("intro" | number)[];
+    const arr: ("intro" | number)[] = [];
+    if (lesson.content) arr.push("intro");
+    (lesson.exercises ?? []).forEach((_, i) => arr.push(i));
+    if (arr.length === 0) arr.push("intro");
+    return arr;
+  }, [lesson]);
+
+  const [stepIdx, setStepIdx] = useState(0);
+  const [hearts, setHearts] = useState(5);
+  const [xpEarned, setXpEarned] = useState(0);
+  const [complete, setComplete] = useState(false);
+
+  if (!data || !lesson) {
     return (
       <div className="grid min-h-screen place-items-center px-4">
         <div className="text-center">
@@ -26,19 +41,6 @@ function LessonPage() {
     );
   }
 
-  const { lesson } = data;
-  const steps = useMemo(() => {
-    const arr: ("intro" | number)[] = [];
-    if (lesson.content) arr.push("intro");
-    (lesson.exercises ?? []).forEach((_, i) => arr.push(i));
-    if (arr.length === 0) arr.push("intro");
-    return arr;
-  }, [lesson]);
-
-  const [stepIdx, setStepIdx] = useState(0);
-  const [hearts, setHearts] = useState(5);
-  const [xpEarned, setXpEarned] = useState(0);
-  const [complete, setComplete] = useState(false);
 
   const progress = ((stepIdx + (complete ? 1 : 0)) / steps.length) * 100;
   const step = steps[stepIdx];
