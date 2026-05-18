@@ -33,10 +33,8 @@ function Leaderboard() {
   const userXp = useAppState((s) => s.xp);
   const userStreak = useAppState((s) => s.streak);
 
-  const all: Row[] = [
-    ...RIVALS,
-    { name: userName, xp: userXp, streak: userStreak, you: true, trend: "up" },
-  ].sort((a, b) => b.xp - a.xp);
+  const you: Row = { name: userName, xp: userXp, streak: userStreak, you: true, trend: "up" };
+  const all: Row[] = [...RIVALS, you].sort((a, b) => b.xp - a.xp);
 
   const tier = TIERS[2]; // Gold sample
 
