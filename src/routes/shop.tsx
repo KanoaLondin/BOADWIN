@@ -20,7 +20,21 @@ export const Route = createFileRoute("/shop")({
   head: () => ({ meta: [{ title: "Shop & Plans — AIED" }] }),
 });
 
-const plans = [
+type Plan = {
+  id: "free" | "super" | "max" | "family";
+  name: string;
+  price: string;
+  period: string;
+  icon: typeof Sparkles;
+  tone: string;
+  features: string[];
+  cta: string;
+  badge?: string;
+  disabled?: boolean;
+  showAlPreview?: boolean;
+};
+
+const plans: Plan[] = [
   {
     id: "free",
     name: "Free",
@@ -70,7 +84,7 @@ const plans = [
     features: ["Up to 6 accounts", "Parent dashboard", "All AIED Max features included"],
     cta: "Get AIED Family",
   },
-] as const;
+];
 
 type ShopItem = {
   id: string;
@@ -135,7 +149,7 @@ function Shop() {
             key={p.id}
             className={`relative rounded-3xl border-2 bg-card p-5 shadow-soft ${p.tone}`}
           >
-            {"badge" in p && p.badge && (
+            {p.badge && (
               <span className="absolute -top-3 left-5 rounded-full gradient-hero px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow-glow">
                 {p.badge}
               </span>
@@ -162,7 +176,7 @@ function Shop() {
               ))}
             </ul>
 
-            {"showAlPreview" in p && p.showAlPreview && (
+            {p.showAlPreview && (
               <button
                 onClick={() => setAlPreview(true)}
                 className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/8 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/15"
