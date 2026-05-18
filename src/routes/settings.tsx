@@ -5,7 +5,7 @@ import {
   KeyRound, User, Heart, Sparkles, Info,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { useAppState, setName, setAgeGroup, type AppState } from "@/lib/app-state";
+import { useAppState, setName, setAgeGroup, setBgAnimationsOff, type AppState } from "@/lib/app-state";
 
 export const Route = createFileRoute("/settings")({
   component: Settings,
