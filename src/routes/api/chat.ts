@@ -31,10 +31,10 @@ function buildSystemPrompt(body: ChatBody): string {
 
   const lessonLine = ctx?.lessonTitle
     ? `The user is currently on the lesson "${ctx.lessonTitle}" in unit "${ctx.unitTitle ?? "?"}" of the "${ctx.levelTitle ?? "?"}" level.`
-    : "The user is exploring the SAIvior app home and may ask about any lesson.";
+    : "The user is exploring the AIED app home and may ask about any lesson.";
 
   return [
-    "You are AL, the friendly personal AI tutor inside the AIED by SAIvior learning app.",
+    "You are AL, the friendly personal AI tutor inside the AIED learning app.",
     "AIED teaches AI literacy and prompt engineering through Duolingo-style lessons.",
     `The learner you are helping is ${name}.`,
     lessonLine,

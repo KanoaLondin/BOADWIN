@@ -4,9 +4,12 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
+  useNavigate,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
 
@@ -43,7 +46,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           This page didn't load
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          Something went wrong on our end. Try refreshing or head back home.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -72,10 +75,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "AIED by SAIvior — AI Literacy for Everyone" },
-      { name: "description", content: "Learn AI literacy and prompt engineering the fun way. Duolingo-style lessons for all ages, powered by SAIvior." },
-      { property: "og:title", content: "AIED — AI Literacy by SAIvior" },
-      { property: "og:description", content: "Master prompt engineering with bite-sized lessons, XP, streaks and certificates." },
+      { title: "AIED — Saving futures through AI literacy" },
+      { name: "description", content: "AIED teaches AI literacy and prompt engineering through fun, Duolingo-style lessons for every age." },
+      { property: "og:title", content: "AIED — Saving futures through AI literacy" },
+      { property: "og:description", content: "Learn AI literacy and prompt engineering the fun way. Free to start." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -83,7 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@500;600;700&display=swap" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@500;600;700;800&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -106,8 +109,31 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Routes that are part of the desktop marketing website.
+// Everything else is the mobile app and gets gated to /landing on desktop.
+const MARKETING_ROUTES = new Set<string>(["/landing"]);
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    setReady(true);
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    if (isDesktop && !MARKETING_ROUTES.has(pathname)) {
+      navigate({ to: "/landing", replace: true });
+    }
+  }, [ready, isDesktop, pathname, navigate]);
 
   return (
     <QueryClientProvider client={queryClient}>

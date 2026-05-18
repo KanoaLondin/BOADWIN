@@ -88,7 +88,7 @@ function PremiumChat({
             type: "text",
             text: lessonContext
               ? `Hey ${userName}! I'm AL, your AI tutor. I see you're on "${lessonContext.lessonTitle}". Ask me anything — I'm here to help! ✨`
-              : `Hey ${userName}! I'm AL, your AI tutor. Ask me anything about AI, prompts, or any lesson in SAIvior. ✨`,
+              : `Hey ${userName}! I'm AL, your AI tutor. Ask me anything about AI, prompts, or any lesson in AIED. ✨`,
           },
         ],
       } as UIMessage,
