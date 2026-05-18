@@ -10,7 +10,7 @@ import {
   ThumbsUp,
   AlertCircle,
 } from "lucide-react";
-import { findLesson, fuzzyMatch, levels, type Exercise } from "@/lib/course-data";
+import { findLesson, fuzzyMatch, type Exercise } from "@/lib/course-data";
 import { AppShell } from "@/components/AppShell";
 import { ChestReward } from "@/components/ChestReward";
 import { Gem } from "@/components/GemBadge";
