@@ -284,11 +284,7 @@ function PreviewModal({ cosmetic, owned, onBuy, onClose }: { cosmetic: Cosmetic;
 
 // Lightweight inline scene preview that scopes the AnimatedBackground inside the modal.
 function ScenePreview({ variant }: { variant: ProfileBg }) {
-  // The shared AnimatedBackground uses `fixed inset-0`; here we re-mount with a wrapper to clip.
-  return (
-    <div className="absolute inset-0 [&>div]:!fixed-none [&>div]:!absolute">
-      <AnimatedBackground variant={variant} />
-    </div>
-  );
+  return <AnimatedBackground variant={variant} contained />;
 }
+
 
