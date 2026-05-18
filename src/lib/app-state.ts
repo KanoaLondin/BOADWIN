@@ -86,6 +86,7 @@ const DEFAULT_STATE: AppState = {
   lastSeenLevel: 1,
   streakFreezeUsedAt: null,
   alTip: "Try a lesson today to keep your streak alive! 🔥",
+  bgAnimationsOff: false,
 };
 
 let state: AppState = DEFAULT_STATE;
