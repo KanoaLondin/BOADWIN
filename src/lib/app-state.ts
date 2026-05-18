@@ -48,6 +48,7 @@ export type AppState = {
   // For streak freeze notification
   streakFreezeUsedAt: string | null;
   alTip: string | null;
+  bgAnimationsOff: boolean;
 };
 
 const DEFAULT_STATE: AppState = {
