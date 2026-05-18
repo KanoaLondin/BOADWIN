@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { Lock, Check, Star, Trophy, Crown } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { levels, type Unit, type Level } from "@/lib/course-data";
@@ -37,7 +38,8 @@ function themeFor(index: number): Theme {
 }
 
 function Courses() {
-  const completed = useAppState((s) => new Set(s.completedLessons));
+  const completedList = useAppState((s) => s.completedLessons);
+  const completed = useMemo(() => new Set(completedList), [completedList]);
   const premiumState = useAppState((s) => s.premium);
 
   // figure out current lesson = first non-completed in first unlocked level
