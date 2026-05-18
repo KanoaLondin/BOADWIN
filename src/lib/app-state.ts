@@ -326,3 +326,7 @@ export function openChest(tier: ChestTier): {
   }
   return { gems, items };
 }
+
+export function setBgAnimationsOff(off: boolean) {
+  setState((s) => ({ ...s, bgAnimationsOff: off }));
+}
