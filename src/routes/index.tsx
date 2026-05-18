@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ChevronRight, Sparkles, Flame, Zap } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { levels } from "@/lib/course-data";
@@ -21,11 +22,32 @@ const TIPS = [
   "Tip of the day: Specific beats vague every time 🎯",
 ];
 
+function formatRemaining(ms: number): string {
+  if (ms <= 0) return "0s";
+  const total = Math.floor(ms / 1000);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
 function Home() {
   const name = useAppState((s) => s.name);
   const xp = useAppState((s) => s.xp);
   const streak = useAppState((s) => s.streak);
   const completed = useAppState((s) => s.completedLessons);
+  const boostUntil = useAppState((s) => s.xpBoostUntil);
+
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!boostUntil) return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [boostUntil]);
+  const boostActive = !!boostUntil && boostUntil > now;
+  const remainingMs = boostActive ? boostUntil! - now : 0;
 
   const dailyGoal = 50;
   const dailyXp = 30;
@@ -61,6 +83,43 @@ function Home() {
           <p className="mt-1 text-2xl font-black">{xp.toLocaleString()}</p>
         </div>
       </div>
+
+      {/* XP Boost status */}
+      {boostActive ? (
+        <section className="mt-4 overflow-hidden rounded-3xl border border-warning/30 bg-gradient-to-r from-warning/15 via-heart/10 to-warning/15 p-4 shadow-soft animate-pop">
+          <div className="flex items-center gap-3">
+            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-warning to-heart text-white shadow-glow">
+              <Zap className="h-5 w-5 fill-current" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-black">2× XP Boost active</p>
+                <span className="rounded-full bg-warning px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
+                  2×
+                </span>
+              </div>
+              <p className="text-xs font-bold text-muted-foreground">
+                Ends in {formatRemaining(remainingMs)} — finish lessons fast!
+              </p>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <Link
+          to="/shop"
+          className="mt-4 flex items-center gap-3 rounded-3xl border border-dashed border-border bg-card/60 p-4 transition-all hover:border-warning/40 hover:bg-warning/5"
+        >
+          <div className="grid h-10 w-10 place-items-center rounded-2xl bg-muted text-muted-foreground">
+            <Zap className="h-5 w-5" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-black">XP Boost off</p>
+            <p className="text-xs text-muted-foreground">Activate 2× XP in the Shop</p>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </Link>
+      )}
+
 
       {/* Daily goal */}
       <section className="mt-4 rounded-3xl bg-card border border-border p-5 shadow-soft">

@@ -9,11 +9,13 @@ import {
   RotateCw,
   ThumbsUp,
   AlertCircle,
+  Zap,
 } from "lucide-react";
 import { findLesson, fuzzyMatch, type Exercise } from "@/lib/course-data";
 import { AppShell } from "@/components/AppShell";
 import { ChestReward } from "@/components/ChestReward";
 import { Gem } from "@/components/GemBadge";
+import { HintButton } from "@/components/HintButton";
 import { completeLesson, loseHeart, useAppState, type ChestTier } from "@/lib/app-state";
 
 export const Route = createFileRoute("/lesson/$lessonId")({
@@ -173,6 +175,7 @@ function LessonPage() {
           <ExerciseStep
             key={stepIdx}
             exercise={lesson.exercises![step as number]}
+            exerciseId={`${lesson.id}:${step}`}
             onCorrect={() => {
               onCorrect(10);
               next();
@@ -217,6 +220,10 @@ function CompleteScreen({
   navigate: ReturnType<typeof useNavigate>;
 }) {
   const completed = useAppState((s) => s.completedLessons);
+  const boostUntil = useAppState((s) => s.xpBoostUntil);
+  const hintedQs = useAppState((s) => s.hintedQuestions);
+  const hintedCount = hintedQs.filter((id) => id.startsWith(`${lesson.id}:`)).length;
+  const boostActive = !!boostUntil && boostUntil > Date.now();
 
   useEffect(() => {
     if (reward) return;
@@ -248,10 +255,20 @@ function CompleteScreen({
             {mistakes === 0 ? "Perfect score! 🌟" : "You're making real progress."}
           </p>
 
+          {boostActive && (
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-warning to-heart px-4 py-1.5 text-xs font-black text-white shadow-glow animate-pop">
+              <Zap className="h-3.5 w-3.5 fill-current" />
+              2× XP MULTIPLIER APPLIED
+            </div>
+          )}
+
           <div className="mt-6 grid grid-cols-3 gap-3">
             <div className="rounded-2xl bg-card border border-border p-3 shadow-soft">
               <p className="text-[10px] uppercase text-muted-foreground">XP</p>
               <p className="mt-1 text-xl font-black text-warning">+{(reward?.xpEarned ?? lesson.xp + xpEarned)}</p>
+              {boostActive && (
+                <p className="text-[9px] font-black uppercase tracking-wider text-heart">2× boost</p>
+              )}
             </div>
             <div className="rounded-2xl bg-card border border-border p-3 shadow-soft">
               <p className="text-[10px] uppercase text-muted-foreground">Gems</p>
@@ -264,6 +281,12 @@ function CompleteScreen({
               <p className="mt-1 text-xl font-black text-heart">{hearts}/5</p>
             </div>
           </div>
+
+          {hintedCount > 0 && (
+            <div className="mt-4 flex items-center justify-center gap-2 rounded-2xl border border-warning/30 bg-warning/5 px-4 py-2 text-xs font-bold text-warning">
+              💡 Hints used on {hintedCount} question{hintedCount === 1 ? "" : "s"}
+            </div>
+          )}
 
           <button
             onClick={() => navigate({ to: "/courses" })}
@@ -299,12 +322,14 @@ type Status = "idle" | "correct" | "close" | "wrong";
 
 function ExerciseStep({
   exercise,
+  exerciseId,
   onCorrect,
   onClose,
   onWrong,
   onContinue,
 }: {
   exercise: Exercise;
+  exerciseId: string;
   onCorrect: () => void;
   onClose: () => void;
   onWrong: () => void;
@@ -368,6 +393,10 @@ function ExerciseStep({
           status={status}
           onCheck={(s) => mark(s)}
         />
+      )}
+
+      {status === "idle" && (
+        <HintButton exercise={exercise} exerciseId={exerciseId} />
       )}
 
       {status !== "idle" && (
