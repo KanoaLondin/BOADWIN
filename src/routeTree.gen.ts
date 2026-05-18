@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ParentRouteImport } from './routes/parent'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as CoursesRouteImport } from './routes/courses'
@@ -31,6 +32,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParentRoute = ParentRouteImport.update({
+  id: '/parent',
+  path: '/parent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/courses': typeof CoursesRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/parent': typeof ParentRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/courses': typeof CoursesRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/parent': typeof ParentRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/courses': typeof CoursesRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/parent': typeof ParentRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/courses'
     | '/leaderboard'
     | '/onboarding'
+    | '/parent'
     | '/profile'
     | '/settings'
     | '/shop'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/courses'
     | '/leaderboard'
     | '/onboarding'
+    | '/parent'
     | '/profile'
     | '/settings'
     | '/shop'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/courses'
     | '/leaderboard'
     | '/onboarding'
+    | '/parent'
     | '/profile'
     | '/settings'
     | '/shop'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   CoursesRoute: typeof CoursesRoute
   LeaderboardRoute: typeof LeaderboardRoute
   OnboardingRoute: typeof OnboardingRoute
+  ParentRoute: typeof ParentRoute
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
@@ -155,6 +168,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parent': {
+      id: '/parent'
+      path: '/parent'
+      fullPath: '/parent'
+      preLoaderRoute: typeof ParentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoursesRoute: CoursesRoute,
   LeaderboardRoute: LeaderboardRoute,
   OnboardingRoute: OnboardingRoute,
+  ParentRoute: ParentRoute,
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
