@@ -14,6 +14,7 @@ import { findLesson, fuzzyMatch, type Exercise } from "@/lib/course-data";
 import { AppShell } from "@/components/AppShell";
 import { ChestReward } from "@/components/ChestReward";
 import { Gem } from "@/components/GemBadge";
+import { HintButton } from "@/components/HintButton";
 import { completeLesson, loseHeart, useAppState, type ChestTier } from "@/lib/app-state";
 
 export const Route = createFileRoute("/lesson/$lessonId")({
