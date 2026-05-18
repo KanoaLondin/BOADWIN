@@ -133,8 +133,18 @@ function Profile() {
 
       {/* AL outfits */}
       <section className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft">
-        <p className="text-sm font-black">AL's wardrobe</p>
-        <p className="text-[11px] text-muted-foreground">Tap to equip. Buy more in the Shop.</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-black">AL's wardrobe</p>
+            <p className="text-[11px] text-muted-foreground">Tap to equip. Buy more in the Shop.</p>
+          </div>
+          <Link
+            to="/wardrobe"
+            className="rounded-full bg-primary px-3 py-1.5 text-[11px] font-black text-primary-foreground shadow-soft"
+          >
+            Open Wardrobe →
+          </Link>
+        </div>
         <div className="mt-3 grid grid-cols-6 gap-2">
           {ALL_OUTFITS.map((o) => {
             const isOwned = owned.includes(o.id);

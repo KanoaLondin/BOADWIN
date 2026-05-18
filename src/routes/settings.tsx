@@ -5,7 +5,7 @@ import {
   KeyRound, User, Heart, Sparkles, Info,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { useAppState, setName, setAgeGroup, type AppState } from "@/lib/app-state";
+import { useAppState, setName, setAgeGroup, setBgAnimationsOff, type AppState } from "@/lib/app-state";
 
 export const Route = createFileRoute("/settings")({
   component: Settings,
@@ -25,6 +25,7 @@ function Settings() {
   const name = useAppState((s) => s.name);
   const ageGroup = useAppState((s) => s.ageGroup);
   const premium = useAppState((s) => s.premium);
+  const bgAnimOff = useAppState((s) => s.bgAnimationsOff);
 
   const [dark, setDark] = useState(false);
   const [notif, setNotif] = useState(true);
@@ -128,6 +129,11 @@ function Settings() {
           icon={<Volume2 className="h-5 w-5" />}
           label="Sound effects"
           right={<Toggle on={sound} onChange={() => setSound((v) => !v)} />}
+        />
+        <Row
+          icon={<Sparkles className="h-5 w-5" />}
+          label="Background animations"
+          right={<Toggle on={!bgAnimOff} onChange={() => setBgAnimationsOff(!bgAnimOff)} />}
         />
         <Row
           icon={<Globe className="h-5 w-5" />}

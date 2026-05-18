@@ -19,6 +19,7 @@ import {
   type StreakColor, type ProfileBg, type BadgeFrame,
 } from "@/lib/app-state";
 import { Mascot } from "@/components/Mascot";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 export const Route = createFileRoute("/shop")({
   component: Shop,
@@ -230,37 +231,60 @@ function InsufficientModal({ info, gems, onClose }: { info: { name: string; pric
 function PreviewModal({ cosmetic, owned, onBuy, onClose }: { cosmetic: Cosmetic; owned: boolean; onBuy: () => void; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 grid place-items-end sm:place-items-center bg-foreground/50 backdrop-blur-sm" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md rounded-t-3xl sm:rounded-3xl bg-card p-6 shadow-glow animate-slide-up">
-        <div className="flex items-start justify-between">
-          <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{cosmetic.cat} preview</div>
+      <div onClick={(e) => e.stopPropagation()} className="relative w-full max-w-md overflow-hidden rounded-t-3xl sm:rounded-3xl bg-card shadow-glow animate-slide-up">
+        <div className="flex items-start justify-between p-5 pb-3">
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{cosmetic.cat} preview</div>
+            <h2 className="text-xl font-black">{cosmetic.name}</h2>
+            <p className="text-sm text-muted-foreground">{cosmetic.desc}</p>
+          </div>
           <button onClick={onClose} className="grid h-8 w-8 place-items-center rounded-full hover:bg-muted"><X className="h-4 w-4" /></button>
         </div>
-        <h2 className="text-xl font-black">{cosmetic.name}</h2>
-        <p className="text-sm text-muted-foreground">{cosmetic.desc}</p>
 
-        <div className={`mt-5 grid h-44 place-items-center rounded-3xl bg-${cosmetic.cat === "bg" ? cosmetic.id : "gradient-card border border-border"}`}>
-          {cosmetic.cat === "outfit" ? (
-            <Mascot size={96} outfit={cosmetic.id} />
-          ) : cosmetic.cat === "frame" ? (
-            <div className={`grid h-20 w-20 place-items-center rounded-2xl bg-card frame-${cosmetic.id}`}>
-              <Sparkles className="h-8 w-8 text-warning" />
+        {/* Full-bleed preview stage */}
+        <div className="relative mx-5 h-60 overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-purple/15 via-card to-cyan/15">
+          {cosmetic.cat === "bg" && (
+            <div className="absolute inset-0">
+              <ScenePreview variant={cosmetic.id as ProfileBg} />
             </div>
-          ) : cosmetic.cat === "streak" ? (
-            <span className={`text-7xl streak-${cosmetic.id}`}>🔥</span>
-          ) : (
-            <div className={`h-40 w-full rounded-2xl bg-${cosmetic.id}`} />
+          )}
+          <div className="absolute inset-0 grid place-items-center">
+            {cosmetic.cat === "outfit" && <Mascot size={170} outfit={cosmetic.id} wave />}
+            {cosmetic.cat === "bg" && <Mascot size={140} outfit="classic" />}
+            {cosmetic.cat === "frame" && (
+              <div className={`grid h-24 w-24 place-items-center rounded-2xl bg-card frame-${cosmetic.id}`}>
+                <Sparkles className="h-9 w-9 text-warning" />
+              </div>
+            )}
+            {cosmetic.cat === "streak" && (
+              <span className={`text-8xl streak-${cosmetic.id}`}>🔥</span>
+            )}
+          </div>
+          {owned && (
+            <span className="absolute right-3 top-3 rounded-full bg-success px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow-soft">
+              Owned
+            </span>
           )}
         </div>
 
-        <button
-          onClick={owned ? onClose : onBuy}
-          className={`mt-5 w-full rounded-2xl px-6 py-3 font-black shadow-glow ${
-            owned ? "bg-muted text-muted-foreground" : "gradient-hero text-white"
-          }`}
-        >
-          {owned ? "Already owned" : <>Buy & equip · <Gem size={14} /> {cosmetic.price}</>}
-        </button>
+        <div className="p-5 pt-4">
+          <button
+            onClick={owned ? onClose : onBuy}
+            className={`flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-3 font-black shadow-glow ${
+              owned ? "bg-success text-white" : "gradient-hero text-white"
+            }`}
+          >
+            {owned ? "Equip" : <>Purchase · <Gem size={14} /> {cosmetic.price}</>}
+          </button>
+        </div>
       </div>
     </div>
   );
 }
+
+// Lightweight inline scene preview that scopes the AnimatedBackground inside the modal.
+function ScenePreview({ variant }: { variant: ProfileBg }) {
+  return <AnimatedBackground variant={variant} contained />;
+}
+
+

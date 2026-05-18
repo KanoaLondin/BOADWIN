@@ -48,6 +48,7 @@ export type AppState = {
   // For streak freeze notification
   streakFreezeUsedAt: string | null;
   alTip: string | null;
+  bgAnimationsOff: boolean;
 };
 
 const DEFAULT_STATE: AppState = {
@@ -85,6 +86,7 @@ const DEFAULT_STATE: AppState = {
   lastSeenLevel: 1,
   streakFreezeUsedAt: null,
   alTip: "Try a lesson today to keep your streak alive! 🔥",
+  bgAnimationsOff: false,
 };
 
 let state: AppState = DEFAULT_STATE;
@@ -323,4 +325,8 @@ export function openChest(tier: ChestTier): {
     items.push({ id: it.id, name: it.name, emoji: it.emoji });
   }
   return { gems, items };
+}
+
+export function setBgAnimationsOff(off: boolean) {
+  setState((s) => ({ ...s, bgAnimationsOff: off }));
 }

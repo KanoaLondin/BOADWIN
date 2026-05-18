@@ -240,3 +240,118 @@
 .bg-mountains{ background: linear-gradient(180deg, #1e293b 0%, #475569 60%, #94a3b8 100%); }
 .bg-city     { background: linear-gradient(180deg, #1e1b4b 0%, #831843 100%); }
 .bg-abstract { background: conic-gradient(from 0deg, #7c3aed, #06b6d4, #f59e0b, #7c3aed); }
+
+/* ============= AL avatar + animated background keyframes ============= */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-6deg); }
+  75% { transform: rotate(6deg); }
+}
+.animate-wiggle { animation: wiggle 0.9s ease-in-out; }
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-25deg); }
+  50% { transform: rotate(20deg); }
+  80% { transform: rotate(-15deg); }
+}
+.animate-wave { animation: wave 1.4s ease-in-out; }
+
+@keyframes aurora {
+  0% { transform: translateX(-20%) skewY(-6deg); opacity: 0.4; }
+  50% { transform: translateX(20%) skewY(-6deg); opacity: 0.8; }
+  100% { transform: translateX(-20%) skewY(-6deg); opacity: 0.4; }
+}
+.animate-aurora { animation: aurora 18s ease-in-out infinite; }
+
+@keyframes drift {
+  0% { transform: translateX(-10%); }
+  100% { transform: translateX(110vw); }
+}
+.animate-drift { animation: drift 80s linear infinite; }
+
+@keyframes shoot {
+  0% { transform: translate(-10vw, 0) rotate(20deg); opacity: 0; }
+  10% { opacity: 1; }
+  60% { opacity: 1; }
+  100% { transform: translate(110vw, 40vh) rotate(20deg); opacity: 0; }
+}
+.animate-shoot { animation: shoot 7s ease-in infinite; animation-delay: 4s; }
+
+@keyframes firefly {
+  0%, 100% { transform: translate(0, 0); opacity: 0.2; }
+  50% { transform: translate(20px, -25px); opacity: 1; }
+}
+.animate-firefly { animation: firefly 4s ease-in-out infinite; }
+
+@keyframes fall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.8; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+.animate-fall { animation: fall 14s linear infinite; }
+
+@keyframes bubble {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  20% { opacity: 0.7; }
+  100% { transform: translateY(-110vh) translateX(20px); opacity: 0; }
+}
+.animate-bubble { animation: bubble 8s ease-in infinite; }
+
+@keyframes swim {
+  0% { transform: translateX(-10vw); }
+  100% { transform: translateX(120vw); }
+}
+.animate-swim { animation: swim 25s linear infinite; }
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+.animate-sway { animation: sway 4s ease-in-out infinite; transform-origin: bottom center; }
+
+@keyframes soar {
+  0% { transform: translate(0,0); }
+  25% { transform: translate(40vw,-3vh); }
+  50% { transform: translate(70vw,2vh); }
+  75% { transform: translate(30vw,-2vh); }
+  100% { transform: translate(0,0); }
+}
+.animate-soar { animation: soar 30s ease-in-out infinite; }
+
+@keyframes snow {
+  0% { transform: translateY(-10vh) translateX(0); opacity: 0.8; }
+  100% { transform: translateY(110vh) translateX(15px); opacity: 0; }
+}
+.animate-snow { animation: snow 12s linear infinite; }
+
+@keyframes flyer {
+  0% { transform: translateX(-10vw); opacity: 0.6; }
+  100% { transform: translateX(110vw); opacity: 0.6; }
+}
+.animate-flyer { animation: flyer 14s linear infinite; }
+
+@keyframes morph {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+.animate-morph { animation: morph 30s linear infinite; }
+
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-spin-slow { animation: spin-slow 30s linear infinite; }
+
+@keyframes rise {
+  0% { transform: translateY(0); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(-110vh); opacity: 0; }
+}
+.animate-rise { animation: rise 10s linear infinite; }
+
+/* When background animations are disabled */
+body.bg-anim-off [class*="animate-"] { animation: none !important; }
+
+/* Frosted cards when an environment background is active */
+body.has-env-bg .bg-card { background-color: color-mix(in oklab, var(--card) 70%, transparent); backdrop-filter: blur(8px); }
+body.has-env-bg .border-border { border-color: color-mix(in oklab, var(--border) 80%, transparent); }
