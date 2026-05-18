@@ -1,18 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Flame, Zap, ChevronRight, Sparkles } from "lucide-react";
+import { ChevronRight, Sparkles, Flame, Zap } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { levels } from "@/lib/course-data";
+import { useAppState } from "@/lib/app-state";
 
 export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
       { title: "AIED — Home" },
-      {
-        name: "description",
-        content:
-          "Your daily AI literacy training. Build streaks, earn XP, master prompt engineering.",
-      },
+      { name: "description", content: "Your daily AI literacy training." },
     ],
   }),
 });
@@ -25,44 +22,48 @@ const TIPS = [
 ];
 
 function Home() {
-  const userName = "Alex";
-  const xp = 1240;
-  const streak = 7;
+  const name = useAppState((s) => s.name);
+  const xp = useAppState((s) => s.xp);
+  const streak = useAppState((s) => s.streak);
+  const completed = useAppState((s) => s.completedLessons);
+
   const dailyGoal = 50;
   const dailyXp = 30;
   const currentLevel = levels[0];
-  const nextLesson = currentLevel.units[0].lessons[0];
+  const allLessons = currentLevel.units.flatMap((u) => u.lessons);
+  const nextLesson =
+    allLessons.find((l) => !completed.includes(l.id)) ?? allLessons[0];
   const tip = TIPS[new Date().getDay() % TIPS.length];
 
   return (
     <AppShell>
-      {/* Top bar */}
-      <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-black">
-          <span className="text-gradient">AIED</span>
-        </h1>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 rounded-full bg-warning/12 px-3 py-1.5 text-warning">
-            <Flame className="h-4 w-4 fill-current" />
-            <span className="text-sm font-black">{streak}</span>
-          </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-xp/15 px-3 py-1.5 text-warning">
-            <Zap className="h-4 w-4 fill-current" />
-            <span className="text-sm font-black">{xp.toLocaleString()}</span>
-          </div>
-        </div>
-      </header>
-
-      {/* Greeting */}
-      <section className="mt-8">
+      <section className="mt-2">
         <h2 className="text-3xl font-black text-foreground">
-          Welcome back, {userName}! 👋
+          Welcome back, {name}! 👋
         </h2>
         <p className="mt-1 text-muted-foreground">Ready for today's AI lesson?</p>
       </section>
 
+      {/* Quick stats */}
+      <div className="mt-5 grid grid-cols-2 gap-3">
+        <div className="rounded-2xl bg-card border border-border p-4 shadow-soft">
+          <div className="flex items-center gap-2 text-warning">
+            <Flame className="h-4 w-4 fill-current" />
+            <p className="text-[10px] font-black uppercase tracking-wider">Streak</p>
+          </div>
+          <p className="mt-1 text-2xl font-black">{streak} <span className="text-sm font-bold text-muted-foreground">days</span></p>
+        </div>
+        <div className="rounded-2xl bg-card border border-border p-4 shadow-soft">
+          <div className="flex items-center gap-2 text-warning">
+            <Zap className="h-4 w-4 fill-current" />
+            <p className="text-[10px] font-black uppercase tracking-wider">Total XP</p>
+          </div>
+          <p className="mt-1 text-2xl font-black">{xp.toLocaleString()}</p>
+        </div>
+      </div>
+
       {/* Daily goal */}
-      <section className="mt-6 rounded-3xl bg-card border border-border p-5 shadow-soft">
+      <section className="mt-4 rounded-3xl bg-card border border-border p-5 shadow-soft">
         <div className="flex items-center justify-between">
           <p className="font-bold">Daily goal</p>
           <span className="text-sm font-bold text-muted-foreground">
@@ -78,8 +79,8 @@ function Home() {
       </section>
 
       {/* Continue learning */}
-      <section className="mt-6">
-        <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+      <section className="mt-5">
+        <h3 className="mb-3 text-sm font-black uppercase tracking-wider text-muted-foreground">
           Continue learning
         </h3>
         <Link
@@ -98,7 +99,7 @@ function Home() {
                 +{nextLesson.xp} XP
               </span>
               <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-black text-white backdrop-blur">
-                ~5 min
+                +5 💎
               </span>
             </div>
             <div className="flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-black text-primary shadow-soft">
@@ -109,12 +110,26 @@ function Home() {
         </Link>
       </section>
 
-      {/* Tip of the day */}
-      <section className="mt-6 flex items-start gap-3 rounded-3xl border border-primary/20 bg-primary/5 p-4">
+      {/* Tip */}
+      <section className="mt-5 flex items-start gap-3 rounded-3xl border border-primary/20 bg-primary/5 p-4">
         <div className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-primary/12 text-primary">
           <Sparkles className="h-5 w-5" />
         </div>
         <p className="text-sm font-semibold text-foreground/90">{tip}</p>
+      </section>
+
+      {/* Quick links */}
+      <section className="mt-5 grid grid-cols-2 gap-3">
+        <Link to="/courses" className="rounded-2xl border border-border bg-card p-4 shadow-soft transition-transform hover:scale-[1.02]">
+          <p className="text-2xl">🗺️</p>
+          <p className="mt-1 text-sm font-black">Course Map</p>
+          <p className="text-xs text-muted-foreground">Explore the journey</p>
+        </Link>
+        <Link to="/shop" className="rounded-2xl border border-border bg-card p-4 shadow-soft transition-transform hover:scale-[1.02]">
+          <p className="text-2xl">🛍️</p>
+          <p className="mt-1 text-sm font-black">Shop</p>
+          <p className="text-xs text-muted-foreground">Spend your gems</p>
+        </Link>
       </section>
     </AppShell>
   );

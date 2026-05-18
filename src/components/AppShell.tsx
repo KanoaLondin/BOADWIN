@@ -1,19 +1,27 @@
 import type { ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
-import { TutorFloatingButton } from "./tutor/TutorFloatingButton";
+import { TopBar } from "./TopBar";
 
 export function AppShell({
   children,
   lessonContext,
+  showTopBar = true,
+  showBottomNav = true,
+  bg,
 }: {
   children: ReactNode;
   lessonContext?: { lessonTitle: string; unitTitle: string; levelTitle: string };
+  showTopBar?: boolean;
+  showBottomNav?: boolean;
+  bg?: string;
 }) {
   return (
-    <div className="min-h-screen pb-28">
-      <div className="mx-auto max-w-2xl px-4 pt-6 sm:pt-8">{children}</div>
-      <TutorFloatingButton lessonContext={lessonContext} />
-      <BottomNav />
+    <div className={`min-h-screen pb-28 ${bg ?? ""}`}>
+      <div className="mx-auto max-w-2xl px-4 pt-3">
+        {showTopBar && <TopBar lessonContext={lessonContext} />}
+        {children}
+      </div>
+      {showBottomNav && <BottomNav />}
     </div>
   );
 }

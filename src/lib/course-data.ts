@@ -1,4 +1,4 @@
-// Course data for AIED by SAIvior: Prompt Engineering
+// Course data for AIED: Prompt Engineering
 
 export type Exercise =
   | {

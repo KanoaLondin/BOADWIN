@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   X,
   Heart,
@@ -12,7 +12,9 @@ import {
 } from "lucide-react";
 import { findLesson, fuzzyMatch, type Exercise } from "@/lib/course-data";
 import { AppShell } from "@/components/AppShell";
-import { TutorFloatingButton } from "@/components/tutor/TutorFloatingButton";
+import { ChestReward } from "@/components/ChestReward";
+import { Gem } from "@/components/GemBadge";
+import { completeLesson, loseHeart, useAppState, type ChestTier } from "@/lib/app-state";
 
 export const Route = createFileRoute("/lesson/$lessonId")({
   component: LessonPage,
@@ -35,9 +37,16 @@ function LessonPage() {
   }, [lesson]);
 
   const [stepIdx, setStepIdx] = useState(0);
-  const [hearts, setHearts] = useState(5);
+  const [hearts, setHearts] = useState(useAppState((s) => s.hearts));
   const [xpEarned, setXpEarned] = useState(0);
+  const [mistakes, setMistakes] = useState(0);
   const [complete, setComplete] = useState(false);
+  const [reward, setReward] = useState<{
+    gemsEarned: number;
+    xpEarned: number;
+    chest: ChestTier | null;
+  } | null>(null);
+  const [chestOpen, setChestOpen] = useState<ChestTier | null>(null);
 
   if (!data || !lesson) {
     return (
@@ -69,6 +78,8 @@ function LessonPage() {
 
   function onWrong() {
     setHearts((h) => Math.max(0, h - 1));
+    setMistakes((m) => m + 1);
+    loseHeart();
   }
 
   const lessonCtx = {
@@ -78,36 +89,22 @@ function LessonPage() {
   };
 
   if (complete) {
+    // Award gems/xp/chest exactly once on mount of complete screen.
+    // (useEffect runs after first paint; safe.)
     return (
-      <AppShell lessonContext={lessonCtx}>
-        <div className="grid min-h-[70vh] place-items-center">
-          <div className="w-full max-w-md text-center animate-pop">
-            <div className="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-full gradient-hero shadow-glow">
-              <PartyPopper className="h-12 w-12 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold">Lesson complete!</h1>
-            <p className="mt-2 text-muted-foreground">You're making real progress.</p>
-
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-card border border-border p-4 shadow-soft">
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">XP earned</p>
-                <p className="mt-1 text-2xl font-bold text-warning">+{xpEarned + lesson.xp}</p>
-              </div>
-              <div className="rounded-2xl bg-card border border-border p-4 shadow-soft">
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">Hearts left</p>
-                <p className="mt-1 text-2xl font-bold text-heart">{hearts}/5</p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => navigate({ to: "/courses" })}
-              className="mt-8 w-full rounded-2xl gradient-hero px-6 py-4 font-bold text-white shadow-glow transition-transform hover:scale-[1.02]"
-            >
-              Continue
-            </button>
-          </div>
-        </div>
-      </AppShell>
+      <CompleteScreen
+        lesson={lesson}
+        unit={data.unit}
+        level={data.level}
+        hearts={hearts}
+        xpEarned={xpEarned}
+        mistakes={mistakes}
+        reward={reward}
+        setReward={setReward}
+        chestOpen={chestOpen}
+        setChestOpen={setChestOpen}
+        navigate={navigate}
+      />
     );
   }
 
@@ -190,9 +187,94 @@ function LessonPage() {
         )}
       </div>
 
-      {/* Floating tutor */}
-      <TutorFloatingButton lessonContext={lessonCtx} />
     </div>
+  );
+}
+
+function CompleteScreen({
+  lesson,
+  unit,
+  level,
+  hearts,
+  xpEarned,
+  mistakes,
+  reward,
+  setReward,
+  chestOpen,
+  setChestOpen,
+  navigate,
+}: {
+  lesson: { id: string; title: string; xp: number };
+  unit: { id: string; lessons: { id: string }[] };
+  level: { id: string; units: { lessons: { id: string }[] }[] };
+  hearts: number;
+  xpEarned: number;
+  mistakes: number;
+  reward: { gemsEarned: number; xpEarned: number; chest: ChestTier | null } | null;
+  setReward: (r: { gemsEarned: number; xpEarned: number; chest: ChestTier | null }) => void;
+  chestOpen: ChestTier | null;
+  setChestOpen: (t: ChestTier | null) => void;
+  navigate: ReturnType<typeof useNavigate>;
+}) {
+  const completed = useAppState((s) => s.completedLessons);
+
+  useEffect(() => {
+    if (reward) return;
+    const unitLessons = unit.lessons.map((l) => l.id);
+    const levelLessons = level.units.flatMap((u) => u.lessons.map((l) => l.id));
+    const newCompleted = new Set([...completed, lesson.id]);
+    const unitDone = unitLessons.every((id) => newCompleted.has(id));
+    const levelDone = levelLessons.every((id) => newCompleted.has(id));
+    const r = completeLesson(lesson.id, {
+      perfect: mistakes === 0,
+      unitDone,
+      levelDone,
+      baseXp: lesson.xp + xpEarned,
+    });
+    setReward(r);
+    if (r.chest) setTimeout(() => setChestOpen(r.chest), 700);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <AppShell>
+      <div className="grid min-h-[70vh] place-items-center">
+        <div className="w-full max-w-md text-center animate-pop">
+          <div className="mx-auto mb-6 grid h-24 w-24 place-items-center rounded-full gradient-hero shadow-glow">
+            <PartyPopper className="h-12 w-12 text-white" />
+          </div>
+          <h1 className="text-3xl font-black">Lesson complete!</h1>
+          <p className="mt-2 text-muted-foreground">
+            {mistakes === 0 ? "Perfect score! 🌟" : "You're making real progress."}
+          </p>
+
+          <div className="mt-6 grid grid-cols-3 gap-3">
+            <div className="rounded-2xl bg-card border border-border p-3 shadow-soft">
+              <p className="text-[10px] uppercase text-muted-foreground">XP</p>
+              <p className="mt-1 text-xl font-black text-warning">+{(reward?.xpEarned ?? lesson.xp + xpEarned)}</p>
+            </div>
+            <div className="rounded-2xl bg-card border border-border p-3 shadow-soft">
+              <p className="text-[10px] uppercase text-muted-foreground">Gems</p>
+              <p className="mt-1 flex items-center justify-center gap-1 text-xl font-black text-cyan">
+                <Gem size={16} />+{reward?.gemsEarned ?? 5}
+              </p>
+            </div>
+            <div className="rounded-2xl bg-card border border-border p-3 shadow-soft">
+              <p className="text-[10px] uppercase text-muted-foreground">Hearts</p>
+              <p className="mt-1 text-xl font-black text-heart">{hearts}/5</p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => navigate({ to: "/courses" })}
+            className="mt-8 w-full rounded-2xl gradient-hero px-6 py-4 font-black text-white shadow-glow transition-transform hover:scale-[1.02]"
+          >
+            Continue
+          </button>
+        </div>
+      </div>
+      {chestOpen && <ChestReward tier={chestOpen} onClose={() => setChestOpen(null)} />}
+    </AppShell>
   );
 }
 
