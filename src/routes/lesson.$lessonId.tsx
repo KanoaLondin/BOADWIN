@@ -11,7 +11,6 @@ import {
   AlertCircle,
   Zap,
 } from "lucide-react";
-const _placeholder_remove = null;
 import { findLesson, fuzzyMatch, type Exercise } from "@/lib/course-data";
 import { AppShell } from "@/components/AppShell";
 import { ChestReward } from "@/components/ChestReward";
