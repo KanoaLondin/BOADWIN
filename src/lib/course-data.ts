@@ -1,6 +1,4 @@
-// Course data for AIED: Prompt Engineering
-
-export type ExerciseType = "multiple-choice" | "fill-blank" | "drag-drop";
+// Course data for AIED by SAIvior: Prompt Engineering
 
 export type Exercise =
   | {
@@ -13,11 +11,30 @@ export type Exercise =
       type: "fill-blank";
       prompt: string;
       answer: string;
+      acceptableAnswers?: string[];
     }
   | {
       type: "drag-drop";
       instruction: string;
       words: string[]; // correct order
+    }
+  | {
+      type: "true-false";
+      statement: string;
+      answer: boolean;
+      explanation?: string;
+    }
+  | {
+      type: "matching";
+      instruction: string;
+      pairs: { term: string; definition: string }[];
+    }
+  | {
+      type: "short-answer";
+      question: string;
+      minWords?: number;
+      // Optional reference answer used for AI tutor/help only.
+      referenceAnswer?: string;
     };
 
 export interface Lesson {
@@ -64,7 +81,7 @@ export const levels: Level[] = [
           {
             id: "u1l1",
             title: "Meet Your AI Friend",
-            xp: 20,
+            xp: 25,
             content:
               "AI stands for Artificial Intelligence. Think of AI as a very smart helper that learned by reading billions of books, websites, and conversations. When you talk to AI, you use something called a PROMPT — which is just a fancy word for the message or question you send it!",
             exercises: [
@@ -88,6 +105,65 @@ export const levels: Level[] = [
                 type: "drag-drop",
                 instruction: "Build your first prompt by dragging words in the right order:",
                 words: ["Please", "write", "a", "short", "story", "about", "a", "dragon"],
+              },
+              {
+                type: "multiple-choice",
+                question: "How did AI learn to be smart?",
+                options: [
+                  "It was born smart",
+                  "By reading billions of books and websites",
+                  "From watching TV",
+                  "From going to school",
+                ],
+                correctIndex: 1,
+              },
+              {
+                type: "true-false",
+                statement: "AI can learn from information it has been trained on.",
+                answer: true,
+                explanation: "Yes! AI learns patterns from huge amounts of training data.",
+              },
+              {
+                type: "matching",
+                instruction: "Match each term to its definition:",
+                pairs: [
+                  { term: "AI", definition: "Artificial Intelligence" },
+                  { term: "Prompt", definition: "A message you send to AI" },
+                  { term: "Response", definition: "What AI sends back to you" },
+                  { term: "Training", definition: "How AI learned information" },
+                ],
+              },
+              {
+                type: "short-answer",
+                question: "In your own words, what would you use AI to help you with?",
+                minWords: 5,
+              },
+              {
+                type: "multiple-choice",
+                question: "Which of these is an example of a prompt?",
+                options: [
+                  "Clicking a button",
+                  "Typing a question or instruction to AI",
+                  "Drawing a picture",
+                  "Watching a video",
+                ],
+                correctIndex: 1,
+              },
+              {
+                type: "fill-blank",
+                prompt: "When you send a message to AI, you are writing a ___________",
+                answer: "prompt",
+              },
+              {
+                type: "drag-drop",
+                instruction: "Put these steps in the correct order for talking to AI:",
+                words: [
+                  "Think of what you need help with",
+                  "Write a clear prompt",
+                  "Send your prompt to AI",
+                  "Read the AI response",
+                  "Decide if the answer is helpful",
+                ],
               },
             ],
           },
@@ -254,4 +330,64 @@ export function findLesson(lessonId: string): { lesson: Lesson; unit: Unit; leve
     }
   }
   return null;
+}
+
+// ---- Fuzzy matching utilities ----
+
+function normalize(s: string): string {
+  return s.trim().toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ");
+}
+
+function levenshtein(a: string, b: string): number {
+  if (a === b) return 0;
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+  const v0 = new Array(b.length + 1);
+  const v1 = new Array(b.length + 1);
+  for (let i = 0; i <= b.length; i++) v0[i] = i;
+  for (let i = 0; i < a.length; i++) {
+    v1[0] = i + 1;
+    for (let j = 0; j < b.length; j++) {
+      const cost = a[i] === b[j] ? 0 : 1;
+      v1[j + 1] = Math.min(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost);
+    }
+    for (let j = 0; j <= b.length; j++) v0[j] = v1[j];
+  }
+  return v1[b.length];
+}
+
+export type FuzzyResult = {
+  status: "exact" | "close" | "wrong";
+  similarity: number;
+  correctAnswer: string;
+};
+
+/**
+ * Fuzzy match a typed answer against one or more accepted answers.
+ * - >= 95% similarity (or exact normalized match) -> "exact"
+ * - >= 80% similarity -> "close" (counts as correct, show gentle hint)
+ * - otherwise -> "wrong"
+ */
+export function fuzzyMatch(
+  input: string,
+  accepted: string | string[],
+): FuzzyResult {
+  const candidates = Array.isArray(accepted) ? accepted : [accepted];
+  const a = normalize(input);
+  let bestSim = 0;
+  let best = candidates[0];
+  for (const c of candidates) {
+    const b = normalize(c);
+    if (!a && !b) return { status: "exact", similarity: 1, correctAnswer: c };
+    const dist = levenshtein(a, b);
+    const sim = 1 - dist / Math.max(a.length, b.length, 1);
+    if (sim > bestSim) {
+      bestSim = sim;
+      best = c;
+    }
+  }
+  let status: FuzzyResult["status"] = "wrong";
+  if (bestSim >= 0.95) status = "exact";
+  else if (bestSim >= 0.8) status = "close";
+  return { status, similarity: bestSim, correctAnswer: best };
 }
