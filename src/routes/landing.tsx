@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   Sparkles, Shield, Trophy, Zap, BookOpen, Heart, Brain,
-  Apple, Smartphone, ChevronRight, Star, Users, GraduationCap,
+  Apple, Smartphone, Star, Users, GraduationCap,
 } from "lucide-react";
 
 export const Route = createFileRoute("/landing")({
