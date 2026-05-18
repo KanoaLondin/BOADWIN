@@ -1,24 +1,20 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Trophy, Flame, Crown, ArrowUp, ArrowDown, Minus, Clock } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { useAppState } from "@/lib/app-state";
+import { FRIENDS } from "@/lib/friends";
 
 export const Route = createFileRoute("/leaderboard")({
   component: Leaderboard,
   head: () => ({ meta: [{ title: "Leaderboard — AIED" }] }),
 });
 
-type Row = { name: string; xp: number; streak: number; you?: boolean; trend: "up" | "down" | "same" };
+type Row = { id?: string; name: string; xp: number; streak: number; you?: boolean; trend: "up" | "down" | "same" };
 
-const RIVALS: Row[] = [
-  { name: "Maya P.",  xp: 4820, streak: 32, trend: "same" },
-  { name: "Diego R.", xp: 4310, streak: 18, trend: "up" },
-  { name: "Aisha K.", xp: 3990, streak: 25, trend: "down" },
-  { name: "Liam T.",  xp: 1120, streak: 4,  trend: "up" },
-  { name: "Sofia M.", xp: 980,  streak: 11, trend: "same" },
-  { name: "Noah J.",  xp: 720,  streak: 2,  trend: "down" },
-  { name: "Ivy W.",   xp: 510,  streak: 5,  trend: "up" },
-];
+const TRENDS: Record<string, Row["trend"]> = {
+  maya: "same", diego: "up", aisha: "down", liam: "up", sofia: "same", noah: "down", ivy: "up",
+};
+const RIVALS: Row[] = FRIENDS.map((f) => ({ id: f.id, name: f.name, xp: f.xp, streak: f.streak, trend: TRENDS[f.id] ?? "same" }));
 
 const TIERS = [
   { name: "Bronze",   icon: "🥉", color: "from-amber-600 to-amber-300" },
@@ -73,14 +69,12 @@ function Leaderboard() {
             "from-warning to-amber-200",
             "from-amber-600/70 to-amber-400/60",
           ];
-          return (
-            <div key={p.name + i} className="flex flex-col items-center">
+          const inner = (
+            <>
               {place === 1 && <Crown className="mb-1 h-5 w-5 text-warning fill-current animate-twinkle" />}
               <div
                 className={`grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br text-xl font-black text-white shadow-glow ${
-                  p.you
-                    ? "from-primary to-cyan ring-4 ring-primary/40"
-                    : "from-purple to-cyan"
+                  p.you ? "from-primary to-cyan ring-4 ring-primary/40" : "from-purple to-cyan"
                 }`}
               >
                 {p.name[0]}
@@ -94,7 +88,14 @@ function Leaderboard() {
               >
                 {place}
               </div>
-            </div>
+            </>
+          );
+          return p.id && !p.you ? (
+            <Link key={p.name + i} to="/friend/$friendId" params={{ friendId: p.id }} className="flex flex-col items-center">
+              {inner}
+            </Link>
+          ) : (
+            <div key={p.name + i} className="flex flex-col items-center">{inner}</div>
           );
         })}
       </section>
@@ -112,13 +113,10 @@ function Leaderboard() {
       <div className="space-y-2">
         {rest.map((u, i) => {
           const rank = i + 4;
-          return (
+          const row = (
             <div
-              key={u.name}
               className={`flex items-center gap-3 rounded-2xl border-2 p-3 transition-all ${
-                u.you
-                  ? "border-primary bg-primary/10 shadow-glow"
-                  : "border-border bg-card"
+                u.you ? "border-primary bg-primary/10 shadow-glow" : "border-border bg-card"
               }`}
             >
               <div className="grid h-9 w-9 place-items-center rounded-xl bg-secondary text-sm font-black text-muted-foreground">
@@ -139,6 +137,13 @@ function Leaderboard() {
                 <p className="text-[9px] uppercase text-muted-foreground">XP</p>
               </div>
             </div>
+          );
+          return u.id && !u.you ? (
+            <Link key={u.name} to="/friend/$friendId" params={{ friendId: u.id }} className="block">
+              {row}
+            </Link>
+          ) : (
+            <div key={u.name}>{row}</div>
           );
         })}
       </div>

@@ -22,6 +22,7 @@ import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LessonLessonIdRouteImport } from './routes/lesson.$lessonId'
+import { Route as FriendFriendIdRouteImport } from './routes/friend.$friendId'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
 const WardrobeRoute = WardrobeRouteImport.update({
@@ -89,6 +90,11 @@ const LessonLessonIdRoute = LessonLessonIdRouteImport.update({
   path: '/lesson/$lessonId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FriendFriendIdRoute = FriendFriendIdRouteImport.update({
+  id: '/friend/$friendId',
+  path: '/friend/$friendId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/subscription': typeof SubscriptionRoute
   '/wardrobe': typeof WardrobeRoute
   '/api/chat': typeof ApiChatRoute
+  '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
 }
 export interface FileRoutesByTo {
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/subscription': typeof SubscriptionRoute
   '/wardrobe': typeof WardrobeRoute
   '/api/chat': typeof ApiChatRoute
+  '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
 }
 export interface FileRoutesById {
@@ -142,6 +150,7 @@ export interface FileRoutesById {
   '/subscription': typeof SubscriptionRoute
   '/wardrobe': typeof WardrobeRoute
   '/api/chat': typeof ApiChatRoute
+  '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
 }
 export interface FileRouteTypes {
@@ -160,6 +169,7 @@ export interface FileRouteTypes {
     | '/subscription'
     | '/wardrobe'
     | '/api/chat'
+    | '/friend/$friendId'
     | '/lesson/$lessonId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/subscription'
     | '/wardrobe'
     | '/api/chat'
+    | '/friend/$friendId'
     | '/lesson/$lessonId'
   id:
     | '__root__'
@@ -192,6 +203,7 @@ export interface FileRouteTypes {
     | '/subscription'
     | '/wardrobe'
     | '/api/chat'
+    | '/friend/$friendId'
     | '/lesson/$lessonId'
   fileRoutesById: FileRoutesById
 }
@@ -209,6 +221,7 @@ export interface RootRouteChildren {
   SubscriptionRoute: typeof SubscriptionRoute
   WardrobeRoute: typeof WardrobeRoute
   ApiChatRoute: typeof ApiChatRoute
+  FriendFriendIdRoute: typeof FriendFriendIdRoute
   LessonLessonIdRoute: typeof LessonLessonIdRoute
 }
 
@@ -305,6 +318,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LessonLessonIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/friend/$friendId': {
+      id: '/friend/$friendId'
+      path: '/friend/$friendId'
+      fullPath: '/friend/$friendId'
+      preLoaderRoute: typeof FriendFriendIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -329,6 +349,7 @@ const rootRouteChildren: RootRouteChildren = {
   SubscriptionRoute: SubscriptionRoute,
   WardrobeRoute: WardrobeRoute,
   ApiChatRoute: ApiChatRoute,
+  FriendFriendIdRoute: FriendFriendIdRoute,
   LessonLessonIdRoute: LessonLessonIdRoute,
 }
 export const routeTree = rootRouteImport
