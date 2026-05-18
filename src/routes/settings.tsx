@@ -25,6 +25,7 @@ function Settings() {
   const name = useAppState((s) => s.name);
   const ageGroup = useAppState((s) => s.ageGroup);
   const premium = useAppState((s) => s.premium);
+  const bgAnimOff = useAppState((s) => s.bgAnimationsOff);
 
   const [dark, setDark] = useState(false);
   const [notif, setNotif] = useState(true);
