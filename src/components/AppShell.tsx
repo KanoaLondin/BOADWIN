@@ -3,6 +3,7 @@ import { BottomNav } from "./BottomNav";
 import { TopBar } from "./TopBar";
 import { UpgradeRequiredModal } from "./UpgradeRequiredModal";
 import { LevelUpWatcher } from "./LevelUpWatcher";
+import { BoostWatcher } from "./BoostWatcher";
 
 export function AppShell({
   children,
