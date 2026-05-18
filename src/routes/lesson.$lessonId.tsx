@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { findLesson, fuzzyMatch, type Exercise } from "@/lib/course-data";
 import { AppShell } from "@/components/AppShell";
+import { TutorFloatingButton } from "@/components/tutor/TutorFloatingButton";
 
 export const Route = createFileRoute("/lesson/$lessonId")({
   component: LessonPage,
@@ -190,19 +191,9 @@ function LessonPage() {
       </div>
 
       {/* Floating tutor */}
-      <TutorAnchor lessonCtx={lessonCtx} />
+      <TutorFloatingButton lessonContext={lessonCtx} />
     </div>
   );
-}
-
-function TutorAnchor({
-  lessonCtx,
-}: {
-  lessonCtx: { lessonTitle: string; unitTitle: string; levelTitle: string };
-}) {
-  // Reuse AppShell's floating tutor by importing component directly.
-  const { TutorFloatingButton } = require("@/components/tutor/TutorFloatingButton") as typeof import("@/components/tutor/TutorFloatingButton");
-  return <TutorFloatingButton lessonContext={lessonCtx} />;
 }
 
 function IntroStep({ content, onNext }: { content: string; onNext: () => void }) {
