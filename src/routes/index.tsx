@@ -84,6 +84,43 @@ function Home() {
         </div>
       </div>
 
+      {/* XP Boost status */}
+      {boostActive ? (
+        <section className="mt-4 overflow-hidden rounded-3xl border border-warning/30 bg-gradient-to-r from-warning/15 via-heart/10 to-warning/15 p-4 shadow-soft animate-pop">
+          <div className="flex items-center gap-3">
+            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-warning to-heart text-white shadow-glow">
+              <Zap className="h-5 w-5 fill-current" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-black">2× XP Boost active</p>
+                <span className="rounded-full bg-warning px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
+                  2×
+                </span>
+              </div>
+              <p className="text-xs font-bold text-muted-foreground">
+                Ends in {formatRemaining(remainingMs)} — finish lessons fast!
+              </p>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <Link
+          to="/shop"
+          className="mt-4 flex items-center gap-3 rounded-3xl border border-dashed border-border bg-card/60 p-4 transition-all hover:border-warning/40 hover:bg-warning/5"
+        >
+          <div className="grid h-10 w-10 place-items-center rounded-2xl bg-muted text-muted-foreground">
+            <Zap className="h-5 w-5" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-black">XP Boost off</p>
+            <p className="text-xs text-muted-foreground">Activate 2× XP in the Shop</p>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </Link>
+      )}
+
+
       {/* Daily goal */}
       <section className="mt-4 rounded-3xl bg-card border border-border p-5 shadow-soft">
         <div className="flex items-center justify-between">
