@@ -27,6 +27,7 @@ export function AppShell({
       {showBottomNav && <BottomNav />}
       <UpgradeRequiredModal />
       <LevelUpWatcher />
+      <BoostWatcher />
     </div>
   );
 }
