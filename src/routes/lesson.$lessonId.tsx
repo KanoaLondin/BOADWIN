@@ -175,6 +175,7 @@ function LessonPage() {
           <ExerciseStep
             key={stepIdx}
             exercise={lesson.exercises![step as number]}
+            exerciseId={`${lesson.id}:${step}`}
             onCorrect={() => {
               onCorrect(10);
               next();
