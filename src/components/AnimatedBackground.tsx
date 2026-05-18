@@ -8,17 +8,19 @@ import type { ProfileBg } from "@/lib/app-state";
 export function AnimatedBackground({
   variant,
   paused = false,
+  contained = false,
   className = "",
 }: {
   variant: ProfileBg;
   paused?: boolean;
+  contained?: boolean;
   className?: string;
 }) {
   if (variant === "none") return null;
   return (
     <div
       aria-hidden
-      className={`pointer-events-none fixed inset-0 -z-10 overflow-hidden ${
+      className={`pointer-events-none ${contained ? "absolute" : "fixed -z-10"} inset-0 overflow-hidden ${
         paused ? "[&_*]:!animation-play-state-paused" : ""
       } ${className}`}
     >
@@ -29,7 +31,7 @@ export function AnimatedBackground({
       {variant === "city" && <City />}
       {variant === "abstract" && <Abstract />}
       {/* readability scrim */}
-      <div className="absolute inset-0 bg-background/35 backdrop-blur-[1px]" />
+      {!contained && <div className="absolute inset-0 bg-background/35 backdrop-blur-[1px]" />}
     </div>
   );
 }
