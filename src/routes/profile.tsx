@@ -1,35 +1,33 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  Flame, Zap, Settings, Crown, GraduationCap, Lock, Share2, Pencil, Trophy,
-  Sparkles, Award,
-} from "lucide-react";
+import { Flame, Zap, Settings, GraduationCap, Lock, Share2, Pencil, Trophy, Sparkles, Award, Crown, ChevronRight } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Mascot } from "@/components/Mascot";
-import { useAppState, equipOutfit, ownOutfit, spendGems } from "@/lib/app-state";
+import { LevelBadge } from "@/components/LevelBadge";
+import {
+  useAppState, equipOutfit, equipStreakColor, equipProfileBg, equipBadgeFrame,
+} from "@/lib/app-state";
 import { levels } from "@/lib/course-data";
+import { getLevelInfo, getProgressToNext } from "@/lib/level-system";
 
 export const Route = createFileRoute("/profile")({
   component: Profile,
   head: () => ({ meta: [{ title: "Profile — AIED" }] }),
 });
 
-const OUTFITS = [
-  { id: "classic",   name: "Classic",   emoji: "🤖", price: 0 },
-  { id: "scientist", name: "Scientist", emoji: "🥽", price: 100 },
-  { id: "astronaut", name: "Astronaut", emoji: "🚀", price: 150 },
-  { id: "wizard",    name: "Wizard",    emoji: "🧙", price: 200 },
+const ALL_OUTFITS = [
+  { id: "classic",   name: "Classic",   emoji: "🤖" },
+  { id: "scientist", name: "Scientist", emoji: "🥽" },
+  { id: "teacher",   name: "Teacher",   emoji: "🎓" },
+  { id: "astronaut", name: "Astronaut", emoji: "🚀" },
+  { id: "ninja",     name: "Ninja",     emoji: "🥷" },
+  { id: "wizard",    name: "Wizard",    emoji: "🧙" },
 ];
 
-const BADGE_PREVIEW = [
-  { name: "First Prompt",   icon: "🎯", color: "from-purple/30 to-cyan/30", earned: true },
-  { name: "3-Day Streak",   icon: "🔥", color: "from-warning/30 to-heart/30", earned: true },
-  { name: "Quiz Master",    icon: "🧠", color: "from-cyan/30 to-purple/30",  earned: true },
-  { name: "Wordsmith",      icon: "✍️", color: "from-success/30 to-cyan/30", earned: false },
-  { name: "Night Owl",      icon: "🌙", color: "from-purple/30 to-purple/40", earned: false },
-  { name: "Perfectionist",  icon: "💎", color: "from-cyan/30 to-success/30", earned: false },
-  { name: "Champion",       icon: "🏆", color: "from-warning/30 to-purple/30", earned: false },
-  { name: "AIED Elite",     icon: "👑", color: "from-warning/40 to-warning/20", earned: false },
-];
+const PLAN_LABEL: Record<string, string> = {
+  super: "Super AIED",
+  max: "AIED Max",
+  family: "AIED Family",
+};
 
 function Profile() {
   const name = useAppState((s) => s.name);
@@ -40,96 +38,164 @@ function Profile() {
   const completed = useAppState((s) => s.completedLessons);
   const outfit = useAppState((s) => s.alOutfit);
   const owned = useAppState((s) => s.ownedOutfits);
+  const premium = useAppState((s) => s.premium);
+  const renewal = useAppState((s) => s.premiumRenewalISO);
+  const profileBg = useAppState((s) => s.profileBg);
+  const ownedBgs = useAppState((s) => s.ownedProfileBgs);
+  const streakColor = useAppState((s) => s.streakColor);
+  const ownedStreaks = useAppState((s) => s.ownedStreakColors);
+  const badgeFrame = useAppState((s) => s.badgeFrame);
+  const ownedFrames = useAppState((s) => s.ownedBadgeFrames);
+  const streakFreezes = useAppState((s) => s.streakFreezes);
+  const heartRefills = useAppState((s) => s.heartRefills);
+  const skipTokens = useAppState((s) => s.skipTokens);
+  const hintTokens = useAppState((s) => s.hintTokens);
 
-  // Determine current level/tier
   const totalLessons = levels.flatMap((l) => l.units.flatMap((u) => u.lessons)).length;
   const certProgress = Math.min(100, Math.round((completed.length / totalLessons) * 100));
-  const currentLevel =
-    [...levels].reverse().find((lv) =>
-      lv.units.some((u) => u.lessons.some((l) => completed.includes(l.id))),
-    ) ?? levels[0];
-
-  function handleEquip(id: string, price: number) {
-    if (owned.includes(id)) {
-      equipOutfit(id);
-    } else if (spendGems(price)) {
-      ownOutfit(id);
-      equipOutfit(id);
-    }
-  }
+  const userLevel = getLevelInfo(xp);
+  const lvlProgress = getProgressToNext(xp);
+  const planName = premium ? PLAN_LABEL[premium] : "Free";
+  const renewalDate = renewal ? new Date(renewal).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : null;
 
   return (
     <AppShell>
       <header className="flex items-center justify-between">
         <h1 className="text-3xl font-black">Profile</h1>
         <div className="flex gap-2">
-          <button className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-card">
-            <Share2 className="h-4 w-4" />
-          </button>
-          <Link to="/settings" className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-card">
-            <Settings className="h-4 w-4" />
-          </Link>
+          <button className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-card"><Share2 className="h-4 w-4" /></button>
+          <Link to="/settings" className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-card"><Settings className="h-4 w-4" /></Link>
         </div>
       </header>
 
+      {/* Subscription card */}
+      <Link
+        to="/subscription"
+        className={`mt-5 flex items-center justify-between gap-3 rounded-3xl border-2 p-4 shadow-soft ${
+          premium ? "border-primary bg-gradient-to-br from-primary/15 to-cyan/10" : "border-border bg-card"
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <div className="grid h-12 w-12 place-items-center rounded-2xl gradient-hero text-white shadow-glow">
+            <Crown className="h-6 w-6" />
+          </div>
+          <div>
+            <p className="text-xs font-black uppercase tracking-wider text-muted-foreground">Plan</p>
+            <p className="text-lg font-black">{planName}</p>
+            {renewalDate ? (
+              <p className="text-[11px] text-muted-foreground">Renews {renewalDate}</p>
+            ) : (
+              <p className="text-[11px] text-muted-foreground">Unlock more with Super AIED</p>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-black text-primary-foreground">
+          Manage <ChevronRight className="h-3 w-3" />
+        </div>
+      </Link>
+
       {/* Hero card */}
-      <section className="mt-5 overflow-hidden rounded-3xl border-2 border-border bg-gradient-to-br from-purple/15 via-card to-cyan/15 p-6 text-center shadow-card">
+      <section className={`mt-4 overflow-hidden rounded-3xl border-2 border-border p-6 text-center shadow-card ${profileBg !== "none" ? `bg-${profileBg}` : "bg-gradient-to-br from-purple/15 via-card to-cyan/15"}`}>
         <div className="relative mx-auto w-fit">
           <Mascot size={88} outfit={outfit} />
-          <button
-            aria-label="Edit"
-            className="absolute -bottom-1 right-0 grid h-7 w-7 place-items-center rounded-full bg-card border border-border shadow-soft"
-          >
+          <button aria-label="Edit" className="absolute -bottom-1 right-0 grid h-7 w-7 place-items-center rounded-full bg-card border border-border shadow-soft">
             <Pencil className="h-3.5 w-3.5" />
           </button>
         </div>
-        <h2 className="mt-4 text-2xl font-black">{name}</h2>
-        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          {currentLevel.badge} · {ageGroup}
-        </p>
+        <h2 className={`mt-4 text-2xl font-black ${profileBg !== "none" ? "text-white" : ""}`}>{name}</h2>
+        <div className="mt-1 flex items-center justify-center gap-2">
+          <LevelBadge xp={xp} />
+          <p className={`text-xs font-bold uppercase tracking-widest ${profileBg !== "none" ? "text-white/80" : "text-muted-foreground"}`}>
+            {userLevel.name} · {ageGroup}
+          </p>
+        </div>
+        {/* Level progress */}
+        <div className={`mx-auto mt-3 max-w-xs rounded-full px-3 py-1 text-[10px] font-bold ${profileBg !== "none" ? "bg-white/15 text-white" : "bg-muted text-muted-foreground"}`}>
+          {lvlProgress.current}/{lvlProgress.needed} XP to next level
+        </div>
         <div className="mt-4 grid grid-cols-3 gap-2">
           <Stat icon={<Zap className="h-4 w-4" />} value={xp.toLocaleString()} label="Total XP" />
           <Stat icon={<Flame className="h-4 w-4" />} value={streak} label="Day streak" />
-          <Stat icon={<Crown className="h-4 w-4" />} value={`💎 ${gems}`} label="Gems" />
+          <Stat icon={<Sparkles className="h-4 w-4" />} value={`💎 ${gems}`} label="Gems" />
+        </div>
+      </section>
+
+      {/* Inventory */}
+      <section className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft">
+        <p className="text-sm font-black uppercase tracking-wider text-muted-foreground">Inventory</p>
+        <div className="mt-3 grid grid-cols-4 gap-2 text-center">
+          <Inv emoji="❄️" label="Freeze" value={streakFreezes} />
+          <Inv emoji="❤️" label="Refills" value={heartRefills} />
+          <Inv emoji="🎯" label="Skips" value={skipTokens} />
+          <Inv emoji="💡" label="Hints" value={hintTokens} />
         </div>
       </section>
 
       {/* AL outfits */}
-      <section className="mt-5 rounded-3xl border-2 border-border bg-card p-5 shadow-soft">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-black">AL's wardrobe</p>
-            <p className="text-[11px] text-muted-foreground">Tap to equip · Unlock with gems</p>
-          </div>
-          <Sparkles className="h-5 w-5 text-warning" />
-        </div>
-        <div className="mt-4 grid grid-cols-4 gap-2">
-          {OUTFITS.map((o) => {
+      <section className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft">
+        <p className="text-sm font-black">AL's wardrobe</p>
+        <p className="text-[11px] text-muted-foreground">Tap to equip. Buy more in the Shop.</p>
+        <div className="mt-3 grid grid-cols-6 gap-2">
+          {ALL_OUTFITS.map((o) => {
             const isOwned = owned.includes(o.id);
             const isEquipped = outfit === o.id;
             return (
               <button
                 key={o.id}
-                onClick={() => handleEquip(o.id, o.price)}
-                className={`group relative flex flex-col items-center gap-1 rounded-2xl border-2 p-2 transition-all ${
-                  isEquipped
-                    ? "border-primary bg-primary/10 shadow-glow"
-                    : "border-border bg-background/40 hover:border-primary/50"
+                disabled={!isOwned}
+                onClick={() => equipOutfit(o.id)}
+                className={`relative flex flex-col items-center gap-1 rounded-2xl border-2 p-2 transition-all ${
+                  isEquipped ? "border-primary bg-primary/10" : isOwned ? "border-border" : "border-border opacity-40"
                 }`}
               >
-                <span className="text-2xl">{o.emoji}</span>
-                <span className="text-[10px] font-black">{o.name}</span>
-                {!isOwned ? (
-                  <span className="rounded-full bg-cyan/15 px-1.5 py-0.5 text-[9px] font-black text-cyan">
-                    💎 {o.price}
-                  </span>
-                ) : isEquipped ? (
-                  <span className="rounded-full bg-success/15 px-1.5 py-0.5 text-[9px] font-black text-success">
-                    Equipped
-                  </span>
-                ) : (
-                  <span className="text-[9px] font-bold text-muted-foreground">Owned</span>
-                )}
+                <span className="text-xl">{o.emoji}</span>
+                <span className="text-[9px] font-black">{o.name}</span>
+                {isEquipped && <span className="absolute -top-1 -right-1 grid h-4 w-4 place-items-center rounded-full bg-success text-[8px] text-white">✓</span>}
+                {!isOwned && <Lock className="absolute right-1 top-1 h-3 w-3 text-muted-foreground" />}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Cosmetic selectors */}
+      <section className="mt-4 rounded-3xl border border-border bg-card p-5 shadow-soft">
+        <p className="text-sm font-black">Cosmetics</p>
+
+        <p className="mt-3 text-[10px] font-black uppercase text-muted-foreground">Profile background</p>
+        <div className="mt-2 grid grid-cols-7 gap-2">
+          {(["none","galaxy","forest","ocean","mountains","city","abstract"] as const).map((b) => {
+            const isOwned = ownedBgs.includes(b);
+            const isOn = profileBg === b;
+            return (
+              <button key={b} disabled={!isOwned} onClick={() => equipProfileBg(b)} className={`relative h-10 rounded-xl border-2 ${isOn ? "border-primary" : "border-border"} ${b === "none" ? "bg-muted" : `bg-${b}`} ${!isOwned && "opacity-40"}`} title={b}>
+                {isOn && <span className="absolute inset-0 grid place-items-center text-white drop-shadow">✓</span>}
+              </button>
+            );
+          })}
+        </div>
+
+        <p className="mt-4 text-[10px] font-black uppercase text-muted-foreground">Badge frame</p>
+        <div className="mt-2 grid grid-cols-6 gap-2">
+          {(["none","gold","neon","rainbow","fire","ice"] as const).map((f) => {
+            const isOwned = ownedFrames.includes(f);
+            const isOn = badgeFrame === f;
+            return (
+              <button key={f} disabled={!isOwned} onClick={() => equipBadgeFrame(f)} className={`grid h-10 place-items-center rounded-xl border-2 bg-card text-xs font-black uppercase ${isOn ? "border-primary" : "border-border"} ${f !== "none" ? `frame-${f}` : ""} ${!isOwned && "opacity-40"}`}>
+                {f === "none" ? "—" : f[0]}
+              </button>
+            );
+          })}
+        </div>
+
+        <p className="mt-4 text-[10px] font-black uppercase text-muted-foreground">Streak color</p>
+        <div className="mt-2 grid grid-cols-5 gap-2">
+          {(["orange","blue","purple","green","rainbow"] as const).map((c) => {
+            const isOwned = ownedStreaks.includes(c);
+            const isOn = streakColor === c;
+            return (
+              <button key={c} disabled={!isOwned} onClick={() => equipStreakColor(c)} className={`grid h-10 place-items-center rounded-xl border-2 ${isOn ? "border-primary" : "border-border"} bg-card text-xl ${!isOwned && "opacity-40"}`}>
+                <span className={`streak-${c}`}>🔥</span>
               </button>
             );
           })}
@@ -139,79 +205,54 @@ function Profile() {
       {/* Certificate progress */}
       <section className="mt-5 overflow-hidden rounded-3xl border-2 border-warning/40 bg-gradient-to-br from-warning/15 via-card to-warning/5 p-5 shadow-soft">
         <div className="flex items-center gap-3">
-          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-warning/20">
-            <GraduationCap className="h-6 w-6 text-warning" />
-          </div>
+          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-warning/20"><GraduationCap className="h-6 w-6 text-warning" /></div>
           <div className="flex-1">
             <p className="text-sm font-black">AIED Prompt Engineering Certificate</p>
-            <p className="text-[11px] text-muted-foreground">
-              {completed.length} of {totalLessons} lessons complete
-            </p>
+            <p className="text-[11px] text-muted-foreground">{completed.length} of {totalLessons} lessons complete</p>
           </div>
           <span className="text-2xl font-black text-warning">{certProgress}%</span>
         </div>
         <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-secondary">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-warning to-amber-300 transition-all"
-            style={{ width: `${certProgress}%` }}
-          />
+          <div className="h-full rounded-full bg-gradient-to-r from-warning to-amber-300 transition-all" style={{ width: `${certProgress}%` }} />
         </div>
-        <Link
-          to="/courses"
-          className="mt-4 block rounded-2xl border-2 border-warning/40 bg-card px-4 py-2.5 text-center text-xs font-black text-warning"
-        >
+        <Link to="/courses" className="mt-4 block rounded-2xl border-2 border-warning/40 bg-card px-4 py-2.5 text-center text-xs font-black text-warning">
           Continue your pathway →
         </Link>
       </section>
 
-      {/* Achievements preview */}
-      <section className="mt-5">
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">
-            <Trophy className="-mt-0.5 mr-1 inline h-3.5 w-3.5 text-warning" /> Achievements
-          </h3>
-          <Link to="/achievements" className="text-xs font-black text-primary">
-            See all
-          </Link>
-        </div>
-        <div className="grid grid-cols-4 gap-3">
-          {BADGE_PREVIEW.map((b) => (
-            <div key={b.name} className="flex flex-col items-center gap-1.5">
-              <div
-                className={`relative grid h-16 w-16 place-items-center rounded-2xl border-2 ${
-                  b.earned
-                    ? `border-warning bg-gradient-to-br ${b.color} shadow-card`
-                    : "border-border bg-muted opacity-60"
-                }`}
-              >
-                {b.earned ? (
-                  <span className="text-2xl">{b.icon}</span>
-                ) : (
-                  <Lock className="h-5 w-5 text-muted-foreground" />
-                )}
-                {b.earned && (
-                  <Award className="absolute -right-1 -top-1 h-4 w-4 text-warning fill-current" />
-                )}
-              </div>
-              <p className="text-center text-[10px] font-bold leading-tight">{b.name}</p>
+      {/* Achievements link */}
+      <section className="mt-5 mb-2">
+        <Link to="/achievements" className="flex items-center justify-between rounded-3xl border border-border bg-card p-4 shadow-soft">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-warning/15 text-warning"><Trophy className="h-5 w-5" /></div>
+            <div>
+              <p className="text-sm font-black">Achievements</p>
+              <p className="text-[11px] text-muted-foreground">Browse all badges</p>
             </div>
-          ))}
-        </div>
+          </div>
+          <Award className="h-5 w-5 text-warning" />
+        </Link>
       </section>
     </AppShell>
   );
 }
 
-function Stat({
-  icon, value, label,
-}: { icon: React.ReactNode; value: string | number; label: string }) {
+function Stat({ icon, value, label }: { icon: React.ReactNode; value: string | number; label: string }) {
   return (
     <div className="rounded-xl bg-background/50 p-3 backdrop-blur">
-      <div className="mx-auto mb-1 grid h-7 w-7 place-items-center rounded-lg bg-primary/15 text-primary">
-        {icon}
-      </div>
+      <div className="mx-auto mb-1 grid h-7 w-7 place-items-center rounded-lg bg-primary/15 text-primary">{icon}</div>
       <p className="text-base font-black leading-none">{value}</p>
       <p className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
+    </div>
+  );
+}
+
+function Inv({ emoji, label, value }: { emoji: string; label: string; value: number }) {
+  return (
+    <div className="rounded-xl bg-secondary/40 p-2">
+      <p className="text-xl">{emoji}</p>
+      <p className="mt-0.5 text-base font-black">{value}</p>
+      <p className="text-[9px] font-bold uppercase text-muted-foreground">{label}</p>
     </div>
   );
 }

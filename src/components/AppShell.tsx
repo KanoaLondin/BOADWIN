@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
 import { TopBar } from "./TopBar";
+import { UpgradeRequiredModal } from "./UpgradeRequiredModal";
+import { LevelUpWatcher } from "./LevelUpWatcher";
 
 export function AppShell({
   children,
@@ -22,6 +24,9 @@ export function AppShell({
         {children}
       </div>
       {showBottomNav && <BottomNav />}
+      <UpgradeRequiredModal />
+      <LevelUpWatcher />
     </div>
   );
 }
+
