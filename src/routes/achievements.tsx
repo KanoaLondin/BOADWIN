@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
+import { useAppState } from "@/lib/app-state";
 
 export const Route = createFileRoute("/achievements")({
   component: AchievementsPage,
