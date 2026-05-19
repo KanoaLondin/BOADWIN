@@ -13,8 +13,11 @@ const items = [
 export function BottomNav() {
   const { pathname } = useLocation();
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/90 backdrop-blur-xl shadow-soft">
-      <div className="mx-auto flex max-w-2xl items-center justify-around px-1 py-2">
+    <nav
+      className="bottom-nav-glass fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card/90 backdrop-blur-xl shadow-soft"
+      style={{ height: "var(--bottom-nav-height)" }}
+    >
+      <div className="mx-auto flex h-full max-w-2xl items-center justify-around px-1 py-2">
         {items.map(({ to, label, icon: Icon }) => {
           const active = pathname === to;
           return (
