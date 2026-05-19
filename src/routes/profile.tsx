@@ -253,10 +253,16 @@ function Profile() {
 
 function Stat({ icon, value, label }: { icon: React.ReactNode; value: string | number; label: string }) {
   return (
-    <div className="rounded-xl bg-background/50 p-3 backdrop-blur">
-      <div className="mx-auto mb-1 grid h-7 w-7 place-items-center rounded-lg bg-primary/15 text-primary">{icon}</div>
-      <p className="text-base font-black leading-none">{value}</p>
-      <p className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
+    <div className="glass-stat rounded-2xl p-3 transition-transform hover:scale-[1.03]">
+      <div className="mx-auto mb-1 grid h-7 w-7 place-items-center rounded-lg bg-primary/15 text-primary shadow-soft">
+        {icon}
+      </div>
+      <p className="text-base font-black leading-none text-foreground [text-shadow:0_1px_2px_rgba(255,255,255,.6)]">
+        {value}
+      </p>
+      <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-foreground/70">
+        {label}
+      </p>
     </div>
   );
 }
