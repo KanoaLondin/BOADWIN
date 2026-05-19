@@ -63,14 +63,6 @@ export function ALAvatar({
             <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-heart ring-2 ring-background animate-ping-slow" />
           )}
         </button>
-        {tooltip && (
-          <div className="absolute right-0 top-full z-40 mt-2 w-56 rounded-xl border border-border bg-card p-3 text-xs shadow-card animate-fade-in">
-            <p className="font-bold text-foreground">AL — Your AI Tutor 🤖</p>
-            <p className="mt-1 text-muted-foreground">
-              Upgrade to AIED Max to chat with AL.
-            </p>
-          </div>
-        )}
       </div>
       {open && (
         <TutorChat
