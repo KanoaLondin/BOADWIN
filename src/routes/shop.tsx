@@ -237,6 +237,7 @@ function InsufficientModal({ info, gems, onClose }: { info: { name: string; pric
         </Link>
       </div>
     </div>
+    </ModalPortal>
   );
 }
 
