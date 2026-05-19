@@ -55,6 +55,7 @@ const categories: Achievement["category"][] = ["Streak", "Completion", "Skill", 
 
 function AchievementsPage() {
   const earnedCount = achievements.filter((a) => a.earned).length;
+  const frame = useAppState((s) => s.badgeFrame);
 
   return (
     <AppShell>
@@ -80,7 +81,7 @@ function AchievementsPage() {
             </h2>
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
               {items.map((a) => (
-                <BadgeCard key={a.id} a={a} />
+                <BadgeCard key={a.id} a={a} frame={frame} />
               ))}
             </div>
           </section>
@@ -90,7 +91,8 @@ function AchievementsPage() {
   );
 }
 
-function BadgeCard({ a }: { a: Achievement }) {
+function BadgeCard({ a, frame }: { a: Achievement; frame: string }) {
+  const frameClass = frame && frame !== "none" ? `frame-${frame}` : "";
   return (
     <div
       className={`flex flex-col items-center gap-2 rounded-2xl border p-3 text-center shadow-soft ${
