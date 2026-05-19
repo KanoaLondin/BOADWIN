@@ -330,6 +330,7 @@ function PreviewModal({ cosmetic, owned, onBuy, onClose }: { cosmetic: Cosmetic;
         </div>
       </div>
     </div>
+    </ModalPortal>
   );
 }
 
