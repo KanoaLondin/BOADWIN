@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Gem } from "@/components/GemBadge";
 import { AppShell } from "@/components/AppShell";
-import { Sparkles, X, AlertCircle, ArrowRight } from "lucide-react";
+import { X, AlertCircle, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import {
   useAppState,
