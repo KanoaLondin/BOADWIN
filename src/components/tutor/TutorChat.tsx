@@ -3,7 +3,17 @@ import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { ArrowLeft, Send, Sparkles, Lock } from "lucide-react";
+import { ArrowLeft, Send, Sparkles, Lock, Info, Check } from "lucide-react";
+import { useAppState } from "@/lib/app-state";
+import { getLevelInfo } from "@/lib/level-system";
+import {
+  AL_TIER_META,
+  deriveAlTier,
+  getAlTierOverride,
+  resolveAlTier,
+  setAlTierOverride,
+  type AlTier,
+} from "@/lib/al-tier";
 
 type LessonContext = { lessonTitle: string; unitTitle: string; levelTitle: string };
 
@@ -30,18 +40,6 @@ const SAMPLE_TURNS: { role: "user" | "assistant"; text: string }[] = [
       "Sure! Think about what you're trying to tell the AI to do. What's the most important word in your instruction?",
   },
 ];
-
-function getUserName(): string {
-  if (typeof window === "undefined") return "Alex";
-  return window.localStorage.getItem("aied:name") || "Alex";
-}
-
-function getAgeGroup(): "kids" | "teens" | "adults" {
-  if (typeof window === "undefined") return "teens";
-  const v = window.localStorage.getItem("aied:ageGroup");
-  if (v === "kids" || v === "teens" || v === "adults") return v;
-  return "teens";
-}
 
 export function TutorChat({
   onClose,
