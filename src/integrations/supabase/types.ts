@@ -14,13 +14,165 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      friendships: {
+        Row: {
+          created_at: string
+          requested_by: string
+          responded_at: string | null
+          status: string
+          user_a: string
+          user_b: string
+        }
+        Insert: {
+          created_at?: string
+          requested_by: string
+          responded_at?: string | null
+          status: string
+          user_a: string
+          user_b: string
+        }
+        Update: {
+          created_at?: string
+          requested_by?: string
+          responded_at?: string | null
+          status?: string
+          user_a?: string
+          user_b?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "friendships_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friendships_user_a_fkey"
+            columns: ["user_a"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friendships_user_b_fkey"
+            columns: ["user_b"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          age_group: string
+          al_outfit: string
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          gems: number
+          hearts: number
+          id: string
+          last_active_at: string
+          member_since: string
+          premium: string
+          profile_bg: string
+          streak: number
+          updated_at: string
+          username: string
+          username_changed_at: string | null
+          weekly_xp: number
+          xp: number
+        }
+        Insert: {
+          age_group?: string
+          al_outfit?: string
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          gems?: number
+          hearts?: number
+          id: string
+          last_active_at?: string
+          member_since?: string
+          premium?: string
+          profile_bg?: string
+          streak?: number
+          updated_at?: string
+          username: string
+          username_changed_at?: string | null
+          weekly_xp?: number
+          xp?: number
+        }
+        Update: {
+          age_group?: string
+          al_outfit?: string
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          gems?: number
+          hearts?: number
+          id?: string
+          last_active_at?: string
+          member_since?: string
+          premium?: string
+          profile_bg?: string
+          streak?: number
+          updated_at?: string
+          username?: string
+          username_changed_at?: string | null
+          weekly_xp?: number
+          xp?: number
+        }
+        Relationships: []
+      }
+      user_blocks: {
+        Row: {
+          blocked: string
+          blocker: string
+          created_at: string
+        }
+        Insert: {
+          blocked: string
+          blocker: string
+          created_at?: string
+        }
+        Update: {
+          blocked?: string
+          blocker?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_blocks_blocked_fkey"
+            columns: ["blocked"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_blocks_blocker_fkey"
+            columns: ["blocker"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      expire_pending_friend_requests: { Args: never; Returns: undefined }
+      pair_users: {
+        Args: { u1: string; u2: string }
+        Returns: {
+          a: string
+          b: string
+        }[]
+      }
+      username_available: { Args: { candidate: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
