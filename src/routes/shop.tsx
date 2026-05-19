@@ -262,6 +262,7 @@ function PreviewModal({ cosmetic, owned, onBuy, onClose }: { cosmetic: Cosmetic;
   }
 
   return (
+    <ModalPortal>
     <div
       className="fixed inset-0 z-[60] grid place-items-end sm:place-items-center bg-foreground/60 backdrop-blur-sm"
       onClick={onClose}
