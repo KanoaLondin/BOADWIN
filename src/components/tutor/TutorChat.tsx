@@ -7,6 +7,8 @@ import { ArrowLeft, Send, Sparkles, Lock } from "lucide-react";
 import { useAppState } from "@/lib/app-state";
 import { getLevelInfo } from "@/lib/level-system";
 import { resolveAlTier } from "@/lib/al-tier";
+import { Mascot } from "@/components/Mascot";
+
 
 
 type LessonContext = { lessonTitle: string; unitTitle: string; levelTitle: string };
