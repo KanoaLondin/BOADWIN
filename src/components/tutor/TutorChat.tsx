@@ -355,3 +355,79 @@ function AlAvatar({ small = false }: { small?: boolean }) {
     </div>
   );
 }
+
+function TierBanner({ initialTier, autoTier }: { initialTier: AlTier; autoTier: AlTier }) {
+  const [tier, setTier] = useState<AlTier>(initialTier);
+  const [open, setOpen] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const meta = AL_TIER_META[tier];
+
+  function pick(t: AlTier, asAuto: boolean) {
+    setAlTierOverride(asAuto ? null : t);
+    setTier(asAuto ? autoTier : t);
+    setOpen(false);
+  }
+
+  // Keep override-aware tier in sync if state changes externally
+  useEffect(() => {
+    const o = getAlTierOverride();
+    setTier(o ?? autoTier);
+  }, [autoTier]);
+
+  return (
+    <div className="relative">
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => setOpen((v) => !v)}
+          className="flex items-center gap-1 rounded-full border border-primary/20 bg-white px-2.5 py-0.5 text-[11px] font-bold text-primary shadow-soft hover:bg-primary/5"
+        >
+          <span>{meta.emoji}</span>
+          <span>{meta.label}</span>
+        </button>
+        <button
+          onClick={() => setShowInfo((v) => !v)}
+          className="grid h-5 w-5 place-items-center rounded-full text-muted-foreground hover:bg-muted"
+          aria-label="What is this?"
+        >
+          <Info className="h-3.5 w-3.5" />
+        </button>
+      </div>
+
+      {showInfo && (
+        <div className="absolute left-1/2 top-full z-10 mt-1 w-60 -translate-x-1/2 rounded-xl border border-border bg-white p-2.5 text-[11px] text-muted-foreground shadow-soft">
+          AL adjusts his responses based on your current level and learning progress. You can override the mode here.
+        </div>
+      )}
+
+      {open && (
+        <div className="absolute left-1/2 top-full z-20 mt-1 w-56 -translate-x-1/2 overflow-hidden rounded-xl border border-border bg-white shadow-soft">
+          <button
+            onClick={() => pick(autoTier, true)}
+            className="flex w-full items-center justify-between px-3 py-2 text-left text-xs hover:bg-muted"
+          >
+            <span className="font-bold">Auto ({AL_TIER_META[autoTier].emoji} {AL_TIER_META[autoTier].short})</span>
+            {getAlTierOverride() == null && <Check className="h-3.5 w-3.5 text-primary" />}
+          </button>
+          <div className="h-px bg-border" />
+          {([1, 2, 3, 4] as AlTier[]).map((t) => {
+            const m = AL_TIER_META[t];
+            const active = getAlTierOverride() === t;
+            return (
+              <button
+                key={t}
+                onClick={() => pick(t, false)}
+                className="flex w-full items-center justify-between px-3 py-2 text-left text-xs hover:bg-muted"
+              >
+                <span className="flex items-center gap-1.5">
+                  <span>{m.emoji}</span>
+                  <span className="font-semibold">{m.label}</span>
+                </span>
+                {active && <Check className="h-3.5 w-3.5 text-primary" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
