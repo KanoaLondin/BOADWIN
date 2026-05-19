@@ -267,7 +267,10 @@ function ChatShell({
             <p className="mt-1 text-sm font-bold leading-tight">AL</p>
             <p className="text-[10px] text-muted-foreground">Your AIED Tutor</p>
           </div>
-          <div className="ml-auto h-10 w-10 shrink-0" />
+          <div className="ml-auto shrink-0">
+            <HeaderAlButton />
+          </div>
+
         </div>
       </header>
       <div className="flex min-h-0 flex-1 flex-col">{children}</div>
