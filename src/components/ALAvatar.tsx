@@ -42,8 +42,7 @@ export function ALAvatar({
         <button
           onClick={() => {
             if (!premium) {
-              setTooltip((v) => !v);
-              setTimeout(() => setTooltip(false), 2500);
+              requestUpgrade();
             } else {
               setOpen(true);
             }
