@@ -199,8 +199,8 @@ function ChatShell({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-x-0 top-0 bottom-[72px] z-40 flex flex-col bg-white animate-fade-in">
-      <header className="flex items-center gap-3 border-b border-border bg-white px-3 py-3">
+    <div className="fixed inset-x-0 top-0 bottom-[72px] z-40 flex flex-col bg-white animate-slide-up">
+      <header className="relative flex items-center border-b border-border bg-white px-3 py-3">
         <button
           onClick={onClose}
           className="grid h-10 w-10 place-items-center rounded-full hover:bg-muted"
@@ -208,11 +208,12 @@ function ChatShell({
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
-        <AlAvatar />
-        <div className="flex-1">
-          <p className="font-bold leading-tight">AL</p>
-          <p className="text-[11px] text-muted-foreground">Your AIED tutor</p>
+        <div className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center">
+          <AlAvatar />
+          <p className="mt-1 text-sm font-bold leading-tight">AL</p>
+          <p className="text-[10px] text-muted-foreground">Your AIED Tutor</p>
         </div>
+        <div className="ml-auto h-10 w-10" />
       </header>
       {children}
     </div>
