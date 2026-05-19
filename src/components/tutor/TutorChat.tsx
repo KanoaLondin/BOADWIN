@@ -199,32 +199,22 @@ function ChatShell({
   onClose: () => void;
 }) {
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/30 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div
-        className="flex h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl bg-card shadow-glow animate-slide-up"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <header className="flex items-center justify-between border-b border-border bg-card px-4 py-3">
-          <div className="flex items-center gap-3">
-            <AlAvatar />
-            <div>
-              <p className="font-bold leading-tight">AL</p>
-              <p className="text-[11px] text-muted-foreground">Your AIED tutor</p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="grid h-9 w-9 place-items-center rounded-full hover:bg-muted"
-            aria-label="Close"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </header>
-        {children}
-      </div>
+    <div className="fixed inset-0 z-50 flex flex-col bg-background animate-fade-in">
+      <header className="flex items-center gap-3 border-b border-border bg-card px-3 py-3">
+        <button
+          onClick={onClose}
+          className="grid h-10 w-10 place-items-center rounded-full hover:bg-muted"
+          aria-label="Back"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </button>
+        <AlAvatar />
+        <div className="flex-1">
+          <p className="font-bold leading-tight">AL</p>
+          <p className="text-[11px] text-muted-foreground">Your AIED tutor</p>
+        </div>
+      </header>
+      {children}
     </div>
   );
 }
