@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
+import { useAppState } from "@/lib/app-state";
 
 export const Route = createFileRoute("/achievements")({
   component: AchievementsPage,
@@ -54,6 +55,7 @@ const categories: Achievement["category"][] = ["Streak", "Completion", "Skill", 
 
 function AchievementsPage() {
   const earnedCount = achievements.filter((a) => a.earned).length;
+  const frame = useAppState((s) => s.badgeFrame);
 
   return (
     <AppShell>
@@ -79,7 +81,7 @@ function AchievementsPage() {
             </h2>
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
               {items.map((a) => (
-                <BadgeCard key={a.id} a={a} />
+                <BadgeCard key={a.id} a={a} frame={frame} />
               ))}
             </div>
           </section>
@@ -89,7 +91,8 @@ function AchievementsPage() {
   );
 }
 
-function BadgeCard({ a }: { a: Achievement }) {
+function BadgeCard({ a, frame }: { a: Achievement; frame: string }) {
+  const frameClass = frame && frame !== "none" ? `frame-${frame}` : "";
   return (
     <div
       className={`flex flex-col items-center gap-2 rounded-2xl border p-3 text-center shadow-soft ${
@@ -97,16 +100,16 @@ function BadgeCard({ a }: { a: Achievement }) {
       }`}
     >
       <div
-        className={`relative grid h-16 w-16 place-items-center rounded-2xl text-3xl ${
+        className={`relative grid h-16 w-16 place-items-center rounded-full text-3xl ${frameClass} ${
           a.earned ? "gradient-hero shadow-glow" : "bg-muted"
-        }`}
+        } ${!a.earned ? "opacity-90" : ""}`}
       >
         {a.earned ? (
           <span className="drop-shadow-sm">{a.emoji}</span>
         ) : (
           <>
             <span className="opacity-30 grayscale">{a.emoji}</span>
-            <span className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full bg-card border border-border">
+            <span className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full bg-card border border-border z-10">
               <Lock className="h-3 w-3 text-muted-foreground" />
             </span>
           </>
