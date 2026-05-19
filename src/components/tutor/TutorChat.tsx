@@ -200,7 +200,7 @@ function ChatShell({
 }) {
   return (
     <div className="fixed inset-x-0 top-0 bottom-[72px] z-40 flex flex-col bg-white animate-fade-in">
-      <header className="flex items-center gap-3 border-b border-border bg-card px-3 py-3">
+      <header className="flex items-center gap-3 border-b border-border bg-white px-3 py-3">
         <button
           onClick={onClose}
           className="grid h-10 w-10 place-items-center rounded-full hover:bg-muted"
