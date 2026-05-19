@@ -100,16 +100,16 @@ function BadgeCard({ a, frame }: { a: Achievement; frame: string }) {
       }`}
     >
       <div
-        className={`relative grid h-16 w-16 place-items-center rounded-2xl text-3xl ${
+        className={`relative grid h-16 w-16 place-items-center rounded-full text-3xl ${frameClass} ${
           a.earned ? "gradient-hero shadow-glow" : "bg-muted"
-        }`}
+        } ${!a.earned ? "opacity-90" : ""}`}
       >
         {a.earned ? (
           <span className="drop-shadow-sm">{a.emoji}</span>
         ) : (
           <>
             <span className="opacity-30 grayscale">{a.emoji}</span>
-            <span className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full bg-card border border-border">
+            <span className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full bg-card border border-border z-10">
               <Lock className="h-3 w-3 text-muted-foreground" />
             </span>
           </>
