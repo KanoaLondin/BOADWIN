@@ -141,7 +141,7 @@ function PremiumChat({
   }
 
   return (
-    <ChatShell onClose={onClose} tierBanner={<TierBanner initialTier={tierInfo.tier} autoTier={tierInfo.auto} />}>
+    <ChatShell onClose={onClose}>
 
       <div ref={scrollRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4" style={{ backgroundColor: CHAT_SURFACE }}>
         {messages.map((m) => (
