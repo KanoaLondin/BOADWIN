@@ -1,10 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { ArrowLeft, Send, Sparkles, Lock } from "lucide-react";
 
 type LessonContext = { lessonTitle: string; unitTitle: string; levelTitle: string };
+
+const CHAT_NAV_HEIGHT = "var(--bottom-nav-height)";
+const CHAT_SURFACE = "var(--al-chat-surface)";
 
 const QUICK_REPLIES = [
   "Explain more",
@@ -110,7 +114,7 @@ function PremiumChat({
 
   return (
     <ChatShell onClose={onClose}>
-      <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto bg-white px-4 py-4">
+      <div ref={scrollRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4" style={{ backgroundColor: CHAT_SURFACE }}>
         {messages.map((m) => (
           <Bubble key={m.id} role={m.role as "user" | "assistant"}>
             {m.parts
@@ -121,7 +125,7 @@ function PremiumChat({
         {status === "submitted" && <TypingBubble />}
       </div>
 
-      <div className="bg-white px-3 pb-2 pt-1">
+      <div className="shrink-0 px-3 pb-2 pt-1" style={{ backgroundColor: CHAT_SURFACE }}>
         <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {QUICK_REPLIES.map((q) => (
             <button
@@ -141,7 +145,8 @@ function PremiumChat({
           e.preventDefault();
           send(input);
         }}
-        className="flex items-center gap-2 border-t border-border bg-white px-3 py-3"
+        className="shrink-0 flex items-center gap-2 border-t border-border px-3 py-3"
+        style={{ backgroundColor: CHAT_SURFACE }}
       >
         <input
           value={input}
@@ -164,14 +169,14 @@ function PremiumChat({
 function LockedPreview({ onClose }: { onClose: () => void }) {
   return (
     <ChatShell onClose={onClose}>
-      <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+      <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4" style={{ backgroundColor: CHAT_SURFACE }}>
         {SAMPLE_TURNS.map((t, i) => (
           <Bubble key={i} role={t.role}>
             {t.text}
           </Bubble>
         ))}
       </div>
-      <div className="border-t border-border bg-gradient-to-b from-card to-primary/8 p-5">
+      <div className="shrink-0 border-t border-border p-5" style={{ backgroundColor: CHAT_SURFACE }}>
         <div className="flex items-center gap-2 text-primary">
           <Lock className="h-4 w-4" />
           <p className="text-sm font-bold">AL is part of AIED Max</p>
@@ -195,29 +200,62 @@ function ChatShell({
   children,
   onClose,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   onClose: () => void;
 }) {
-  return (
-    <div className="fixed inset-x-0 top-0 bottom-[72px] z-40 flex flex-col bg-white animate-slide-up">
-      <header className="relative flex items-center border-b border-border bg-white px-3 py-3">
-        <button
-          onClick={onClose}
-          className="grid h-10 w-10 place-items-center rounded-full hover:bg-muted"
-          aria-label="Back"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </button>
-        <div className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center">
-          <AlAvatar />
-          <p className="mt-1 text-sm font-bold leading-tight">AL</p>
-          <p className="text-[10px] text-muted-foreground">Your AIED Tutor</p>
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+
+    document.body.classList.add("al-chat-open");
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.body.classList.remove("al-chat-open");
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, []);
+
+  const content = (
+    <div
+      className="fixed left-0 right-0 top-0 z-[9999] flex w-screen flex-col overflow-hidden animate-chat-slide-up"
+      style={{
+        bottom: CHAT_NAV_HEIGHT,
+        height: `calc(100dvh - ${CHAT_NAV_HEIGHT})`,
+        maxHeight: `calc(100dvh - ${CHAT_NAV_HEIGHT})`,
+        backgroundColor: CHAT_SURFACE,
+      }}
+    >
+      <header className="relative shrink-0 border-b border-border px-3" style={{ height: "4rem", backgroundColor: CHAT_SURFACE }}>
+        <div className="flex h-full items-center">
+          <button
+            onClick={onClose}
+            className="grid h-10 w-10 place-items-center rounded-full hover:bg-muted"
+            aria-label="Back"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+          <div className="pointer-events-none absolute left-1/2 flex -translate-x-1/2 flex-col items-center">
+            <AlAvatar />
+            <p className="mt-1 text-sm font-bold leading-tight">AL</p>
+            <p className="text-[10px] text-muted-foreground">Your AIED Tutor</p>
+          </div>
+          <div className="ml-auto h-10 w-10 shrink-0" />
         </div>
-        <div className="ml-auto h-10 w-10" />
       </header>
-      {children}
+      <div className="flex min-h-0 flex-1 flex-col">{children}</div>
     </div>
   );
+
+  if (typeof document === "undefined") {
+    return content;
+  }
+
+  return createPortal(content, document.body);
 }
 
 function Bubble({
@@ -225,7 +263,7 @@ function Bubble({
   children,
 }: {
   role: "user" | "assistant";
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   if (role === "user") {
     return (
