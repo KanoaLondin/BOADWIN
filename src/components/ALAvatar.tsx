@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Lock } from "lucide-react";
 import { useAppState } from "@/lib/app-state";
 import { TutorChat } from "@/components/tutor/TutorChat";
+import { requestUpgrade } from "@/lib/event-bus";
 
 type LessonContext = {
   lessonTitle: string;
