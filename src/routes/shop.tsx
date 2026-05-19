@@ -229,55 +229,110 @@ function InsufficientModal({ info, gems, onClose }: { info: { name: string; pric
 }
 
 function PreviewModal({ cosmetic, owned, onBuy, onClose }: { cosmetic: Cosmetic; owned: boolean; onBuy: () => void; onClose: () => void }) {
+  const equippedOutfit  = useAppState((s) => s.alOutfit);
+  const equippedBg      = useAppState((s) => s.profileBg);
+  const equippedFrame   = useAppState((s) => s.badgeFrame);
+  const equippedStreak  = useAppState((s) => s.streakColor);
+  const isEquipped =
+    (cosmetic.cat === "outfit" && equippedOutfit === cosmetic.id) ||
+    (cosmetic.cat === "bg"     && equippedBg === cosmetic.id) ||
+    (cosmetic.cat === "frame"  && equippedFrame === cosmetic.id) ||
+    (cosmetic.cat === "streak" && equippedStreak === cosmetic.id);
+
+  function handleEquip() {
+    if (cosmetic.cat === "outfit") equipOutfit(cosmetic.id);
+    else if (cosmetic.cat === "bg") equipProfileBg(cosmetic.id as ProfileBg);
+    else if (cosmetic.cat === "frame") equipBadgeFrame(cosmetic.id as BadgeFrame);
+    else equipStreakColor(cosmetic.id as StreakColor);
+    toast.success(`${cosmetic.emoji} ${cosmetic.name} equipped!`);
+    onClose();
+  }
+
   return (
-    <div className="fixed inset-0 z-50 grid place-items-end sm:place-items-center bg-foreground/50 backdrop-blur-sm" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="relative w-full max-w-md overflow-hidden rounded-t-3xl sm:rounded-3xl bg-card shadow-glow animate-slide-up">
+    <div
+      className="fixed inset-0 z-[60] grid place-items-end sm:place-items-center bg-foreground/60 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-md overflow-hidden rounded-t-3xl sm:rounded-3xl bg-card shadow-glow animate-slide-up mb-20 sm:mb-0 max-h-[80vh] overflow-y-auto"
+      >
         <div className="flex items-start justify-between p-5 pb-3">
           <div>
             <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{cosmetic.cat} preview</div>
             <h2 className="text-xl font-black">{cosmetic.name}</h2>
             <p className="text-sm text-muted-foreground">{cosmetic.desc}</p>
           </div>
-          <button onClick={onClose} className="grid h-8 w-8 place-items-center rounded-full hover:bg-muted"><X className="h-4 w-4" /></button>
+          <button onClick={onClose} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-full hover:bg-muted">
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
-        {/* Full-bleed preview stage */}
+        {/* Full-bleed preview stage — always renders a fallback gradient so it can never go black */}
         <div className="relative mx-5 h-60 overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-purple/15 via-card to-cyan/15">
           {cosmetic.cat === "bg" && (
             <div className="absolute inset-0">
               <ScenePreview variant={cosmetic.id as ProfileBg} />
             </div>
           )}
-          <div className="absolute inset-0 grid place-items-center">
+          <div className="absolute inset-0 grid place-items-center p-4">
             {cosmetic.cat === "outfit" && <Mascot size={170} outfit={cosmetic.id} wave />}
             {cosmetic.cat === "bg" && <Mascot size={140} outfit="classic" />}
-            {cosmetic.cat === "frame" && (
-              <div className={`grid h-24 w-24 place-items-center rounded-2xl bg-card frame-${cosmetic.id}`}>
-                <Sparkles className="h-9 w-9 text-warning" />
-              </div>
-            )}
+            {cosmetic.cat === "frame" && <FramePreview frame={cosmetic.id as BadgeFrame} />}
             {cosmetic.cat === "streak" && (
               <span className={`text-8xl streak-${cosmetic.id}`}>🔥</span>
             )}
           </div>
           {owned && (
             <span className="absolute right-3 top-3 rounded-full bg-success px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow-soft">
-              Owned
+              {isEquipped ? "Equipped ✓" : "Owned"}
             </span>
           )}
         </div>
 
         <div className="p-5 pt-4">
-          <button
-            onClick={owned ? onClose : onBuy}
-            className={`flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-3 font-black shadow-glow ${
-              owned ? "bg-success text-white" : "gradient-hero text-white"
-            }`}
-          >
-            {owned ? "Equip" : <>Purchase · <Gem size={14} /> {cosmetic.price}</>}
-          </button>
+          {!owned ? (
+            <button
+              onClick={onBuy}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl gradient-hero px-6 py-3 font-black text-white shadow-glow transition-transform active:scale-[0.98]"
+            >
+              Purchase · <Gem size={14} /> {cosmetic.price}
+            </button>
+          ) : isEquipped ? (
+            <button
+              onClick={onClose}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-success/15 px-6 py-3 font-black text-success border-2 border-success/30"
+            >
+              ✓ Equipped
+            </button>
+          ) : (
+            <button
+              onClick={handleEquip}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-success px-6 py-3 font-black text-white shadow-glow transition-transform active:scale-[0.98]"
+            >
+              Equip
+            </button>
+          )}
         </div>
       </div>
+    </div>
+  );
+}
+
+// Three sample circular badges so frame buyers see exactly what they'll get.
+function FramePreview({ frame }: { frame: BadgeFrame }) {
+  const cls = frame === "none" ? "" : `frame-${frame}`;
+  const samples = ["🔥", "⭐", "🏆"];
+  return (
+    <div className="flex items-center gap-5">
+      {samples.map((e, i) => (
+        <div
+          key={i}
+          className={`grid h-16 w-16 place-items-center rounded-full text-3xl gradient-hero shadow-glow ${cls}`}
+        >
+          <span className="drop-shadow-sm">{e}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -286,5 +341,6 @@ function PreviewModal({ cosmetic, owned, onBuy, onClose }: { cosmetic: Cosmetic;
 function ScenePreview({ variant }: { variant: ProfileBg }) {
   return <AnimatedBackground variant={variant} contained />;
 }
+
 
 
