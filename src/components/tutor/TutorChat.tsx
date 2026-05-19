@@ -3,17 +3,11 @@ import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { ArrowLeft, Send, Sparkles, Lock, Info, Check } from "lucide-react";
+import { ArrowLeft, Send, Sparkles, Lock } from "lucide-react";
 import { useAppState } from "@/lib/app-state";
 import { getLevelInfo } from "@/lib/level-system";
-import {
-  AL_TIER_META,
-  deriveAlTier,
-  getAlTierOverride,
-  resolveAlTier,
-  setAlTierOverride,
-  type AlTier,
-} from "@/lib/al-tier";
+import { resolveAlTier } from "@/lib/al-tier";
+
 
 type LessonContext = { lessonTitle: string; unitTitle: string; levelTitle: string };
 
