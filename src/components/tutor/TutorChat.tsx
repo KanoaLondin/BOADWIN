@@ -230,9 +230,11 @@ function LockedPreview({ onClose }: { onClose: () => void }) {
 function ChatShell({
   children,
   onClose,
+  tierBanner,
 }: {
   children: ReactNode;
   onClose: () => void;
+  tierBanner?: ReactNode;
 }) {
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -251,6 +253,8 @@ function ChatShell({
     };
   }, []);
 
+  const headerHeight = tierBanner ? "5.25rem" : "4rem";
+
   const content = (
     <div
       className="fixed left-0 right-0 top-0 z-[9999] flex w-screen flex-col overflow-hidden animate-chat-slide-up"
@@ -261,8 +265,8 @@ function ChatShell({
         backgroundColor: CHAT_SURFACE,
       }}
     >
-      <header className="relative shrink-0 border-b border-border px-3" style={{ height: "4rem", backgroundColor: CHAT_SURFACE }}>
-        <div className="flex h-full items-center">
+      <header className="relative shrink-0 border-b border-border px-3" style={{ height: headerHeight, backgroundColor: CHAT_SURFACE }}>
+        <div className="flex h-16 items-center">
           <button
             onClick={onClose}
             className="grid h-10 w-10 place-items-center rounded-full hover:bg-muted"
@@ -270,13 +274,18 @@ function ChatShell({
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <div className="pointer-events-none absolute left-1/2 flex -translate-x-1/2 flex-col items-center">
+          <div className="pointer-events-none absolute left-1/2 top-2 flex -translate-x-1/2 flex-col items-center">
             <AlAvatar />
             <p className="mt-1 text-sm font-bold leading-tight">AL</p>
             <p className="text-[10px] text-muted-foreground">Your AIED Tutor</p>
           </div>
           <div className="ml-auto h-10 w-10 shrink-0" />
         </div>
+        {tierBanner && (
+          <div className="absolute inset-x-0 bottom-1 flex justify-center pointer-events-none">
+            <div className="pointer-events-auto">{tierBanner}</div>
+          </div>
+        )}
       </header>
       <div className="flex min-h-0 flex-1 flex-col">{children}</div>
     </div>
