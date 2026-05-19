@@ -143,7 +143,8 @@ function PremiumChat({
   }
 
   return (
-    <ChatShell onClose={onClose}>
+    <ChatShell onClose={onClose} tierBanner={<TierBanner initialTier={tierInfo.tier} autoTier={tierInfo.auto} />}>
+
       <div ref={scrollRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4" style={{ backgroundColor: CHAT_SURFACE }}>
         {messages.map((m) => (
           <Bubble key={m.id} role={m.role as "user" | "assistant"}>
