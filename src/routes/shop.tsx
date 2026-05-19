@@ -184,10 +184,21 @@ function Shop() {
   );
 }
 
+// Portal modals to document.body so AppShell's transformed wrapper can't
+// trap them in the wrong containing block (which was making them render at
+// the bottom of the long page instead of pinned to the viewport).
+function ModalPortal({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted || typeof document === "undefined") return null;
+  return createPortal(children, document.body);
+}
+
 function InsufficientModal({ info, gems, onClose }: { info: { name: string; price: number }; gems: number; onClose: () => void }) {
   const short = info.price - gems;
   const pct = Math.min(100, Math.round((gems / info.price) * 100));
   return (
+    <ModalPortal>
     <div className="fixed inset-0 z-[60] grid place-items-end sm:place-items-center bg-foreground/50 backdrop-blur-sm" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md rounded-t-3xl sm:rounded-3xl bg-card p-6 shadow-glow animate-slide-up mb-20 sm:mb-0 max-h-[80vh] overflow-y-auto">
         <div className="flex items-start justify-between">
