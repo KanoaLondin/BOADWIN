@@ -22,7 +22,7 @@ export function ALAvatar({
   const premium = useAppState((s) => s.premium === "max" || s.premium === "family");
   const tip = useAppState((s) => s.alTip);
   const [open, setOpen] = useState(false);
-  const [tooltip, setTooltip] = useState(false);
+
 
   // Blink animation toggle
   const [blink, setBlink] = useState(false);
