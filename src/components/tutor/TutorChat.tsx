@@ -110,7 +110,7 @@ function PremiumChat({
 
   return (
     <ChatShell onClose={onClose}>
-      <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+      <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto bg-white px-4 py-4">
         {messages.map((m) => (
           <Bubble key={m.id} role={m.role as "user" | "assistant"}>
             {m.parts
@@ -121,14 +121,14 @@ function PremiumChat({
         {status === "submitted" && <TypingBubble />}
       </div>
 
-      <div className="px-4 pb-2">
-        <div className="flex flex-wrap gap-2">
+      <div className="bg-white px-3 pb-2 pt-1">
+        <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {QUICK_REPLIES.map((q) => (
             <button
               key={q}
               onClick={() => send(q)}
               disabled={loading}
-              className="rounded-full border border-primary/30 bg-primary/8 px-3 py-1 text-xs font-bold text-primary hover:bg-primary/15 disabled:opacity-50"
+              className="shrink-0 rounded-full border border-primary/30 bg-white px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/8 disabled:opacity-50"
             >
               {q}
             </button>
@@ -141,13 +141,13 @@ function PremiumChat({
           e.preventDefault();
           send(input);
         }}
-        className="flex items-center gap-2 border-t border-border bg-card px-3 py-3"
+        className="flex items-center gap-2 border-t border-border bg-white px-3 py-3"
       >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask AL anything..."
-          className="flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
+          className="flex-1 rounded-full border border-border bg-white px-4 py-2.5 text-sm outline-none focus:border-primary"
         />
         <button
           type="submit"
@@ -199,8 +199,8 @@ function ChatShell({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-x-0 top-0 bottom-[72px] z-40 flex flex-col bg-white animate-fade-in">
-      <header className="flex items-center gap-3 border-b border-border bg-white px-3 py-3">
+    <div className="fixed inset-x-0 top-0 bottom-[72px] z-40 flex flex-col bg-white animate-slide-up">
+      <header className="relative flex items-center border-b border-border bg-white px-3 py-3">
         <button
           onClick={onClose}
           className="grid h-10 w-10 place-items-center rounded-full hover:bg-muted"
@@ -208,11 +208,12 @@ function ChatShell({
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
-        <AlAvatar />
-        <div className="flex-1">
-          <p className="font-bold leading-tight">AL</p>
-          <p className="text-[11px] text-muted-foreground">Your AIED tutor</p>
+        <div className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center">
+          <AlAvatar />
+          <p className="mt-1 text-sm font-bold leading-tight">AL</p>
+          <p className="text-[10px] text-muted-foreground">Your AIED Tutor</p>
         </div>
+        <div className="ml-auto h-10 w-10" />
       </header>
       {children}
     </div>
@@ -238,7 +239,7 @@ function Bubble({
   return (
     <div className="flex items-start gap-2">
       <AlAvatar small />
-      <div className="max-w-[80%] rounded-2xl rounded-tl-sm border border-primary/20 bg-card px-4 py-2.5 text-sm text-foreground shadow-soft">
+      <div className="max-w-[80%] rounded-2xl rounded-tl-sm border border-primary/20 bg-white px-4 py-2.5 text-sm text-foreground shadow-soft">
         {children}
       </div>
     </div>
@@ -249,7 +250,7 @@ function TypingBubble() {
   return (
     <div className="flex items-start gap-2">
       <AlAvatar small />
-      <div className="rounded-2xl rounded-tl-sm border border-primary/20 bg-card px-4 py-3 shadow-soft">
+      <div className="rounded-2xl rounded-tl-sm border border-primary/20 bg-white px-4 py-3 shadow-soft">
         <div className="flex gap-1">
           {[0, 1, 2].map((i) => (
             <span
