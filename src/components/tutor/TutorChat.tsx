@@ -110,7 +110,7 @@ function PremiumChat({
 
   return (
     <ChatShell onClose={onClose}>
-      <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+      <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto bg-white px-4 py-4">
         {messages.map((m) => (
           <Bubble key={m.id} role={m.role as "user" | "assistant"}>
             {m.parts
@@ -121,14 +121,14 @@ function PremiumChat({
         {status === "submitted" && <TypingBubble />}
       </div>
 
-      <div className="px-4 pb-2">
-        <div className="flex flex-wrap gap-2">
+      <div className="bg-white px-3 pb-2 pt-1">
+        <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {QUICK_REPLIES.map((q) => (
             <button
               key={q}
               onClick={() => send(q)}
               disabled={loading}
-              className="rounded-full border border-primary/30 bg-primary/8 px-3 py-1 text-xs font-bold text-primary hover:bg-primary/15 disabled:opacity-50"
+              className="shrink-0 rounded-full border border-primary/30 bg-white px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/8 disabled:opacity-50"
             >
               {q}
             </button>
@@ -141,13 +141,13 @@ function PremiumChat({
           e.preventDefault();
           send(input);
         }}
-        className="flex items-center gap-2 border-t border-border bg-card px-3 py-3"
+        className="flex items-center gap-2 border-t border-border bg-white px-3 py-3"
       >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask AL anything..."
-          className="flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
+          className="flex-1 rounded-full border border-border bg-white px-4 py-2.5 text-sm outline-none focus:border-primary"
         />
         <button
           type="submit"
