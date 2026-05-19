@@ -63,8 +63,26 @@ function PremiumChat({
   onClose: () => void;
   lessonContext?: LessonContext;
 }) {
-  const userName = getUserName();
-  const ageGroup = getAgeGroup();
+  const profile = useAppState((s) => ({
+    name: s.name,
+    ageGroup: s.ageGroup,
+    xp: s.xp,
+    streak: s.streak,
+    completedLessons: s.completedLessons,
+    perfectLessons: s.perfectLessons,
+    hintedQuestions: s.hintedQuestions,
+    skippedLessons: s.skippedLessons,
+  }));
+  const userName = profile.name || "Alex";
+  // API expects kids|teens|adults — fold tweens→teens, pro→adults
+  const ageGroup: "kids" | "teens" | "adults" =
+    profile.ageGroup === "kids" ? "kids"
+    : profile.ageGroup === "adults" || profile.ageGroup === "pro" ? "adults"
+    : "teens";
+
+  const tierInfo = resolveAlTier(profile);
+  const levelInfo = getLevelInfo(profile.xp);
+
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -78,6 +96,20 @@ function PremiumChat({
           lessonContext,
           userName,
           ageGroup,
+          profile: {
+            tier: tierInfo.tier,
+            levelNumber: levelInfo.level,
+            levelName: levelInfo.name,
+            xp: profile.xp,
+            streak: profile.streak,
+            completedCount: profile.completedLessons.length,
+            perfectCount: profile.perfectLessons.length,
+            hintedCount: profile.hintedQuestions.length,
+            skippedCount: profile.skippedLessons.length,
+            recentCompleted: profile.completedLessons.slice(-5),
+            recentPerfect: profile.perfectLessons.slice(-5),
+            recentHinted: profile.hintedQuestions.slice(-5),
+          },
         },
       }),
     }),
