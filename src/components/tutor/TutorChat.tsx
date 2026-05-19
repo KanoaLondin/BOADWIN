@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { Send, X, Sparkles, Lock } from "lucide-react";
+import { ArrowLeft, Send, Sparkles, Lock } from "lucide-react";
 
 type LessonContext = { lessonTitle: string; unitTitle: string; levelTitle: string };
 
