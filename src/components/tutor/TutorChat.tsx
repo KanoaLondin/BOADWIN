@@ -63,16 +63,21 @@ function PremiumChat({
   onClose: () => void;
   lessonContext?: LessonContext;
 }) {
-  const profile = useAppState((s) => ({
-    name: s.name,
-    ageGroup: s.ageGroup,
-    xp: s.xp,
-    streak: s.streak,
-    completedLessons: s.completedLessons,
-    perfectLessons: s.perfectLessons,
-    hintedQuestions: s.hintedQuestions,
-    skippedLessons: s.skippedLessons,
-  }));
+  const name = useAppState((s) => s.name);
+  const ageGroupRaw = useAppState((s) => s.ageGroup);
+  const xp = useAppState((s) => s.xp);
+  const streak = useAppState((s) => s.streak);
+  const completedLessons = useAppState((s) => s.completedLessons);
+  const perfectLessons = useAppState((s) => s.perfectLessons);
+  const hintedQuestions = useAppState((s) => s.hintedQuestions);
+  const skippedLessons = useAppState((s) => s.skippedLessons);
+  const userName = name || "Alex";
+  // API expects kids|teens|adults — fold tweens→teens, pro→adults
+  const ageGroup: "kids" | "teens" | "adults" =
+    ageGroupRaw === "kids" ? "kids"
+    : ageGroupRaw === "adults" || ageGroupRaw === "pro" ? "adults"
+    : "teens";
+
   const userName = profile.name || "Alex";
   // API expects kids|teens|adults — fold tweens→teens, pro→adults
   const ageGroup: "kids" | "teens" | "adults" =
