@@ -364,3 +364,30 @@ body.bg-anim-off [class*="animate-"] { animation: none !important; }
 /* Frosted cards when an environment background is active */
 body.has-env-bg .bg-card { background-color: color-mix(in oklab, var(--card) 70%, transparent); backdrop-filter: blur(8px); }
 body.has-env-bg .border-border { border-color: color-mix(in oklab, var(--border) 80%, transparent); }
+
+/* ===== Page transitions on bottom-nav routes ===== */
+@keyframes page-slide-right {
+  0% { transform: translate3d(24px, 0, 0); opacity: 0; }
+  100% { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+@keyframes page-slide-left {
+  0% { transform: translate3d(-24px, 0, 0); opacity: 0; }
+  100% { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+@keyframes page-fade {
+  0% { transform: translate3d(0, 6px, 0); opacity: 0; }
+  100% { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+@keyframes page-home {
+  0% { transform: scale(0.97); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-page-slide-right { animation: page-slide-right 280ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+.animate-page-slide-left  { animation: page-slide-left  280ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+.animate-page-fade        { animation: page-fade        260ms ease-out both; }
+.animate-page-home        { animation: page-home        260ms ease-out both; }
+
+body.bg-anim-off .animate-page-slide-right,
+body.bg-anim-off .animate-page-slide-left,
+body.bg-anim-off .animate-page-fade,
+body.bg-anim-off .animate-page-home { animation: page-fade 180ms ease-out both !important; }

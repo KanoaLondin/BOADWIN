@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Lock } from "lucide-react";
 import { useAppState } from "@/lib/app-state";
+import { Mascot } from "@/components/Mascot";
 import { TutorChat } from "@/components/tutor/TutorChat";
 import { requestUpgrade } from "@/lib/event-bus";
 
@@ -10,29 +11,19 @@ type LessonContext = {
   levelTitle: string;
 };
 
-// Small AL face used in the top-right corner of every screen.
-// Acts as the entry point to the tutor chat.
+// Small AL avatar in the top-right corner of every screen.
+// Reflects whichever outfit/cosmetic the user has equipped.
 export function ALAvatar({
   lessonContext,
-  size = 44,
+  size = 48,
 }: {
   lessonContext?: LessonContext;
   size?: number;
 }) {
   const premium = useAppState((s) => s.premium === "max" || s.premium === "family");
   const tip = useAppState((s) => s.alTip);
+  const outfit = useAppState((s) => s.alOutfit) ?? "classic";
   const [open, setOpen] = useState(false);
-
-
-  // Blink animation toggle
-  const [blink, setBlink] = useState(false);
-  useEffect(() => {
-    const i = setInterval(() => {
-      setBlink(true);
-      setTimeout(() => setBlink(false), 180);
-    }, 4500);
-    return () => clearInterval(i);
-  }, []);
 
   const hasNotif = premium && !!tip;
 
@@ -48,12 +39,18 @@ export function ALAvatar({
             }
           }}
           aria-label={premium ? "Open AL tutor" : "AL — upgrade required"}
-          className={`relative grid place-items-center rounded-2xl shadow-glow transition-transform hover:scale-110 ${
-            premium ? "gradient-hero animate-al-pulse" : "bg-muted opacity-70 grayscale"
+          className={`relative grid place-items-center overflow-hidden rounded-full border-2 border-primary/60 bg-white shadow-glow transition-transform hover:scale-110 ${
+            premium ? "animate-al-pulse" : "opacity-70 grayscale"
           }`}
           style={{ width: size, height: size }}
         >
-          <ALFace blink={blink} />
+          {/* Mascot is sized larger and shifted so head/upper body fit the circle */}
+          <div
+            className="pointer-events-none absolute left-1/2 -translate-x-1/2"
+            style={{ top: -size * 0.18 }}
+          >
+            <Mascot size={size * 1.5} outfit={outfit} float={premium} />
+          </div>
           {!premium && (
             <span className="absolute -bottom-1 -right-1 grid h-5 w-5 place-items-center rounded-full bg-warning text-white shadow-soft">
               <Lock className="h-2.5 w-2.5" />
@@ -72,33 +69,5 @@ export function ALAvatar({
         />
       )}
     </>
-  );
-}
-
-function ALFace({ blink }: { blink: boolean }) {
-  return (
-    <svg viewBox="0 0 64 64" className="h-3/5 w-3/5" xmlns="http://www.w3.org/2000/svg">
-      {/* head */}
-      <rect x="12" y="16" width="40" height="34" rx="11" fill="white" />
-      {/* antenna */}
-      <line x1="32" y1="10" x2="32" y2="16" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
-      <circle cx="32" cy="8" r="2.5" fill="#06B6D4" />
-      {/* eyes */}
-      {blink ? (
-        <>
-          <line x1="22" y1="30" x2="28" y2="30" stroke="#7C3AED" strokeWidth="2.5" strokeLinecap="round" />
-          <line x1="36" y1="30" x2="42" y2="30" stroke="#7C3AED" strokeWidth="2.5" strokeLinecap="round" />
-        </>
-      ) : (
-        <>
-          <circle cx="25" cy="30" r="3.2" fill="#7C3AED" />
-          <circle cx="39" cy="30" r="3.2" fill="#7C3AED" />
-          <circle cx="26" cy="29" r="1" fill="white" />
-          <circle cx="40" cy="29" r="1" fill="white" />
-        </>
-      )}
-      {/* smile */}
-      <path d="M24 39 Q32 45 40 39" stroke="#06B6D4" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-    </svg>
   );
 }
