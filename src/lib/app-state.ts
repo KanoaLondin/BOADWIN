@@ -1,6 +1,8 @@
-// Client-side app state for AIED — backed by localStorage.
+// Client-side app state for AIED — backed by localStorage, and mirrored to
+// the signed-in user's Supabase profile so progress follows them across devices.
 import { useSyncExternalStore } from "react";
 import { getLevelInfo } from "./level-system";
+import { supabase } from "@/integrations/supabase/client";
 
 const KEY = "aied:state:v2";
 
@@ -106,7 +108,9 @@ function load(): AppState {
 
 function persist() {
   if (typeof window === "undefined") return;
-  try { window.localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
+  try {
+    window.localStorage.setItem(KEY, JSON.stringify(state));
+  } catch {}
 }
 
 function ensureInit() {
@@ -118,23 +122,134 @@ function ensureInit() {
   initialized = true;
 }
 
-function emit() { for (const l of listeners) l(); }
+function emit() {
+  for (const l of listeners) l();
+}
 
-export function getState(): AppState { ensureInit(); return state; }
+export function getState(): AppState {
+  ensureInit();
+  return state;
+}
 
 export function setState(updater: (s: AppState) => AppState) {
   ensureInit();
   state = updater(state);
   persist();
   emit();
+  scheduleCloudSave();
 }
 
 export function useAppState<T>(selector: (s: AppState) => T): T {
   return useSyncExternalStore(
-    (cb) => { listeners.add(cb); return () => listeners.delete(cb); },
+    (cb) => {
+      listeners.add(cb);
+      return () => listeners.delete(cb);
+    },
     () => selector(getState()),
     () => selector(DEFAULT_STATE),
   );
+}
+
+// ---------- Cloud sync (Supabase) ----------
+// Keeps a signed-in user's progress in their `profiles` row so they can log
+// in on any device and pick up where they left off. `setState` above is the
+// single choke point every mutation in this file goes through, so hooking
+// the cloud save in there covers all of them without touching each call site.
+
+let cloudUserId: string | null = null;
+let cloudIsAdmin = false;
+let hydrating = false;
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+export function isAdmin(): boolean {
+  return cloudIsAdmin;
+}
+
+function scheduleCloudSave() {
+  if (!cloudUserId || hydrating || typeof window === "undefined") return;
+  if (saveTimer) clearTimeout(saveTimer);
+  const userId = cloudUserId;
+  saveTimer = setTimeout(() => {
+    const s = getState();
+    // `role` and `premium` are never sent from the client — a database
+    // trigger silently rejects changes to them from anything but a
+    // service-role connection, so there's no point (or safety upside) in
+    // trying. Everything else about the player's progress lives here.
+    supabase
+      .from("profiles")
+      .update({
+        state: JSON.parse(JSON.stringify(s)),
+        xp: s.xp,
+        streak: s.streak,
+        hearts: s.hearts,
+        gems: s.gems,
+        al_outfit: s.alOutfit,
+        profile_bg: s.profileBg,
+        display_name: s.name,
+        age_group: s.ageGroup,
+        last_active_at: new Date().toISOString(),
+      })
+      .eq("id", userId)
+      .then(({ error }) => {
+        if (error) console.error("[app-state] cloud save failed", error);
+      });
+  }, 800);
+}
+
+export type CloudProfile = {
+  id: string;
+  role: string;
+  state: unknown;
+  xp: number;
+  streak: number;
+  hearts: number;
+  gems: number;
+  al_outfit: string;
+  profile_bg: string;
+  display_name: string | null;
+  age_group: string;
+};
+
+/** Call once right after sign-in with the freshly-fetched profile row. */
+export function hydrateFromCloud(profile: CloudProfile) {
+  ensureInit();
+  hydrating = true;
+  cloudUserId = profile.id;
+  cloudIsAdmin = profile.role === "admin";
+  const cloudState =
+    profile.state && typeof profile.state === "object" ? (profile.state as Partial<AppState>) : {};
+  // Start from DEFAULT_STATE (not the current in-memory state) so a
+  // previous account's leftovers on a shared device never leak into this
+  // sign-in — every field this user's cloud data doesn't cover gets reset.
+  setState(() => ({
+    ...DEFAULT_STATE,
+    ...cloudState,
+    xp: profile.xp,
+    streak: profile.streak,
+    hearts: profile.hearts,
+    gems: profile.gems,
+    alOutfit: profile.al_outfit || DEFAULT_STATE.alOutfit,
+    profileBg: (profile.profile_bg as ProfileBg) || DEFAULT_STATE.profileBg,
+    name: profile.display_name || DEFAULT_STATE.name,
+    ageGroup: (profile.age_group as AppState["ageGroup"]) || DEFAULT_STATE.ageGroup,
+    // Admins see every level and lesson unlocked locally, regardless of
+    // their actual `premium` column — this is never written back to the
+    // database, it's purely a local override for rendering.
+    premium: cloudIsAdmin ? "max" : (cloudState.premium ?? DEFAULT_STATE.premium),
+  }));
+  hydrating = false;
+}
+
+/** Call on sign-out: stop syncing and wipe local progress so the next
+ * signed-in user (or a guest) on this device starts clean. */
+export function unbindCloud() {
+  cloudUserId = null;
+  cloudIsAdmin = false;
+  if (saveTimer) {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+  }
+  setState(() => DEFAULT_STATE);
 }
 
 // ---------- Currency / XP ----------
@@ -182,8 +297,12 @@ export function setPremium(p: AppState["premium"]) {
 }
 
 // ---------- Profile basics ----------
-export function setName(name: string) { setState((s) => ({ ...s, name })); }
-export function setAgeGroup(ageGroup: AppState["ageGroup"]) { setState((s) => ({ ...s, ageGroup })); }
+export function setName(name: string) {
+  setState((s) => ({ ...s, name }));
+}
+export function setAgeGroup(ageGroup: AppState["ageGroup"]) {
+  setState((s) => ({ ...s, ageGroup }));
+}
 
 // ---------- Power-ups ----------
 export function activateXpBoost(hours: number) {
@@ -224,19 +343,25 @@ export function equipOutfit(id: string) {
   setState((s) => (s.ownedOutfits.includes(id) ? { ...s, alOutfit: id } : s));
 }
 export function ownStreakColor(c: StreakColor) {
-  setState((s) => (s.ownedStreakColors.includes(c) ? s : { ...s, ownedStreakColors: [...s.ownedStreakColors, c] }));
+  setState((s) =>
+    s.ownedStreakColors.includes(c) ? s : { ...s, ownedStreakColors: [...s.ownedStreakColors, c] },
+  );
 }
 export function equipStreakColor(c: StreakColor) {
   setState((s) => (s.ownedStreakColors.includes(c) ? { ...s, streakColor: c } : s));
 }
 export function ownProfileBg(c: ProfileBg) {
-  setState((s) => (s.ownedProfileBgs.includes(c) ? s : { ...s, ownedProfileBgs: [...s.ownedProfileBgs, c] }));
+  setState((s) =>
+    s.ownedProfileBgs.includes(c) ? s : { ...s, ownedProfileBgs: [...s.ownedProfileBgs, c] },
+  );
 }
 export function equipProfileBg(c: ProfileBg) {
   setState((s) => (s.ownedProfileBgs.includes(c) ? { ...s, profileBg: c } : s));
 }
 export function ownBadgeFrame(c: BadgeFrame) {
-  setState((s) => (s.ownedBadgeFrames.includes(c) ? s : { ...s, ownedBadgeFrames: [...s.ownedBadgeFrames, c] }));
+  setState((s) =>
+    s.ownedBadgeFrames.includes(c) ? s : { ...s, ownedBadgeFrames: [...s.ownedBadgeFrames, c] },
+  );
 }
 export function equipBadgeFrame(c: BadgeFrame) {
   setState((s) => (s.ownedBadgeFrames.includes(c) ? { ...s, badgeFrame: c } : s));
@@ -271,7 +396,13 @@ export type ChestTier = "bronze" | "silver" | "gold" | "diamond";
 
 export function completeLesson(
   lessonId: string,
-  opts: { perfect: boolean; unitDone?: boolean; levelDone?: boolean; baseXp: number; hintedCount?: number },
+  opts: {
+    perfect: boolean;
+    unitDone?: boolean;
+    levelDone?: boolean;
+    baseXp: number;
+    hintedCount?: number;
+  },
 ): {
   gemsEarned: number;
   xpEarned: number;
@@ -282,9 +413,19 @@ export function completeLesson(
   if (opts.unitDone) gemsEarned += 25;
 
   setState((s) => {
-    const done = s.completedLessons.includes(lessonId) ? s.completedLessons : [...s.completedLessons, lessonId];
-    const perf = opts.perfect && !s.perfectLessons.includes(lessonId) ? [...s.perfectLessons, lessonId] : s.perfectLessons;
-    return { ...s, completedLessons: done, perfectLessons: perf, lessonsSinceChest: s.lessonsSinceChest + 1 };
+    const done = s.completedLessons.includes(lessonId)
+      ? s.completedLessons
+      : [...s.completedLessons, lessonId];
+    const perf =
+      opts.perfect && !s.perfectLessons.includes(lessonId)
+        ? [...s.perfectLessons, lessonId]
+        : s.perfectLessons;
+    return {
+      ...s,
+      completedLessons: done,
+      perfectLessons: perf,
+      lessonsSinceChest: s.lessonsSinceChest + 1,
+    };
   });
   addGems(gemsEarned);
   const boost = isBoostActive() ? 2 : 1;
@@ -306,16 +447,19 @@ export function openChest(tier: ChestTier): {
   items: { id: string; name: string; emoji: string }[];
 } {
   const ranges: Record<ChestTier, [number, number]> = {
-    bronze: [10, 20], silver: [25, 40], gold: [50, 100], diamond: [150, 200],
+    bronze: [10, 20],
+    silver: [25, 40],
+    gold: [50, 100],
+    diamond: [150, 200],
   };
   const [lo, hi] = ranges[tier];
   const gems = Math.floor(lo + Math.random() * (hi - lo + 1));
   addGems(gems);
   const pool = [
     { id: "freeze", name: "Streak Freeze", emoji: "❄️", apply: () => addStreakFreeze(1) },
-    { id: "heart",  name: "Heart Refill",  emoji: "❤️", apply: () => addHeartRefill(1) },
-    { id: "boost",  name: "XP Boost (2h)", emoji: "⚡", apply: () => activateXpBoost(2) },
-    { id: "hint",   name: "Hint Token",    emoji: "💡", apply: () => addHintTokens(1) },
+    { id: "heart", name: "Heart Refill", emoji: "❤️", apply: () => addHeartRefill(1) },
+    { id: "boost", name: "XP Boost (2h)", emoji: "⚡", apply: () => activateXpBoost(2) },
+    { id: "hint", name: "Hint Token", emoji: "💡", apply: () => addHintTokens(1) },
   ];
   const n = tier === "bronze" ? 1 : tier === "silver" ? 1 : tier === "gold" ? 2 : 3;
   const items: { id: string; name: string; emoji: string }[] = [];

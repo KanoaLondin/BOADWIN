@@ -1,11 +1,29 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
-  Bell, Moon, Sun, Volume2, Globe, LogOut, ChevronRight, Crown,
-  KeyRound, User, Heart, Sparkles, Info,
+  Bell,
+  Moon,
+  Sun,
+  Volume2,
+  Globe,
+  LogOut,
+  ChevronRight,
+  Crown,
+  KeyRound,
+  User,
+  Heart,
+  Sparkles,
+  Info,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { useAppState, setName, setAgeGroup, setBgAnimationsOff, type AppState } from "@/lib/app-state";
+import {
+  useAppState,
+  setName,
+  setAgeGroup,
+  setBgAnimationsOff,
+  type AppState,
+} from "@/lib/app-state";
+import { signOut } from "@/lib/auth";
 
 export const Route = createFileRoute("/settings")({
   component: Settings,
@@ -13,11 +31,11 @@ export const Route = createFileRoute("/settings")({
 });
 
 const AGES: { id: AppState["ageGroup"]; label: string }[] = [
-  { id: "kids",    label: "Kids · 6-10" },
-  { id: "tweens",  label: "Tweens · 11-13" },
-  { id: "teens",   label: "Teens · 14-17" },
-  { id: "adults",  label: "Adults · 18+" },
-  { id: "pro",     label: "Professional" },
+  { id: "kids", label: "Kids · 6-10" },
+  { id: "tweens", label: "Tweens · 11-13" },
+  { id: "teens", label: "Teens · 14-17" },
+  { id: "adults", label: "Adults · 18+" },
+  { id: "pro", label: "Professional" },
 ];
 
 function Settings() {
@@ -103,10 +121,13 @@ function Settings() {
                 premium ? "bg-warning/15 text-warning" : "bg-muted text-muted-foreground"
               }`}
             >
-              {premium === "max"   ? "AIED Max"
-                : premium === "family" ? "AIED Family"
-                : premium === "super" ? "Super AIED"
-                : "Free"}
+              {premium === "max"
+                ? "AIED Max"
+                : premium === "family"
+                  ? "AIED Family"
+                  : premium === "super"
+                    ? "Super AIED"
+                    : "Free"}
             </span>
           }
           onClick={() => navigate({ to: "/shop" })}
@@ -173,7 +194,13 @@ function Settings() {
         />
       </Section>
 
-      <button className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-heart/30 bg-heart/10 px-6 py-3 font-black text-heart">
+      <button
+        onClick={() => {
+          signOut();
+          navigate({ to: "/login", replace: true });
+        }}
+        className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-heart/30 bg-heart/10 px-6 py-3 font-black text-heart"
+      >
         <LogOut className="h-4 w-4" /> Sign out
       </button>
 
@@ -196,7 +223,10 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 function Row({
-  icon, label, right, onClick,
+  icon,
+  label,
+  right,
+  onClick,
 }: {
   icon: React.ReactNode;
   label: string;

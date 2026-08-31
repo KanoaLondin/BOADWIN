@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
+import { useAuth } from "@/lib/auth";
 
 function NotFoundComponent() {
   return (
@@ -77,9 +78,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "AIED — Saving futures through AI literacy" },
-      { name: "description", content: "AIED teaches AI literacy and prompt engineering through fun, Duolingo-style lessons for every age." },
+      {
+        name: "description",
+        content:
+          "AIED teaches AI literacy and prompt engineering through fun, Duolingo-style lessons for every age.",
+      },
       { property: "og:title", content: "AIED — Saving futures through AI literacy" },
-      { property: "og:description", content: "Learn AI literacy and prompt engineering the fun way. Free to start." },
+      {
+        property: "og:description",
+        content: "Learn AI literacy and prompt engineering the fun way. Free to start.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -87,7 +95,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@500;600;700;800&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@500;600;700;800&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -114,12 +125,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
 // Everything else is the mobile app and gets gated to /landing on desktop.
 const MARKETING_ROUTES = new Set<string>(["/landing"]);
 
+// Pages a signed-out visitor is allowed to see. Everything else requires an
+// account, per the app's "everyone signs in, progress follows you" design.
+const PUBLIC_ROUTES = new Set<string>(["/landing", "/login", "/signup"]);
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [isDesktop, setIsDesktop] = useState(false);
   const [ready, setReady] = useState(false);
+  const auth = useAuth();
 
   useEffect(() => {
     const check = () => setIsDesktop(window.innerWidth >= 1024);
@@ -136,9 +152,30 @@ function RootComponent() {
     }
   }, [ready, isDesktop, pathname, navigate]);
 
+  useEffect(() => {
+    if (auth.status === "loading") return;
+    if (auth.status === "guest" && !PUBLIC_ROUTES.has(pathname)) {
+      navigate({ to: "/login", replace: true });
+    }
+    if (auth.status === "authed" && (pathname === "/login" || pathname === "/signup")) {
+      navigate({ to: "/", replace: true });
+    }
+  }, [auth.status, pathname, navigate]);
+
+  // Avoid a flash of gated content while we still don't know whether
+  // there's a session, or right before the redirect above kicks in.
+  const authGateBlocking =
+    auth.status === "loading" || (auth.status === "guest" && !PUBLIC_ROUTES.has(pathname));
+
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      {authGateBlocking ? (
+        <div className="grid min-h-screen place-items-center bg-background">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/20 border-t-primary" />
+        </div>
+      ) : (
+        <Outlet />
+      )}
       <Toaster position="top-center" richColors closeButton />
     </QueryClientProvider>
   );

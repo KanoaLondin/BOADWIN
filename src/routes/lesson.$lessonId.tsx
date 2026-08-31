@@ -38,6 +38,7 @@ function LessonPage() {
     return arr;
   }, [lesson]);
 
+  const premiumState = useAppState((s) => s.premium);
   const [stepIdx, setStepIdx] = useState(0);
   const [hearts, setHearts] = useState(useAppState((s) => s.hearts));
   const [xpEarned, setXpEarned] = useState(0);
@@ -57,6 +58,22 @@ function LessonPage() {
           <p className="text-lg font-bold">Lesson not found</p>
           <Link to="/courses" className="mt-4 inline-block text-primary underline">
             Back to courses
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Guard direct links, not just the course-map UI: a non-premium user
+  // typing a Premium-tier lesson URL by hand shouldn't get in either.
+  if (data.level.tier !== "Free" && !premiumState) {
+    return (
+      <div className="grid min-h-screen place-items-center px-4">
+        <div className="text-center">
+          <p className="text-lg font-bold">This lesson needs {data.level.tier}</p>
+          <p className="mt-1 text-sm text-muted-foreground">Unlock it to keep going.</p>
+          <Link to="/shop" className="mt-4 inline-block text-primary underline">
+            See upgrade options
           </Link>
         </div>
       </div>
@@ -189,7 +206,6 @@ function LessonPage() {
           />
         )}
       </div>
-
     </div>
   );
 }
@@ -265,9 +281,13 @@ function CompleteScreen({
           <div className="mt-6 grid grid-cols-3 gap-3">
             <div className="rounded-2xl bg-card border border-border p-3 shadow-soft">
               <p className="text-[10px] uppercase text-muted-foreground">XP</p>
-              <p className="mt-1 text-xl font-black text-warning">+{(reward?.xpEarned ?? lesson.xp + xpEarned)}</p>
+              <p className="mt-1 text-xl font-black text-warning">
+                +{reward?.xpEarned ?? lesson.xp + xpEarned}
+              </p>
               {boostActive && (
-                <p className="text-[9px] font-black uppercase tracking-wider text-heart">2× boost</p>
+                <p className="text-[9px] font-black uppercase tracking-wider text-heart">
+                  2× boost
+                </p>
               )}
             </div>
             <div className="rounded-2xl bg-card border border-border p-3 shadow-soft">
@@ -360,11 +380,7 @@ function ExerciseStep({
         />
       )}
       {exercise.type === "fill-blank" && (
-        <FillBlank
-          exercise={exercise}
-          status={status}
-          onCheck={(s, text) => mark(s, text)}
-        />
+        <FillBlank exercise={exercise} status={status} onCheck={(s, text) => mark(s, text)} />
       )}
       {exercise.type === "drag-drop" && (
         <DragDrop
@@ -388,16 +404,10 @@ function ExerciseStep({
         />
       )}
       {exercise.type === "short-answer" && (
-        <ShortAnswer
-          exercise={exercise}
-          status={status}
-          onCheck={(s) => mark(s)}
-        />
+        <ShortAnswer exercise={exercise} status={status} onCheck={(s) => mark(s)} />
       )}
 
-      {status === "idle" && (
-        <HintButton exercise={exercise} exerciseId={exerciseId} />
-      )}
+      {status === "idle" && <HintButton exercise={exercise} exerciseId={exerciseId} />}
 
       {status !== "idle" && (
         <FeedbackBar
@@ -449,8 +459,7 @@ function MultipleChoice({
           const isCorrect = i === exercise.correctIndex;
           let cls = "border-border bg-card hover:border-primary";
           if (locked && isCorrect) cls = "border-success bg-success/15 text-success";
-          else if (locked && isSel && !isCorrect)
-            cls = "border-heart bg-heart/15 text-heart";
+          else if (locked && isSel && !isCorrect) cls = "border-heart bg-heart/15 text-heart";
           else if (isSel) cls = "border-primary bg-primary/8";
           return (
             <button
@@ -545,7 +554,7 @@ function DragDrop({
         .map((w, i) => ({ w, i, k: Math.random() }))
         .sort((a, b) => a.k - b.k)
         .map(({ w, i }) => ({ w, key: `${w}-${i}` })),
-    [exercise]
+    [exercise],
   );
 
   const [pool, setPool] = useState(shuffled);
@@ -599,9 +608,7 @@ function DragDrop({
       {!locked && (
         <button
           disabled={built.length !== exercise.words.length}
-          onClick={() =>
-            onCheck(built.map((b) => b.w).join(" ") === exercise.words.join(" "))
-          }
+          onClick={() => onCheck(built.map((b) => b.w).join(" ") === exercise.words.join(" "))}
           className="mt-6 w-full rounded-2xl gradient-hero px-6 py-4 font-bold text-white shadow-glow disabled:opacity-40 disabled:shadow-none"
         >
           Check
@@ -676,7 +683,7 @@ function Matching({
       exercise.pairs
         .map((p, i) => ({ d: p.definition, i, k: Math.random() }))
         .sort((a, b) => a.k - b.k),
-    [exercise]
+    [exercise],
   );
 
   // user picks: termIndex -> definition string
@@ -722,10 +729,10 @@ function Matching({
                   isCorrect
                     ? "border-success bg-success/10 text-success"
                     : isWrong
-                    ? "border-heart bg-heart/10 text-heart"
-                    : sel
-                    ? "border-primary bg-primary/5"
-                    : "border-dashed border-border bg-muted/40 text-muted-foreground"
+                      ? "border-heart bg-heart/10 text-heart"
+                      : sel
+                        ? "border-primary bg-primary/5"
+                        : "border-dashed border-border bg-muted/40 text-muted-foreground"
                 }`}
               >
                 {sel ?? (activeTerm === i ? "Pick a definition below..." : "—")}
@@ -841,22 +848,22 @@ function FeedbackBar({
           anim: "animate-pop",
         }
       : status === "close"
-      ? {
-          ring: "border-warning bg-warning/10",
-          color: "text-warning",
-          btn: "bg-warning",
-          icon: <ThumbsUp className="h-5 w-5" />,
-          title: "Close enough!",
-          anim: "animate-pop",
-        }
-      : {
-          ring: "border-heart bg-heart/10",
-          color: "text-heart",
-          btn: "bg-heart",
-          icon: <AlertCircle className="h-5 w-5" />,
-          title: "Not quite",
-          anim: "animate-shake",
-        };
+        ? {
+            ring: "border-warning bg-warning/10",
+            color: "text-warning",
+            btn: "bg-warning",
+            icon: <ThumbsUp className="h-5 w-5" />,
+            title: "Close enough!",
+            anim: "animate-pop",
+          }
+        : {
+            ring: "border-heart bg-heart/10",
+            color: "text-heart",
+            btn: "bg-heart",
+            icon: <AlertCircle className="h-5 w-5" />,
+            title: "Not quite",
+            anim: "animate-shake",
+          };
 
   return (
     <div className={`mt-6 rounded-2xl border-2 p-5 ${cfg.ring} ${cfg.anim}`}>
@@ -867,7 +874,9 @@ function FeedbackBar({
         <div>
           <p className={`font-bold ${cfg.color}`}>{cfg.title}</p>
           {(message || status === "wrong") && (
-            <p className="text-sm text-muted-foreground">{message || `Answer: ${fallbackCorrect}`}</p>
+            <p className="text-sm text-muted-foreground">
+              {message || `Answer: ${fallbackCorrect}`}
+            </p>
           )}
         </div>
       </div>
