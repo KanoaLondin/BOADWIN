@@ -264,11 +264,82 @@ export const levels: Level[] = [
         title: "Prompt Basics",
         description: "What makes a great prompt",
         lessons: [
-          lesson("u3l1", "What Makes a Good Prompt?"),
-          lesson("u3l2", "Keywords and Instructions"),
-          lesson("u3l3", "Setting the Scene"),
-          lesson("u3l4", "Tone and Style"),
-          quiz("u3q", "Unit 3 Check"),
+          {
+            id: "u3l1",
+            title: "What Makes a Good Prompt?",
+            xp: 20,
+            content:
+              "A good prompt is clear, specific, and gives AI enough information to help you well. Think of it like ordering at a restaurant — 'food' isn't a real order, but 'a medium cheese pizza with extra basil' is something the kitchen can actually make.",
+            exercises: [
+              { type: "multiple-choice", question: "Which of these is the clearest prompt?", options: ["Tell me stuff", "Write a 100-word summary of the water cycle for a 6th grader", "Water??", "Explain"], correctIndex: 1 },
+              { type: "true-false", statement: "A vague prompt usually gets a vague answer.", answer: true },
+              { type: "fill-blank", prompt: "A good prompt should be clear and ____.", answer: "specific" },
+              {
+                type: "matching",
+                instruction: "Match each quality to its definition:",
+                pairs: [
+                  { term: "Clear", definition: "Easy to understand, no confusion" },
+                  { term: "Specific", definition: "Gives exact details" },
+                  { term: "Vague", definition: "Missing important details" },
+                ],
+              },
+            ],
+          },
+          {
+            id: "u3l2",
+            title: "Keywords and Instructions",
+            xp: 20,
+            content:
+              "Keywords tell AI the topic, and instructions tell it what to do with that topic. 'Dogs' is a keyword. 'List 5 fun facts about dogs' combines a keyword with a clear instruction.",
+            exercises: [
+              { type: "multiple-choice", question: "In the prompt 'Explain photosynthesis in 3 bullet points,' what is the instruction?", options: ["photosynthesis", "Explain ... in 3 bullet points", "3", "bullet"], correctIndex: 1 },
+              { type: "drag-drop", instruction: "Build a prompt by putting the words in order:", words: ["Explain", "how", "volcanoes", "form", "in", "two", "sentences"] },
+              { type: "fill-blank", prompt: "The topic word in a prompt is called a ____.", answer: "keyword" },
+            ],
+          },
+          {
+            id: "u3l3",
+            title: "Setting the Scene",
+            xp: 20,
+            content:
+              "Setting the scene means giving AI context — who you are, who the answer is for, or the situation you're in. Context helps AI tailor its response instead of guessing.",
+            exercises: [
+              { type: "multiple-choice", question: "Which prompt sets the best scene?", options: ["Write about space", "I'm a 6th grader writing a science report — explain black holes in simple terms", "space fact", "tell me"], correctIndex: 1 },
+              { type: "true-false", statement: "Telling AI who the answer is for (like 'for a 10-year-old') can change how it responds.", answer: true, explanation: "Context like audience changes vocabulary and tone." },
+              { type: "short-answer", question: "Write a prompt that sets the scene for asking AI to help you study for a math test.", minWords: 8 },
+            ],
+          },
+          {
+            id: "u3l4",
+            title: "Tone and Style",
+            xp: 20,
+            content:
+              "Tone is the mood of the writing — funny, serious, friendly, formal. You can ask AI to write in a specific tone, like 'explain this like I'm 5' or 'write this professionally for my teacher.'",
+            exercises: [
+              { type: "multiple-choice", question: "Which prompt asks for a specific tone?", options: ["Tell me about recycling", "Explain recycling in a fun, silly way with jokes", "recycling info", "list recycling facts"], correctIndex: 1 },
+              {
+                type: "matching",
+                instruction: "Match each tone to its description:",
+                pairs: [
+                  { term: "Formal", definition: "Serious and proper, like for a teacher or boss" },
+                  { term: "Casual", definition: "Relaxed, like talking to a friend" },
+                  { term: "Playful", definition: "Fun and silly" },
+                ],
+              },
+              { type: "fill-blank", prompt: "Asking AI to 'explain this like I'm 5' is a request about ____.", answer: "tone", acceptableAnswers: ["tone", "style"] },
+            ],
+          },
+          {
+            id: "u3q",
+            title: "Unit 3 Check",
+            xp: 50,
+            isQuiz: true,
+            exercises: [
+              { type: "multiple-choice", question: "What makes a prompt 'specific'?", options: ["It's long", "It gives exact details", "It's polite", "It's short"], correctIndex: 1 },
+              { type: "true-false", statement: "Context helps AI tailor its answer.", answer: true },
+              { type: "fill-blank", prompt: "The mood or style of writing is called ____.", answer: "tone" },
+            ],
+          },
         ],
       },
       {
@@ -276,11 +347,73 @@ export const levels: Level[] = [
         title: "Prompt Patterns",
         description: "Reusable prompt frameworks",
         lessons: [
-          lesson("u4l1", "The Who-What-Why Pattern"),
-          lesson("u4l2", "Step by Step Prompts"),
-          lesson("u4l3", "Creative Prompts"),
-          lesson("u4l4", "Problem Solving Prompts"),
-          quiz("u4q", "Unit 4 Check"),
+          {
+            id: "u4l1",
+            title: "The Who-What-Why Pattern",
+            xp: 20,
+            content:
+              "A simple pattern for strong prompts: WHO you are (or who it's for), WHAT you want, and WHY (the goal or purpose). Using all three helps AI give a genuinely useful answer.",
+            exercises: [
+              { type: "multiple-choice", question: "In 'I'm a beginner cook — give me a simple pasta recipe for a quick weeknight dinner,' what is the WHY?", options: ["I'm a beginner cook", "give me a simple pasta recipe", "for a quick weeknight dinner", "pasta"], correctIndex: 2 },
+              { type: "drag-drop", instruction: "Build a Who-What-Why prompt in order:", words: ["I'm", "a", "new", "gamer", "recommend", "a", "beginner-friendly", "video", "game"] },
+              { type: "true-false", statement: "The Who-What-Why pattern only works for cooking prompts.", answer: false, explanation: "It works for almost any topic — school, hobbies, work, and more." },
+            ],
+          },
+          {
+            id: "u4l2",
+            title: "Step by Step Prompts",
+            xp: 20,
+            content:
+              "When a task has many parts, ask AI to work through it step by step. This helps AI (and you!) follow the logic and catch mistakes along the way.",
+            exercises: [
+              { type: "multiple-choice", question: "Why ask AI to work 'step by step'?", options: ["It's more polite", "It helps break down complex problems clearly", "It makes answers shorter", "It's required"], correctIndex: 1 },
+              { type: "fill-blank", prompt: "Asking AI to explain its reasoning one step at a time is called ____ ____ prompting.", answer: "step by step", acceptableAnswers: ["step by step", "step-by-step"] },
+              { type: "short-answer", question: "Write a step-by-step prompt asking AI to help you plan a school project.", minWords: 8 },
+            ],
+          },
+          {
+            id: "u4l3",
+            title: "Creative Prompts",
+            xp: 20,
+            content:
+              "Creative prompts ask AI to imagine, invent, or tell stories. The more vivid detail you give — characters, setting, mood — the more original the result.",
+            exercises: [
+              { type: "multiple-choice", question: "Which is the most creative prompt?", options: ["Write a story", "Write a 200-word adventure story about a shy dragon who is afraid of fire", "story please", "dragon"], correctIndex: 1 },
+              {
+                type: "matching",
+                instruction: "Match each story ingredient to its meaning:",
+                pairs: [
+                  { term: "Character", definition: "Who the story is about" },
+                  { term: "Setting", definition: "Where and when the story happens" },
+                  { term: "Mood", definition: "The feeling of the story" },
+                ],
+              },
+              { type: "true-false", statement: "Adding details like character and setting usually makes creative writing prompts stronger.", answer: true },
+            ],
+          },
+          {
+            id: "u4l4",
+            title: "Problem Solving Prompts",
+            xp: 20,
+            content:
+              "Problem-solving prompts ask AI to help you think through a challenge — like resolving a disagreement, fixing a mistake, or planning a schedule. Explain the problem clearly and what you've already tried.",
+            exercises: [
+              { type: "multiple-choice", question: "What should a good problem-solving prompt include?", options: ["Just the problem name", "The problem, background, and what you've tried", "Nothing, AI will guess", "Only emojis"], correctIndex: 1 },
+              { type: "fill-blank", prompt: "Explaining what you've already tried helps AI avoid suggesting the ____ thing.", answer: "same" },
+              { type: "short-answer", question: "Write a prompt asking AI for help solving a disagreement between two friends over a group project.", minWords: 10 },
+            ],
+          },
+          {
+            id: "u4q",
+            title: "Unit 4 Check",
+            xp: 50,
+            isQuiz: true,
+            exercises: [
+              { type: "multiple-choice", question: "The Who-What-Why pattern includes:", options: ["Who, What, Why", "When, Where, Who", "What, When, Why", "Who, How, When"], correctIndex: 0 },
+              { type: "true-false", statement: "Step-by-step prompts help break down complex tasks.", answer: true },
+              { type: "fill-blank", prompt: "Creative prompts often include character, setting, and ____.", answer: "mood" },
+            ],
+          },
         ],
       },
     ],
