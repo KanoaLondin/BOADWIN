@@ -207,6 +207,7 @@ export type CloudProfile = {
   al_outfit: string;
   profile_bg: string;
   display_name: string | null;
+  username?: string | null;
   age_group: string;
 };
 
