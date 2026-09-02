@@ -76,8 +76,13 @@ function SignUp() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="At least 3 characters"
-              className="w-full rounded-2xl border-2 border-border bg-card px-5 py-3.5 text-base font-semibold outline-none focus:border-primary"
+              className={`w-full rounded-2xl border-2 bg-card px-5 py-3.5 text-base font-semibold outline-none focus:border-primary ${
+                usernameError ? "border-heart" : "border-border"
+              }`}
             />
+            {usernameError && (
+              <p className="mt-1.5 text-xs font-semibold text-heart">{usernameError}</p>
+            )}
           </div>
           <div>
             <label className="mb-1 block text-xs font-bold text-muted-foreground">Email</label>
