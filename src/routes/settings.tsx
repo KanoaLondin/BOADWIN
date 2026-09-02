@@ -63,7 +63,15 @@ function Settings() {
   }
 
   function saveName() {
-    if (nameInput.trim() && nameInput !== name) setName(nameInput.trim());
+    const next = nameInput.trim();
+    if (!next || next === name) return;
+    const problem = validateUsername(next, 2);
+    if (problem) {
+      toast.error(problem);
+      setNameInput(name); // keep the old name; they can try another
+      return;
+    }
+    setName(next);
   }
 
   function resetPin() {
