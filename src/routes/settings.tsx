@@ -24,6 +24,8 @@ import {
   type AppState,
 } from "@/lib/app-state";
 import { signOut } from "@/lib/auth";
+import { validateUsername } from "@/lib/profanity";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/settings")({
   component: Settings,
