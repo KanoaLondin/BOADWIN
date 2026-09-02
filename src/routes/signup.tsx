@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowRight, ChevronDown, Loader2 } from "lucide-react";
 import { Mascot } from "@/components/Mascot";
 import { signUp } from "@/lib/auth";
+import { USERNAME_BLOCKED_MESSAGE, validateUsername } from "@/lib/profanity";
 
 export const Route = createFileRoute("/signup")({
   component: SignUp,
