@@ -33,7 +33,10 @@ function Onboarding() {
   const [nameVal, setNameVal] = useState("");
   const [goal, setGoal] = useState<number | null>(null);
 
+  const nameError = nameVal.trim() ? validateUsername(nameVal, 2) : null;
+
   function finish() {
+    if (nameError) return;
     if (age) setAgeGroup(age);
     if (nameVal.trim()) setName(nameVal.trim());
     if (typeof window !== "undefined" && goal != null) {
@@ -44,7 +47,7 @@ function Onboarding() {
 
   const canNext =
     (step === 0 && !!age) ||
-    (step === 1 && nameVal.trim().length >= 2) ||
+    (step === 1 && nameVal.trim().length >= 2 && !nameError) ||
     (step === 2 && goal != null);
   const totalSteps = 3;
 
