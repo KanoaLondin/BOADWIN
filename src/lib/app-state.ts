@@ -231,7 +231,10 @@ export function hydrateFromCloud(profile: CloudProfile) {
     gems: profile.gems,
     alOutfit: profile.al_outfit || DEFAULT_STATE.alOutfit,
     profileBg: (profile.profile_bg as ProfileBg) || DEFAULT_STATE.profileBg,
-    name: profile.display_name || DEFAULT_STATE.name,
+    // The username the person chose at sign-up is the source of truth for
+    // greetings; display_name only wins if they later renamed themselves in
+    // onboarding/settings. Never fall back to a placeholder for a real account.
+    name: profile.display_name || profile.username || DEFAULT_STATE.name,
     ageGroup: (profile.age_group as AppState["ageGroup"]) || DEFAULT_STATE.ageGroup,
     // Admins see every level and lesson unlocked locally, regardless of
     // their actual `premium` column — this is never written back to the
