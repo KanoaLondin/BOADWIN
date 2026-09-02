@@ -134,8 +134,14 @@ function Onboarding() {
               placeholder="Your name"
               className="mt-6 w-full rounded-2xl border-2 border-border bg-card px-5 py-4 text-center text-xl font-black outline-none focus:border-primary"
             />
-            <p className="mt-2 text-[11px] text-muted-foreground">
-              {nameVal.trim().length < 2 ? "At least 2 letters" : "Looks good!"}
+            <p
+              className={`mt-2 text-[11px] font-semibold ${nameError ? "text-heart" : "text-muted-foreground"}`}
+            >
+              {nameError
+                ? nameError
+                : nameVal.trim().length < 2
+                  ? "At least 2 letters"
+                  : "Looks good!"}
             </p>
           </div>
         )}
