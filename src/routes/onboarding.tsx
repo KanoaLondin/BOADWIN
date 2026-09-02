@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowRight, ArrowLeft, Check, Sparkles } from "lucide-react";
 import { Mascot } from "@/components/Mascot";
 import { setAgeGroup, setName, type AppState } from "@/lib/app-state";
+import { validateUsername } from "@/lib/profanity";
 
 export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
