@@ -14,6 +14,21 @@ export type Database = {
   }
   public: {
     Tables: {
+      blocked_username_terms: {
+        Row: {
+          created_at: string
+          term: string
+        }
+        Insert: {
+          created_at?: string
+          term: string
+        }
+        Update: {
+          created_at?: string
+          term?: string
+        }
+        Relationships: []
+      }
       friendships: {
         Row: {
           created_at: string
@@ -171,6 +186,7 @@ export type Database = {
     }
     Functions: {
       expire_pending_friend_requests: { Args: never; Returns: undefined }
+      normalize_for_moderation: { Args: { input: string }; Returns: string }
       pair_users: {
         Args: { u1: string; u2: string }
         Returns: {
@@ -179,6 +195,7 @@ export type Database = {
         }[]
       }
       username_available: { Args: { candidate: string }; Returns: boolean }
+      username_is_allowed: { Args: { candidate: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
