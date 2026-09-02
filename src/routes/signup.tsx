@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowRight, ChevronDown, Loader2 } from "lucide-react";
 import { Mascot } from "@/components/Mascot";
 import { signUp } from "@/lib/auth";
+import { USERNAME_BLOCKED_MESSAGE, validateUsername } from "@/lib/profanity";
 
 export const Route = createFileRoute("/signup")({
   component: SignUp,
@@ -19,8 +20,12 @@ function SignUp() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const usernameError = username.trim() ? validateUsername(username) : null;
   const canSubmit =
-    username.trim().length >= 3 && /\S+@\S+\.\S+/.test(email) && password.length >= 6;
+    username.trim().length >= 3 &&
+    !usernameError &&
+    /\S+@\S+\.\S+/.test(email) &&
+    password.length >= 6;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,7 +42,14 @@ function SignUp() {
       });
       navigate({ to: "/onboarding" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong creating your account.");
+      const raw = err instanceof Error ? err.message : "";
+      // The database runs the same safety check; surface it in plain English
+      // instead of the generic "database error" the auth API returns.
+      setError(
+        /database error|isn't allowed|not allowed/i.test(raw)
+          ? USERNAME_BLOCKED_MESSAGE
+          : raw || "Something went wrong creating your account.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -64,8 +76,13 @@ function SignUp() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="At least 3 characters"
-              className="w-full rounded-2xl border-2 border-border bg-card px-5 py-3.5 text-base font-semibold outline-none focus:border-primary"
+              className={`w-full rounded-2xl border-2 bg-card px-5 py-3.5 text-base font-semibold outline-none focus:border-primary ${
+                usernameError ? "border-heart" : "border-border"
+              }`}
             />
+            {usernameError && (
+              <p className="mt-1.5 text-xs font-semibold text-heart">{usernameError}</p>
+            )}
           </div>
           <div>
             <label className="mb-1 block text-xs font-bold text-muted-foreground">Email</label>

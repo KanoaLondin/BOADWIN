@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowRight, ArrowLeft, Check, Sparkles } from "lucide-react";
 import { Mascot } from "@/components/Mascot";
 import { setAgeGroup, setName, type AppState } from "@/lib/app-state";
+import { validateUsername } from "@/lib/profanity";
 
 export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
@@ -33,7 +34,10 @@ function Onboarding() {
   const [nameVal, setNameVal] = useState("");
   const [goal, setGoal] = useState<number | null>(null);
 
+  const nameError = nameVal.trim() ? validateUsername(nameVal, 2) : null;
+
   function finish() {
+    if (nameError) return;
     if (age) setAgeGroup(age);
     if (nameVal.trim()) setName(nameVal.trim());
     if (typeof window !== "undefined" && goal != null) {
@@ -44,7 +48,7 @@ function Onboarding() {
 
   const canNext =
     (step === 0 && !!age) ||
-    (step === 1 && nameVal.trim().length >= 2) ||
+    (step === 1 && nameVal.trim().length >= 2 && !nameError) ||
     (step === 2 && goal != null);
   const totalSteps = 3;
 
@@ -130,8 +134,14 @@ function Onboarding() {
               placeholder="Your name"
               className="mt-6 w-full rounded-2xl border-2 border-border bg-card px-5 py-4 text-center text-xl font-black outline-none focus:border-primary"
             />
-            <p className="mt-2 text-[11px] text-muted-foreground">
-              {nameVal.trim().length < 2 ? "At least 2 letters" : "Looks good!"}
+            <p
+              className={`mt-2 text-[11px] font-semibold ${nameError ? "text-heart" : "text-muted-foreground"}`}
+            >
+              {nameError
+                ? nameError
+                : nameVal.trim().length < 2
+                  ? "At least 2 letters"
+                  : "Looks good!"}
             </p>
           </div>
         )}

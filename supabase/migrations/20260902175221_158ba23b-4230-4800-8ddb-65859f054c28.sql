@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.username_is_allowed(text) FROM PUBLIC, anon, authenticated;
