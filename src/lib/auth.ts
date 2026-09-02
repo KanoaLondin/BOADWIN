@@ -21,7 +21,8 @@ type AuthState = {
 
 const PENDING_CODE_KEY = "aied:pendingAdminCode";
 
-let state: AuthState = { status: "loading", userId: null, email: null, profile: null };
+const LOADING_STATE: AuthState = { status: "loading", userId: null, email: null, profile: null };
+let state: AuthState = LOADING_STATE;
 const listeners = new Set<() => void>();
 
 function set(patch: Partial<AuthState>) {
@@ -53,23 +54,40 @@ async function redeemPendingAdminCodeIfAny(accessToken: string) {
 }
 
 let initialized = false;
+
+async function applySession(session: { access_token?: string; user?: { id: string; email?: string | null } } | null) {
+  const user = session?.user ?? null;
+  if (!user) {
+    unbindCloud();
+    set({ status: "guest", userId: null, email: null, profile: null });
+    return;
+  }
+  if (state.status === "authed" && state.userId === user.id) return; // token refresh, nothing to redo
+  if (session?.access_token) {
+    await redeemPendingAdminCodeIfAny(session.access_token);
+  }
+  const profile = await fetchProfile(user.id);
+  if (profile) hydrateFromCloud(profile);
+  set({ status: "authed", userId: user.id, email: user.email ?? null, profile });
+}
+
 function init() {
   if (initialized || typeof window === "undefined") return;
   initialized = true;
-  supabase.auth.onAuthStateChange(async (_event, session) => {
-    const user = session?.user ?? null;
-    if (!user) {
-      unbindCloud();
-      set({ status: "guest", userId: null, email: null, profile: null });
-      return;
-    }
-    if (session?.access_token) {
-      await redeemPendingAdminCodeIfAny(session.access_token);
-    }
-    const profile = await fetchProfile(user.id);
-    if (profile) hydrateFromCloud(profile);
-    set({ status: "authed", userId: user.id, email: user.email ?? null, profile });
+  supabase.auth.onAuthStateChange((_event, session) => {
+    void applySession(session as never);
   });
+  // Fallback in case the listener never emits an initial event (e.g. a
+  // storage read hiccup): resolve the loading state from the stored session
+  // so the app never hangs on the auth spinner.
+  supabase.auth
+    .getSession()
+    .then(({ data }) => {
+      if (state.status === "loading") void applySession(data.session as never);
+    })
+    .catch(() => {
+      if (state.status === "loading") set({ status: "guest" });
+    });
 }
 
 export function useAuth(): AuthState {
@@ -80,7 +98,7 @@ export function useAuth(): AuthState {
       return () => listeners.delete(cb);
     },
     () => state,
-    () => ({ status: "loading" as const, userId: null, email: null, profile: null }),
+    () => LOADING_STATE,
   );
 }
 
