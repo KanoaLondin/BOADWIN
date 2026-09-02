@@ -19,8 +19,12 @@ function SignUp() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const usernameError = username.trim() ? validateUsername(username) : null;
   const canSubmit =
-    username.trim().length >= 3 && /\S+@\S+\.\S+/.test(email) && password.length >= 6;
+    username.trim().length >= 3 &&
+    !usernameError &&
+    /\S+@\S+\.\S+/.test(email) &&
+    password.length >= 6;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,7 +41,14 @@ function SignUp() {
       });
       navigate({ to: "/onboarding" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong creating your account.");
+      const raw = err instanceof Error ? err.message : "";
+      // The database runs the same safety check; surface it in plain English
+      // instead of the generic "database error" the auth API returns.
+      setError(
+        /database error|isn't allowed|not allowed/i.test(raw)
+          ? USERNAME_BLOCKED_MESSAGE
+          : raw || "Something went wrong creating your account.",
+      );
     } finally {
       setSubmitting(false);
     }
