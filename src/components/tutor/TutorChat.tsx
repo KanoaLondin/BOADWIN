@@ -61,6 +61,8 @@ function PremiumChat({
 }) {
   const name = useAppState((s) => s.name);
   const ageGroupRaw = useAppState((s) => s.ageGroup);
+  const cohortAgeGroup = useAppState((s) => s.cohortAgeGroup);
+
   const xp = useAppState((s) => s.xp);
   const streak = useAppState((s) => s.streak);
   const completedLessons = useAppState((s) => s.completedLessons);
@@ -90,6 +92,8 @@ function PremiumChat({
           lessonContext,
           userName,
           ageGroup,
+          cohortAgeGroup,
+
           profile: {
             tier: tierInfo.tier,
             levelNumber: levelInfo.level,

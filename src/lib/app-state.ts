@@ -13,7 +13,11 @@ export type BadgeFrame = "none" | "gold" | "neon" | "rainbow" | "fire" | "ice";
 export type AppState = {
   name: string;
   ageGroup: "kids" | "tweens" | "teens" | "adults" | "pro";
+  // Onboarding cohort (mirrors the cloud profile columns).
+  cohortAgeGroup: "kid" | "teen" | "adult" | null;
+  knowledgeLevel: "new" | "some" | "experienced" | null;
   xp: number;
+
   gems: number;
   hearts: number;
   maxHearts: number;
@@ -56,7 +60,10 @@ export type AppState = {
 const DEFAULT_STATE: AppState = {
   name: "Alex",
   ageGroup: "teens",
+  cohortAgeGroup: null,
+  knowledgeLevel: null,
   xp: 60,
+
   gems: 120,
   hearts: 5,
   maxHearts: 5,
@@ -209,6 +216,9 @@ export type CloudProfile = {
   display_name: string | null;
   username?: string | null;
   age_group: string;
+  cohort_age_group?: string | null;
+  knowledge_level?: string | null;
+
 };
 
 /** Call once right after sign-in with the freshly-fetched profile row. */
@@ -236,6 +246,9 @@ export function hydrateFromCloud(profile: CloudProfile) {
     // onboarding/settings. Never fall back to a placeholder for a real account.
     name: profile.display_name || profile.username || DEFAULT_STATE.name,
     ageGroup: (profile.age_group as AppState["ageGroup"]) || DEFAULT_STATE.ageGroup,
+    cohortAgeGroup: (profile.cohort_age_group as AppState["cohortAgeGroup"]) ?? null,
+    knowledgeLevel: (profile.knowledge_level as AppState["knowledgeLevel"]) ?? null,
+
     // Admins see every level and lesson unlocked locally, regardless of
     // their actual `premium` column — this is never written back to the
     // database, it's purely a local override for rendering.
@@ -304,6 +317,13 @@ export function setPremium(p: AppState["premium"]) {
 export function setName(name: string) {
   setState((s) => ({ ...s, name }));
 }
+export function setCohort(cohort: {
+  cohortAgeGroup: AppState["cohortAgeGroup"];
+  knowledgeLevel: AppState["knowledgeLevel"];
+}) {
+  setState((s) => ({ ...s, ...cohort }));
+}
+
 export function setAgeGroup(ageGroup: AppState["ageGroup"]) {
   setState((s) => ({ ...s, ageGroup }));
 }
