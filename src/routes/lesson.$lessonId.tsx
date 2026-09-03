@@ -11,7 +11,7 @@ import {
   AlertCircle,
   Zap,
 } from "lucide-react";
-import { findLesson, fuzzyMatch, type Exercise } from "@/lib/course-data";
+import { findLesson, fuzzyMatch, wordBankFor, type Exercise } from "@/lib/course-data";
 import { AppShell } from "@/components/AppShell";
 import { ChestReward } from "@/components/ChestReward";
 import { Gem } from "@/components/GemBadge";
@@ -500,7 +500,10 @@ function FillBlank({
 }) {
   const [value, setValue] = useState("");
   const locked = status !== "idle";
-  const [before, after] = exercise.prompt.split("___________");
+  const parts = exercise.prompt.split(/_{2,}/);
+  const before = parts[0] ?? "";
+  const after = parts.slice(1).join(" ");
+  const bank = useMemo(() => wordBankFor(exercise), [exercise]);
 
   function check() {
     const accepted = [exercise.answer, ...(exercise.acceptableAnswers ?? [])];
@@ -521,11 +524,36 @@ function FillBlank({
           disabled={locked}
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="type here"
+          placeholder="type or pick"
           className="mx-1 inline-block w-44 rounded-lg border-b-2 border-primary bg-transparent px-2 py-1 text-center font-bold text-primary outline-none focus:border-accent"
         />
         {after}
       </p>
+
+      <p className="mt-6 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+        Word bank
+      </p>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {bank.map((w) => {
+          const picked = value.trim().toLowerCase() === w.toLowerCase();
+          return (
+            <button
+              key={w}
+              type="button"
+              disabled={locked}
+              onClick={() => setValue(w)}
+              className={`rounded-xl border-2 px-3 py-2 text-sm font-bold transition-all disabled:opacity-60 ${
+                picked
+                  ? "border-primary bg-primary/12 text-primary"
+                  : "border-border bg-card hover:border-primary hover:bg-primary/8"
+              }`}
+            >
+              {w}
+            </button>
+          );
+        })}
+      </div>
+
       {!locked && (
         <button
           disabled={!value.trim()}
@@ -538,6 +566,7 @@ function FillBlank({
     </div>
   );
 }
+
 
 function DragDrop({
   exercise,
@@ -686,18 +715,54 @@ function Matching({
     [exercise],
   );
 
-  // user picks: termIndex -> definition string
+  // termIndex -> definition string
   const [picks, setPicks] = useState<Record<number, string>>({});
-  const [activeTerm, setActiveTerm] = useState<number | null>(null);
-
-  function selectDef(d: string) {
-    if (locked || activeTerm === null) return;
-    setPicks((p) => ({ ...p, [activeTerm]: d }));
-    setActiveTerm(null);
-  }
+  const [drag, setDrag] = useState<{ def: string; x: number; y: number } | null>(null);
+  const [hover, setHover] = useState<number | null>(null);
+  const [justDropped, setJustDropped] = useState<number | null>(null);
 
   const usedDefs = new Set(Object.values(picks));
   const allFilled = Object.keys(picks).length === exercise.pairs.length;
+
+  function assign(termIndex: number, def: string) {
+    setPicks((prev) => {
+      const next: Record<number, string> = {};
+      // a definition can only be used once
+      for (const [k, v] of Object.entries(prev)) if (v !== def) next[Number(k)] = v;
+      next[termIndex] = def;
+      return next;
+    });
+    setJustDropped(termIndex);
+    window.setTimeout(() => setJustDropped(null), 400);
+  }
+
+  function startDrag(def: string, e: React.PointerEvent) {
+    if (locked) return;
+    e.preventDefault();
+    setDrag({ def, x: e.clientX, y: e.clientY });
+
+    const move = (ev: PointerEvent) => {
+      setDrag({ def, x: ev.clientX, y: ev.clientY });
+      const el = document
+        .elementFromPoint(ev.clientX, ev.clientY)
+        ?.closest("[data-drop-index]") as HTMLElement | null;
+      setHover(el ? Number(el.dataset.dropIndex) : null);
+    };
+    const up = (ev: PointerEvent) => {
+      const el = document
+        .elementFromPoint(ev.clientX, ev.clientY)
+        ?.closest("[data-drop-index]") as HTMLElement | null;
+      if (el) assign(Number(el.dataset.dropIndex), def);
+      setDrag(null);
+      setHover(null);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+  }
 
   function check() {
     const right = exercise.pairs.every((p, i) => picks[i] === p.definition);
@@ -705,37 +770,43 @@ function Matching({
   }
 
   return (
-    <div>
+    <div className="select-none">
       <h2 className="text-xl font-bold">{exercise.instruction}</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Drag each definition onto its matching term.
+      </p>
+
       <div className="mt-5 grid gap-3">
         {exercise.pairs.map((p, i) => {
           const sel = picks[i];
           const isCorrect = locked && sel === p.definition;
           const isWrong = locked && sel && sel !== p.definition;
-          const isActive = activeTerm === i;
+          const isHover = hover === i && !!drag;
           return (
-            <div key={i} className="grid grid-cols-[110px_1fr] gap-2">
-              <button
-                disabled={locked}
-                onClick={() => setActiveTerm(i)}
-                className={`rounded-xl border-2 px-3 py-2 text-sm font-bold transition-all ${
-                  isActive ? "border-primary bg-primary/10" : "border-border bg-card"
-                }`}
-              >
+            <div key={i} className="grid grid-cols-[110px_1fr] items-stretch gap-2">
+              <div className="grid place-items-center rounded-xl border-2 border-border bg-card px-3 py-2 text-center text-sm font-bold">
                 {p.term}
-              </button>
+              </div>
               <div
-                className={`rounded-xl border-2 px-3 py-2 text-sm transition-all ${
+                data-drop-index={i}
+                onClick={() => {
+                  if (!locked && sel) setPicks(({ [i]: _drop, ...rest }) => rest);
+                }}
+                className={`min-h-[44px] rounded-xl border-2 px-3 py-2 text-sm transition-all ${
+                  justDropped === i ? "animate-pop" : ""
+                } ${
                   isCorrect
                     ? "border-success bg-success/10 text-success"
                     : isWrong
                       ? "border-heart bg-heart/10 text-heart"
-                      : sel
-                        ? "border-primary bg-primary/5"
-                        : "border-dashed border-border bg-muted/40 text-muted-foreground"
+                      : isHover
+                        ? "scale-[1.02] border-primary bg-primary/15 shadow-glow"
+                        : sel
+                          ? "border-primary bg-primary/5 font-semibold"
+                          : "border-dashed border-border bg-muted/40 text-muted-foreground"
                 }`}
               >
-                {sel ?? (activeTerm === i ? "Pick a definition below..." : "—")}
+                {sel ?? (isHover ? "Drop here" : "Drag a definition here")}
               </div>
             </div>
           );
@@ -745,22 +816,31 @@ function Matching({
       <div className="mt-5 flex flex-wrap gap-2">
         {shuffledDefs.map(({ d, i }) => {
           const used = usedDefs.has(d);
+          const isDragging = drag?.def === d;
           return (
-            <button
+            <div
               key={i}
-              disabled={locked || used || activeTerm === null}
-              onClick={() => selectDef(d)}
-              className={`rounded-xl border px-3 py-2 text-sm font-semibold transition-all ${
+              onPointerDown={(e) => !used && startDrag(d, e)}
+              className={`touch-none rounded-xl border px-3 py-2 text-sm font-semibold transition-all ${
                 used
                   ? "border-border bg-muted text-muted-foreground line-through opacity-50"
-                  : "border-border bg-card hover:border-primary hover:bg-primary/10"
-              }`}
+                  : "cursor-grab border-border bg-card hover:border-primary hover:bg-primary/10 active:cursor-grabbing"
+              } ${isDragging ? "opacity-40" : ""}`}
             >
               {d}
-            </button>
+            </div>
           );
         })}
       </div>
+
+      {drag && (
+        <div
+          className="pointer-events-none fixed z-[100] -translate-x-1/2 -translate-y-1/2 rounded-xl border-2 border-primary bg-card px-3 py-2 text-sm font-bold text-primary shadow-glow"
+          style={{ left: drag.x, top: drag.y }}
+        >
+          {drag.def}
+        </div>
+      )}
 
       {!locked && (
         <button
@@ -774,6 +854,7 @@ function Matching({
     </div>
   );
 }
+
 
 function ShortAnswer({
   exercise,

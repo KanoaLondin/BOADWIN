@@ -12,6 +12,8 @@ export type Exercise =
       prompt: string;
       answer: string;
       acceptableAnswers?: string[];
+      /** Optional explicit word bank options (correct answer added automatically). */
+      wordBank?: string[];
     }
   | {
       type: "drag-drop";
@@ -936,4 +938,68 @@ export function fuzzyMatch(
   if (bestSim >= 0.95) status = "exact";
   else if (bestSim >= 0.8) status = "close";
   return { status, similarity: bestSim, correctAnswer: best };
+}
+
+// ---- Fill-in-the-blank word bank ----
+
+/** Every fill-blank answer used anywhere in the course (deduped). */
+const allBlankAnswers: string[] = (() => {
+  const set = new Set<string>();
+  for (const lv of levels)
+    for (const u of lv.units)
+      for (const l of u.lessons)
+        for (const ex of l.exercises ?? [])
+          if (ex.type === "fill-blank") set.add(ex.answer);
+  return [...set];
+})();
+
+function hash(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+/** Deterministic shuffle so the bank stays stable across re-renders. */
+function seededShuffle<T>(arr: T[], seed: number): T[] {
+  const a = [...arr];
+  let s = seed || 1;
+  for (let i = a.length - 1; i > 0; i--) {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    const j = s % (i + 1);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/**
+ * Build a word bank for a fill-blank exercise: the correct answer plus
+ * plausible distractors (other real answers from the course, preferring
+ * similar-length words). Deterministic for a given prompt.
+ */
+export function wordBankFor(
+  exercise: Extract<Exercise, { type: "fill-blank" }>,
+  size = 4,
+): string[] {
+  if (exercise.wordBank?.length) {
+    return seededShuffle(
+      [...new Set([exercise.answer, ...exercise.wordBank])],
+      hash(exercise.prompt),
+    );
+  }
+  const seed = hash(exercise.prompt);
+  const exclude = new Set(
+    [exercise.answer, ...(exercise.acceptableAnswers ?? [])].map((w) => w.toLowerCase()),
+  );
+  const target = exercise.answer.length;
+  const pool = allBlankAnswers
+    .filter((w) => !exclude.has(w.toLowerCase()))
+    .map((w) => ({ w, d: Math.abs(w.length - target) }))
+    .sort((a, b) => a.d - b.d || hash(a.w + seed) - hash(b.w + seed))
+    .slice(0, 12)
+    .map((x) => x.w);
+  const distractors = seededShuffle(pool, seed).slice(0, Math.max(1, size - 1));
+  return seededShuffle([exercise.answer, ...distractors], seed + 7);
 }
