@@ -75,12 +75,14 @@ export const KNOWLEDGE_QUESTIONS: KnowledgeQuestion[] = [
 export const RECOMMENDED_UNIT_BY_COURSE: Record<string, Record<KnowledgeLevel, string>> = {
   "prompt-engineering": { new: "u1", some: "u3", experienced: "u5" },
   "how-ai-works": { new: "h1", some: "h3", experienced: "h7" },
+  "agentic-coding": { new: "a1", some: "a3", experienced: "a5" },
 };
 
 /** Free-tier fallbacks so the recommendation is always actually reachable. */
 export const RECOMMENDED_UNIT_FREE_BY_COURSE: Record<string, Record<KnowledgeLevel, string>> = {
   "prompt-engineering": { new: "u1", some: "u3", experienced: "u4" },
   "how-ai-works": { new: "h1", some: "h2", experienced: "h3" },
+  "agentic-coding": { new: "a1", some: "a2", experienced: "a3" },
 };
 
 export const DEFAULT_COURSE_ID = "prompt-engineering";
