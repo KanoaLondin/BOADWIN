@@ -1,6 +1,11 @@
 // Course data for AIED: Prompt Engineering
 import { howAiWorksLevels } from "./course-how-ai-works";
 import { agenticCodingLevels } from "./course-agentic-coding";
+import { aiAgentsLevels } from "./course-ai-agents";
+import { aiEvaluationLevels } from "./course-ai-evaluation";
+import { aiSecurityLevels } from "./course-ai-security";
+import { aiEthicsLevels } from "./course-ai-ethics";
+import { implementingAiLevels } from "./course-implementing-ai";
 
 export type Exercise =
   | {
@@ -2095,6 +2100,12 @@ export interface Course {
   title: string;
   subtitle: string;
   emoji: string;
+  /** Difficulty label shown on the course page, e.g. "Intermediate". */
+  levelLabel?: string;
+  /** Courses recommended before this one ("None" when it's an entry point). */
+  prerequisites?: string;
+  /** External references this track was compiled from. */
+  sources?: string;
   levels: Level[];
 }
 
@@ -2104,6 +2115,8 @@ export const COURSES: Course[] = [
     title: "Prompt Engineering",
     subtitle: "Talk to AI like a pro",
     emoji: "\u2728",
+    levelLabel: "Beginner–Advanced",
+    prerequisites: "None",
     levels,
   },
   {
@@ -2111,6 +2124,8 @@ export const COURSES: Course[] = [
     title: "How AI Actually Works",
     subtitle: "The science inside the machine",
     emoji: "\ud83e\udde0",
+    levelLabel: "Beginner–Advanced",
+    prerequisites: "None",
     levels: howAiWorksLevels,
   },
   {
@@ -2118,9 +2133,67 @@ export const COURSES: Course[] = [
     title: "AI Coding Assistants",
     subtitle: "Agentic coding 101",
     emoji: "\ud83e\udd16",
+    levelLabel: "Beginner–Advanced",
+    prerequisites: "None",
     levels: agenticCodingLevels,
   },
+  {
+    id: "ai-agents",
+    title: "AI Agents & Agentic Workflows",
+    subtitle: "Models that act, not just answer",
+    emoji: "\ud83d\udd79\ufe0f",
+    levelLabel: "Intermediate",
+    prerequisites: "Prompt Engineering, AI Coding Assistants",
+    sources:
+      "UC Berkeley LLM Agents MOOC, Microsoft \u201cAI Agents for Beginners,\u201d Claude Code Ultimate Guide (agents/skills/MCP chapters), AI/LLM Red Team Handbook (agentic attack surface)",
+    levels: aiAgentsLevels,
+  },
+  {
+    id: "ai-evaluation",
+    title: "AI Evaluation & Testing",
+    subtitle: "Know whether it actually works",
+    emoji: "\ud83d\udcca",
+    levelLabel: "Intermediate",
+    prerequisites: "Prompt Engineering, How AI Actually Works",
+    sources:
+      "LLM Evaluation Guide (66-page compendium), Anthropic\u2019s Prompt Evaluations course, Hugging Face Evaluation Guidebook",
+    levels: aiEvaluationLevels,
+  },
+  {
+    id: "ai-security",
+    title: "AI Security & Red-Teaming",
+    subtitle: "How AI systems get attacked",
+    emoji: "\ud83d\udee1\ufe0f",
+    levelLabel: "Advanced",
+    prerequisites: "AI Agents & Agentic Workflows, Prompt Engineering",
+    sources:
+      "AI/LLM Red Team Handbook (\u201cThe Complete Consultant\u2019s Guide to AI LLM Security Testing\u201d), Google & DAIR.AI prompt engineering materials (injection/jailbreak sections)",
+    levels: aiSecurityLevels,
+  },
+  {
+    id: "ai-ethics",
+    title: "AI Ethics & Responsible AI",
+    subtitle: "Bias, governance and real harms",
+    emoji: "\u2696\ufe0f",
+    levelLabel: "Intermediate",
+    prerequisites: "How AI Actually Works",
+    sources:
+      "Syllabi from UT Austin (Ethics of AI), Northeastern (Responsible AI), University of Chicago Harris School (Ethics & Governance of AI), Stanford CS281 (Ethics of Artificial Intelligence)",
+    levels: aiEthicsLevels,
+  },
+  {
+    id: "implementing-ai",
+    title: "Implementing AI Into Your Life & Business",
+    subtitle: "Adoption is a people problem",
+    emoji: "\ud83d\ude80",
+    levelLabel: "Beginner\u2013Intermediate",
+    prerequisites: "None (an entry point to the whole hub)",
+    sources:
+      "GitHub\u2019s AI Adoption Playbook (CC-BY-4.0), Anthropic Economic Index research, Salesforce Ventures AI Implementation Playbook",
+    levels: implementingAiLevels,
+  },
 ];
+
 
 /** Every level across every course track. */
 export const allLevels: Level[] = COURSES.flatMap((c) => c.levels);
