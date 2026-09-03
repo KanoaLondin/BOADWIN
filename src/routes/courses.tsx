@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Lock, Check, Star, Trophy, Crown } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { levels, type Unit, type Level } from "@/lib/course-data";
+import { COURSES, type Unit, type Level } from "@/lib/course-data";
 import { useAppState } from "@/lib/app-state";
 import { recommendedUnitId } from "@/lib/cohort";
 
@@ -44,14 +44,18 @@ function Courses() {
   const completed = useMemo(() => new Set(completedList), [completedList]);
   const premiumState = useAppState((s) => s.premium);
   const knowledgeLevel = useAppState((s) => s.knowledgeLevel);
+  const [courseId, setCourseId] = useState(COURSES[0].id);
+
+  const course = COURSES.find((c) => c.id === courseId) ?? COURSES[0];
+  const courseLevels = course.levels;
 
   // Cohort recommendation — a highlight only, nothing extra gets locked.
-  const recommendedUnit = recommendedUnitId(knowledgeLevel, !!premiumState);
+  const recommendedUnit = recommendedUnitId(knowledgeLevel, !!premiumState, course.id);
 
   // Current lesson = first non-completed in the recommended unit, else the
   // first non-completed lesson in the first unlocked level.
   let current: string | null = null;
-  for (const lv of levels) {
+  for (const lv of courseLevels) {
     if (lv.tier !== "Free" && !premiumState) break;
     const unit = lv.units.find((u) => u.id === recommendedUnit);
     const lesson = unit?.lessons.find((l) => !completed.has(l.id));
@@ -61,7 +65,7 @@ function Courses() {
     }
   }
   if (!current) {
-    outer: for (const lv of levels) {
+    outer: for (const lv of courseLevels) {
       if (lv.tier !== "Free" && !premiumState) break;
       for (const u of lv.units) {
         for (const l of u.lessons) {
@@ -74,6 +78,11 @@ function Courses() {
     }
   }
 
+  const unitCount = courseLevels.reduce((n, lv) => n + lv.units.length, 0);
+  const lessonCount = courseLevels.reduce(
+    (n, lv) => n + lv.units.reduce((m, u) => m + u.lessons.length, 0),
+    0,
+  );
 
   let unitIndex = -1;
 
@@ -81,12 +90,47 @@ function Courses() {
     <AppShell>
       <header className="mb-4">
         <p className="text-xs font-bold uppercase tracking-widest text-purple">Adventure Map</p>
-        <h1 className="text-3xl font-black">Prompt Engineering</h1>
-        <p className="text-sm text-muted-foreground">Travel through 5 lands · 10 worlds · 50+ lessons</p>
+        <h1 className="text-3xl font-black">{course.title}</h1>
+        <p className="text-sm text-muted-foreground">
+          {course.subtitle} · {courseLevels.length} lands · {unitCount} worlds · {lessonCount} lessons
+        </p>
       </header>
 
+      {/* Course track switcher */}
+      <div className="mb-6 grid grid-cols-2 gap-2">
+        {COURSES.map((c) => {
+          const active = c.id === course.id;
+          const done = c.levels.reduce(
+            (n, lv) => n + lv.units.reduce((m, u) => m + u.lessons.filter((l) => completed.has(l.id)).length, 0),
+            0,
+          );
+          const total = c.levels.reduce(
+            (n, lv) => n + lv.units.reduce((m, u) => m + u.lessons.length, 0),
+            0,
+          );
+          return (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => setCourseId(c.id)}
+              className={`rounded-2xl border-2 p-3 text-left transition-all ${
+                active
+                  ? "border-primary bg-primary/10 shadow-glow"
+                  : "border-border bg-card hover:border-primary/40"
+              }`}
+            >
+              <p className="text-xl">{c.emoji}</p>
+              <p className="mt-1 text-sm font-black leading-tight">{c.title}</p>
+              <p className="text-[11px] text-muted-foreground">
+                {done}/{total} lessons
+              </p>
+            </button>
+          );
+        })}
+      </div>
+
       <div className="space-y-10">
-        {levels.map((level, li) => {
+        {courseLevels.map((level, li) => {
           const levelLocked = level.tier !== "Free" && !premiumState;
           return (
             <section key={level.id} className="space-y-6">
@@ -114,6 +158,7 @@ function Courses() {
     </AppShell>
   );
 }
+
 
 function LevelBanner({ level, index, locked }: { level: Level; index: number; locked: boolean }) {
   return (
