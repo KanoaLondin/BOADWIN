@@ -83,7 +83,7 @@ function Login() {
 
           <button
             type="submit"
-            disabled={!canSubmit || submitting}
+            disabled={submitting}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl gradient-hero px-6 py-4 font-black text-white shadow-glow transition-transform hover:scale-[1.02] disabled:opacity-40 disabled:shadow-none"
           >
             {submitting ? (
