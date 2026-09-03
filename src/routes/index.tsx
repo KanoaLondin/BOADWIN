@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ChevronRight, Sparkles, Flame, Zap } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { levels } from "@/lib/course-data";
+import { COURSES, allLevels, courseForUnit } from "@/lib/course-data";
 import { useAppState } from "@/lib/app-state";
 import { isKidCohort, recommendedUnitId } from "@/lib/cohort";
 
@@ -60,7 +60,7 @@ function Home() {
   // "Continue learning" lands on the unit recommended for this learner's
   // cohort, falling back to the next unfinished lesson anywhere.
   const recommendedUnit = recommendedUnitId(knowledgeLevel, !!premium);
-  const allUnits = levels.flatMap((lv) => lv.units.map((u) => ({ unit: u, level: lv })));
+  const allUnits = allLevels.flatMap((lv) => lv.units.map((u) => ({ unit: u, level: lv })));
   const recommended = allUnits.find((x) => x.unit.id === recommendedUnit) ?? allUnits[0];
   const isRecommendedStart = recommended.unit.lessons.some((l) => !completed.includes(l.id));
   const target = isRecommendedStart
@@ -166,7 +166,7 @@ function Home() {
           className="group block overflow-hidden rounded-3xl gradient-hero p-6 shadow-glow transition-transform hover:scale-[1.01]"
         >
           <p className="text-xs font-black uppercase tracking-widest text-white/80">
-            Prompt Engineering · {currentLevel.title}
+            {courseForUnit(target.unit.id)?.title ?? "Prompt Engineering"} · {currentLevel.title}
           </p>
           {isRecommendedStart && knowledgeLevel && knowledgeLevel !== "new" && (
             <span className="mt-2 inline-block rounded-full bg-white/25 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white backdrop-blur">
@@ -191,6 +191,46 @@ function Home() {
             </div>
           </div>
         </Link>
+      </section>
+
+      {/* Your courses */}
+      <section className="mt-6">
+        <h3 className="mb-3 text-sm font-black uppercase tracking-wider text-muted-foreground">
+          Your courses
+        </h3>
+        <div className="space-y-3">
+          {COURSES.map((c) => {
+            const lessons = c.levels.flatMap((lv) => lv.units.flatMap((u) => u.lessons));
+            const done = lessons.filter((l) => completed.includes(l.id)).length;
+            const pct = Math.round((done / lessons.length) * 100);
+            const recUnitId = recommendedUnitId(knowledgeLevel, !!premium, c.id);
+            const recUnit = c.levels.flatMap((lv) => lv.units).find((u) => u.id === recUnitId);
+            return (
+              <Link
+                key={c.id}
+                to="/courses"
+                className="block rounded-3xl border border-border bg-card p-4 shadow-soft transition-transform hover:scale-[1.01]"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{c.emoji}</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-black">{c.title}</p>
+                    <p className="text-xs text-muted-foreground">{c.subtitle}</p>
+                  </div>
+                  <span className="text-xs font-black text-muted-foreground">{pct}%</span>
+                </div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+                  <div className="h-full rounded-full gradient-xp" style={{ width: `${pct}%` }} />
+                </div>
+                {recUnit && (
+                  <p className="mt-2 text-[11px] font-bold text-primary">
+                    ⭐ Start here: {recUnit.title}
+                  </p>
+                )}
+              </Link>
+            );
+          })}
+        </div>
       </section>
 
       {/* Tip */}

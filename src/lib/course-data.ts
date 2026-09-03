@@ -1,4 +1,5 @@
 // Course data for AIED: Prompt Engineering
+import { howAiWorksLevels } from "./course-how-ai-works";
 
 export type Exercise =
   | {
@@ -2086,8 +2087,44 @@ export const levels: Level[] = [
   },
 ];
 
+// ---- Course tracks ----
+
+export interface Course {
+  id: string;
+  title: string;
+  subtitle: string;
+  emoji: string;
+  levels: Level[];
+}
+
+export const COURSES: Course[] = [
+  {
+    id: "prompt-engineering",
+    title: "Prompt Engineering",
+    subtitle: "Talk to AI like a pro",
+    emoji: "\u2728",
+    levels,
+  },
+  {
+    id: "how-ai-works",
+    title: "How AI Actually Works",
+    subtitle: "The science inside the machine",
+    emoji: "\ud83e\udde0",
+    levels: howAiWorksLevels,
+  },
+];
+
+/** Every level across every course track. */
+export const allLevels: Level[] = COURSES.flatMap((c) => c.levels);
+
+export function courseForUnit(unitId: string): Course | null {
+  for (const c of COURSES)
+    for (const lv of c.levels) if (lv.units.some((u) => u.id === unitId)) return c;
+  return null;
+}
+
 export function findLesson(lessonId: string): { lesson: Lesson; unit: Unit; level: Level } | null {
-  for (const level of levels) {
+  for (const level of allLevels) {
     for (const unit of level.units) {
       for (const l of unit.lessons) {
         if (l.id === lessonId) return { lesson: l, unit, level };
@@ -2162,7 +2199,7 @@ export function fuzzyMatch(
 /** Every fill-blank answer used anywhere in the course (deduped). */
 const allBlankAnswers: string[] = (() => {
   const set = new Set<string>();
-  for (const lv of levels)
+  for (const lv of allLevels)
     for (const u of lv.units)
       for (const l of u.lessons)
         for (const ex of l.exercises ?? [])

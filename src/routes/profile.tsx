@@ -7,7 +7,7 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 import {
   useAppState, equipOutfit, equipStreakColor, equipProfileBg, equipBadgeFrame,
 } from "@/lib/app-state";
-import { levels } from "@/lib/course-data";
+import { allLevels } from "@/lib/course-data";
 import { getLevelInfo, getProgressToNext } from "@/lib/level-system";
 
 export const Route = createFileRoute("/profile")({
@@ -52,7 +52,7 @@ function Profile() {
   const skipTokens = useAppState((s) => s.skipTokens);
   const hintTokens = useAppState((s) => s.hintTokens);
 
-  const totalLessons = levels.flatMap((l) => l.units.flatMap((u) => u.lessons)).length;
+  const totalLessons = allLevels.flatMap((l) => l.units.flatMap((u) => u.lessons)).length;
   const certProgress = Math.min(100, Math.round((completed.length / totalLessons) * 100));
   const userLevel = getLevelInfo(xp);
   const lvlProgress = getProgressToNext(xp);

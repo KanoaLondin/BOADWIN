@@ -71,26 +71,36 @@ export const KNOWLEDGE_QUESTIONS: KnowledgeQuestion[] = [
   },
 ];
 
-/** Recommended starting unit for each knowledge level. */
-export const RECOMMENDED_UNIT: Record<KnowledgeLevel, string> = {
-  new: "u1",
-  some: "u3",
-  experienced: "u5",
+/** Recommended starting unit per course, for each knowledge level. */
+export const RECOMMENDED_UNIT_BY_COURSE: Record<string, Record<KnowledgeLevel, string>> = {
+  "prompt-engineering": { new: "u1", some: "u3", experienced: "u5" },
+  "how-ai-works": { new: "h1", some: "h3", experienced: "h7" },
 };
 
-/** Free-tier fallback so the recommendation is always actually reachable. */
-export const RECOMMENDED_UNIT_FREE: Record<KnowledgeLevel, string> = {
-  new: "u1",
-  some: "u3",
-  experienced: "u4",
+/** Free-tier fallbacks so the recommendation is always actually reachable. */
+export const RECOMMENDED_UNIT_FREE_BY_COURSE: Record<string, Record<KnowledgeLevel, string>> = {
+  "prompt-engineering": { new: "u1", some: "u3", experienced: "u4" },
+  "how-ai-works": { new: "h1", some: "h2", experienced: "h3" },
 };
+
+export const DEFAULT_COURSE_ID = "prompt-engineering";
+
+/** Recommended starting unit for each knowledge level (prompt engineering). */
+export const RECOMMENDED_UNIT = RECOMMENDED_UNIT_BY_COURSE[DEFAULT_COURSE_ID];
+
+/** Free-tier fallback so the recommendation is always actually reachable. */
+export const RECOMMENDED_UNIT_FREE = RECOMMENDED_UNIT_FREE_BY_COURSE[DEFAULT_COURSE_ID];
 
 export function recommendedUnitId(
   knowledgeLevel: KnowledgeLevel | null | undefined,
   hasPremium: boolean,
+  courseId: string = DEFAULT_COURSE_ID,
 ): string {
   const level = knowledgeLevel ?? "new";
-  return hasPremium ? RECOMMENDED_UNIT[level] : RECOMMENDED_UNIT_FREE[level];
+  const table = hasPremium
+    ? (RECOMMENDED_UNIT_BY_COURSE[courseId] ?? RECOMMENDED_UNIT)
+    : (RECOMMENDED_UNIT_FREE_BY_COURSE[courseId] ?? RECOMMENDED_UNIT_FREE);
+  return table[level];
 }
 
 /** Maps the cohort age band onto the app's existing age-group setting. */
