@@ -16,11 +16,17 @@ function Login() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const canSubmit = /\S+@\S+\.\S+/.test(email) && password.length > 0;
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!canSubmit || submitting) return;
+    if (submitting) return;
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
     setSubmitting(true);
     setError(null);
     try {
@@ -77,7 +83,7 @@ function Login() {
 
           <button
             type="submit"
-            disabled={!canSubmit || submitting}
+            disabled={submitting}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl gradient-hero px-6 py-4 font-black text-white shadow-glow transition-transform hover:scale-[1.02] disabled:opacity-40 disabled:shadow-none"
           >
             {submitting ? (
