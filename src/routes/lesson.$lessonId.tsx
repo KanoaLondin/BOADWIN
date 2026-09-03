@@ -298,7 +298,7 @@ function CompleteScreen({
             </div>
             <div className="rounded-2xl bg-card border border-border p-3 shadow-soft">
               <p className="text-[10px] uppercase text-muted-foreground">Hearts</p>
-              <p className="mt-1 text-xl font-black text-heart">{hearts}/5</p>
+              <p className="mt-1 text-xl font-black text-heart">5/5</p>
             </div>
           </div>
 
