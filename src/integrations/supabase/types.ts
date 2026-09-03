@@ -83,11 +83,13 @@ export type Database = {
           age_group: string
           al_outfit: string
           bio: string | null
+          cohort_age_group: string | null
           created_at: string
           display_name: string | null
           gems: number
           hearts: number
           id: string
+          knowledge_level: string | null
           last_active_at: string
           member_since: string
           premium: string
@@ -105,11 +107,13 @@ export type Database = {
           age_group?: string
           al_outfit?: string
           bio?: string | null
+          cohort_age_group?: string | null
           created_at?: string
           display_name?: string | null
           gems?: number
           hearts?: number
           id: string
+          knowledge_level?: string | null
           last_active_at?: string
           member_since?: string
           premium?: string
@@ -127,11 +131,13 @@ export type Database = {
           age_group?: string
           al_outfit?: string
           bio?: string | null
+          cohort_age_group?: string | null
           created_at?: string
           display_name?: string | null
           gems?: number
           hearts?: number
           id?: string
+          knowledge_level?: string | null
           last_active_at?: string
           member_since?: string
           premium?: string

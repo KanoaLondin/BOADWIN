@@ -18,6 +18,7 @@ type ChatBody = {
   };
   userName?: string;
   ageGroup?: "kids" | "tweens" | "teens" | "adults" | "pro";
+  cohortAgeGroup?: "kid" | "teen" | "adult";
   profile?: {
     tier?: AlTier;
     levelNumber?: number;
@@ -93,6 +94,8 @@ function buildSystemPrompt(body: ChatBody): string {
     p.recentHinted?.length ? `- Recently struggled (used hints on): ${p.recentHinted.slice(-3).join(", ")}` : "",
   ].filter(Boolean).join("\n");
 
+  const kidSafe = body.cohortAgeGroup === "kid" || audience === "kids";
+
   return [
     "You are AL, the friendly adaptive AI tutor inside the AIED app, which teaches AI literacy and prompt engineering Duolingo-style.",
     "",
@@ -114,6 +117,19 @@ function buildSystemPrompt(body: ChatBody): string {
     "- If perfect scores are listed, briefly acknowledge their mastery and offer one optional 'cool bonus fact' or preview of the next lesson.",
     "- Never repeat lesson text verbatim — always reframe.",
     "",
+    kidSafe
+      ? [
+          "KID-SAFE MODE (the learner is 8-12 years old):",
+          "- Use simple, everyday words and short sentences. Always warm and encouraging.",
+          "- Never use scary, adult, or violent examples.",
+          "- If the topic touches AI risks or misuse (e.g. tricking an AI into breaking its rules),",
+          "  frame it gently as 'why AI has safety rules and why we follow them' — never give",
+          "  step-by-step technical detail, and never use security-research framing.",
+          "- Redirect any request for how to bypass an AI's safety rules into a friendly lesson",
+          "  about being a kind and responsible AI user.",
+          "",
+        ].join("\n")
+      : "",
     "GROUND RULES:",
     "- Never make the user feel bad for not knowing something. Always encouraging, patient, clear.",
     "- Never give away full answers to lesson exercises — guide them to think it through (leading questions, hints).",

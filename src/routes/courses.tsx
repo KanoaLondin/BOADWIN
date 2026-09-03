@@ -4,6 +4,8 @@ import { Lock, Check, Star, Trophy, Crown } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { levels, type Unit, type Level } from "@/lib/course-data";
 import { useAppState } from "@/lib/app-state";
+import { recommendedUnitId } from "@/lib/cohort";
+
 
 export const Route = createFileRoute("/courses")({
   component: Courses,
@@ -41,20 +43,37 @@ function Courses() {
   const completedList = useAppState((s) => s.completedLessons);
   const completed = useMemo(() => new Set(completedList), [completedList]);
   const premiumState = useAppState((s) => s.premium);
+  const knowledgeLevel = useAppState((s) => s.knowledgeLevel);
 
-  // figure out current lesson = first non-completed in first unlocked level
+  // Cohort recommendation — a highlight only, nothing extra gets locked.
+  const recommendedUnit = recommendedUnitId(knowledgeLevel, !!premiumState);
+
+  // Current lesson = first non-completed in the recommended unit, else the
+  // first non-completed lesson in the first unlocked level.
   let current: string | null = null;
-  outer: for (const lv of levels) {
+  for (const lv of levels) {
     if (lv.tier !== "Free" && !premiumState) break;
-    for (const u of lv.units) {
-      for (const l of u.lessons) {
-        if (!completed.has(l.id)) {
-          current = l.id;
-          break outer;
+    const unit = lv.units.find((u) => u.id === recommendedUnit);
+    const lesson = unit?.lessons.find((l) => !completed.has(l.id));
+    if (lesson) {
+      current = lesson.id;
+      break;
+    }
+  }
+  if (!current) {
+    outer: for (const lv of levels) {
+      if (lv.tier !== "Free" && !premiumState) break;
+      for (const u of lv.units) {
+        for (const l of u.lessons) {
+          if (!completed.has(l.id)) {
+            current = l.id;
+            break outer;
+          }
         }
       }
     }
   }
+
 
   let unitIndex = -1;
 
@@ -83,7 +102,9 @@ function Courses() {
                     completed={completed}
                     current={current}
                     locked={levelLocked}
+                    recommended={unit.id === recommendedUnit && knowledgeLevel !== "new"}
                   />
+
                 );
               })}
             </section>
@@ -131,13 +152,16 @@ function UnitPath({
   completed,
   current,
   locked,
+  recommended = false,
 }: {
   unit: Unit;
   theme: Theme;
   completed: Set<string>;
   current: string | null;
   locked: boolean;
+  recommended?: boolean;
 }) {
+
   // S-curve offsets per row index
   const nodeOffsets = [0, 70, 100, 70, 0, -70, -100, -70];
   const ROW_H = 110;
@@ -163,7 +187,11 @@ function UnitPath({
   });
 
   return (
-    <div className="overflow-hidden rounded-3xl border-2 border-border bg-card shadow-card">
+    <div
+      className={`overflow-hidden rounded-3xl border-2 bg-card shadow-card ${
+        recommended ? "border-primary ring-2 ring-primary/40" : "border-border"
+      }`}
+    >
       <div className={`bg-gradient-to-br ${theme.bg} px-4 py-3`}>
         <div className="flex items-center gap-2">
           <span className="text-2xl">{theme.emoji}</span>
@@ -171,9 +199,15 @@ function UnitPath({
             <p className={`text-[10px] font-black uppercase tracking-widest ${theme.accent}`}>{theme.name}</p>
             <h3 className="text-base font-black text-foreground">{unit.title}</h3>
             <p className="text-[11px] text-foreground/70">{unit.description}</p>
+            {recommended && (
+              <span className="mt-1.5 inline-block rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-primary-foreground shadow-glow">
+                ⭐ Recommended for you — start here
+              </span>
+            )}
           </div>
         </div>
       </div>
+
 
       <div className="relative px-2 pb-6 pt-2 bg-parchment/40">
         <svg

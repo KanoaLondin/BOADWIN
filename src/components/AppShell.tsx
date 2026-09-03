@@ -5,6 +5,8 @@ import { TopBar } from "./TopBar";
 import { UpgradeRequiredModal } from "./UpgradeRequiredModal";
 import { LevelUpWatcher } from "./LevelUpWatcher";
 import { BoostWatcher } from "./BoostWatcher";
+import { CohortGate } from "./CohortGate";
+
 import { useAppState } from "@/lib/app-state";
 
 const NAV_ORDER = ["/", "/courses", "/leaderboard", "/achievements", "/profile", "/shop"];
@@ -60,6 +62,8 @@ export function AppShell({
       <UpgradeRequiredModal />
       <LevelUpWatcher />
       <BoostWatcher />
+      <CohortGate />
+
     </div>
   );
 }

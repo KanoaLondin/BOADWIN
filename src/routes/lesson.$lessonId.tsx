@@ -916,7 +916,9 @@ function FeedbackBar({
   onContinue: () => void;
   fallbackCorrect: string;
 }) {
+  const kid = useAppState((s) => s.cohortAgeGroup) === "kid";
   if (status === "idle") return null;
+
 
   const cfg =
     status === "correct"
@@ -925,7 +927,7 @@ function FeedbackBar({
           color: "text-success",
           btn: "bg-success",
           icon: <Check className="h-5 w-5" />,
-          title: "Nailed it!",
+          title: kid ? "Awesome job! 🎉" : "Nailed it!",
           anim: "animate-pop",
         }
       : status === "close"
@@ -934,7 +936,7 @@ function FeedbackBar({
             color: "text-warning",
             btn: "bg-warning",
             icon: <ThumbsUp className="h-5 w-5" />,
-            title: "Close enough!",
+            title: kid ? "So close — great try! 🌟" : "Close enough!",
             anim: "animate-pop",
           }
         : {
@@ -942,7 +944,7 @@ function FeedbackBar({
             color: "text-heart",
             btn: "bg-heart",
             icon: <AlertCircle className="h-5 w-5" />,
-            title: "Not quite",
+            title: kid ? "Good try! Let's look together 💛" : "Not quite",
             anim: "animate-shake",
           };
 

@@ -1,56 +1,77 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, ArrowLeft, Check, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, Sparkles, Loader2 } from "lucide-react";
 import { Mascot } from "@/components/Mascot";
-import { setAgeGroup, setName, type AppState } from "@/lib/app-state";
+import { setAgeGroup, setCohort, setName } from "@/lib/app-state";
 import { validateUsername } from "@/lib/profanity";
+import { AGE_BANDS, KNOWLEDGE_QUESTIONS, appAgeGroupFor, type CohortAgeGroup } from "@/lib/cohort";
+import { saveCohort } from "@/lib/cohort.functions";
+import { refreshProfile } from "@/lib/auth";
 
 export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
-  head: () => ({ meta: [{ title: "Welcome — AIED" }] }),
+  head: () => ({
+    meta: [
+      { title: "Welcome — AIED" },
+      { name: "description", content: "Set up your AIED learning profile in under a minute." },
+    ],
+  }),
 });
 
-type AgeId = AppState["ageGroup"];
-
-const GROUPS: { id: AgeId; label: string; age: string; emoji: string }[] = [
-  { id: "kids",   label: "Kids",   age: "Ages 6-10",       emoji: "🧒" },
-  { id: "tweens", label: "Tweens", age: "Ages 11-13",      emoji: "🎒" },
-  { id: "teens",  label: "Teens",  age: "Ages 14-17",      emoji: "🎓" },
-  { id: "adults", label: "Adult",  age: "College / Adult", emoji: "💼" },
-  { id: "pro",    label: "Pro",    age: "Professional",    emoji: "🏆" },
-];
-
 const GOALS = [
-  { mins: 5,  xp: 50,  label: "Casual",  desc: "5 min/day" },
+  { mins: 5, xp: 50, label: "Casual", desc: "5 min/day" },
   { mins: 10, xp: 100, label: "Regular", desc: "10 min/day" },
   { mins: 15, xp: 150, label: "Serious", desc: "15 min/day" },
   { mins: 20, xp: 200, label: "Intense", desc: "20 min/day" },
 ];
 
+const QUIZ_START = 3;
+const TOTAL_STEPS = QUIZ_START + KNOWLEDGE_QUESTIONS.length; // age, name, goal, 5 questions
+
 function Onboarding() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [age, setAge] = useState<AgeId | null>(null);
+  const [band, setBand] = useState<string | null>(null);
   const [nameVal, setNameVal] = useState("");
   const [goal, setGoal] = useState<number | null>(null);
+  const [answers, setAnswers] = useState<number[]>(() =>
+    KNOWLEDGE_QUESTIONS.map(() => -1),
+  );
+  const [saving, setSaving] = useState(false);
 
   const nameError = nameVal.trim() ? validateUsername(nameVal, 2) : null;
+  const ageGroup: CohortAgeGroup =
+    AGE_BANDS.find((b) => b.id === band)?.group ?? "adult";
+  const quizIndex = step - QUIZ_START;
 
-  function finish() {
-    if (nameError) return;
-    if (age) setAgeGroup(age);
+  async function finish() {
+    if (nameError || saving) return;
+    setSaving(true);
+    setAgeGroup(appAgeGroupFor(ageGroup));
     if (nameVal.trim()) setName(nameVal.trim());
     if (typeof window !== "undefined" && goal != null) {
       localStorage.setItem("aied:dailyGoalXp", String(goal));
     }
-    navigate({ to: "/" });
+    try {
+      // Scored server-side; the user never sees a score, just personalization.
+      const result = await saveCohort({
+        data: { ageGroup, answers: answers.map((a) => (a < 0 ? 9 : a)) },
+      });
+      setCohort({ cohortAgeGroup: result.ageGroup, knowledgeLevel: result.knowledgeLevel });
+      await refreshProfile();
+    } catch (err) {
+      console.error("[onboarding] cohort save failed", err);
+    } finally {
+      setSaving(false);
+      navigate({ to: "/" });
+    }
   }
 
   const canNext =
-    (step === 0 && !!age) ||
+    (step === 0 && !!band) ||
     (step === 1 && nameVal.trim().length >= 2 && !nameError) ||
-    (step === 2 && goal != null);
-  const totalSteps = 3;
+    (step === 2 && goal != null) ||
+    (step >= QUIZ_START && answers[quizIndex] >= 0);
 
   return (
     <div className="grid min-h-screen place-items-center bg-gradient-to-br from-purple/5 via-background to-cyan/5 px-4 py-10">
@@ -68,7 +89,7 @@ function Onboarding() {
             <span className="h-8 w-8" />
           )}
           <div className="flex flex-1 gap-1.5">
-            {Array.from({ length: totalSteps }).map((_, i) => (
+            {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
               <div
                 key={i}
                 className={`h-1.5 flex-1 rounded-full transition-all ${
@@ -95,25 +116,22 @@ function Onboarding() {
               <p className="mt-1 text-sm text-muted-foreground">
                 Saving futures through AI literacy
               </p>
-              <p className="mt-6 text-sm font-bold">Who's learning today?</p>
+              <p className="mt-6 text-sm font-bold">How old are you?</p>
             </div>
             <div className="mt-4 space-y-3">
-              {GROUPS.map((g) => (
+              {AGE_BANDS.map((b) => (
                 <button
-                  key={g.id}
-                  onClick={() => setAge(g.id)}
-                  className={`flex w-full items-center gap-4 rounded-2xl border-2 p-4 text-left transition-all ${
-                    age === g.id
+                  key={b.id}
+                  onClick={() => setBand(b.id)}
+                  className={`flex w-full items-center gap-4 rounded-2xl border-2 p-5 text-left transition-all ${
+                    band === b.id
                       ? "border-primary bg-primary/10 shadow-glow"
                       : "border-border bg-card hover:border-primary/50"
                   }`}
                 >
-                  <span className="text-3xl">{g.emoji}</span>
-                  <div className="flex-1">
-                    <p className="font-black">{g.label}</p>
-                    <p className="text-xs text-muted-foreground">{g.age}</p>
-                  </div>
-                  {age === g.id && <Check className="h-5 w-5 text-primary" />}
+                  <span className="text-3xl">{b.emoji}</span>
+                  <p className="flex-1 text-xl font-black">{b.label}</p>
+                  {band === b.id && <Check className="h-5 w-5 text-primary" />}
                 </button>
               ))}
             </div>
@@ -175,13 +193,62 @@ function Onboarding() {
           </div>
         )}
 
+        {step >= QUIZ_START && (
+          <div className="animate-fade-in">
+            <div className="text-center">
+              <Mascot size={72} />
+              <p className="mt-4 text-xs font-black uppercase tracking-widest text-purple">
+                Let's see what you already know!
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                No grades, no pressure — this just helps us pick your starting point.
+              </p>
+              <h1 className="mt-4 text-xl font-black">
+                {KNOWLEDGE_QUESTIONS[quizIndex].prompt}
+              </h1>
+              <p className="mt-1 text-[11px] font-bold text-muted-foreground">
+                Question {quizIndex + 1} of {KNOWLEDGE_QUESTIONS.length}
+              </p>
+            </div>
+            <div className="mt-5 space-y-3">
+              {KNOWLEDGE_QUESTIONS[quizIndex].options.map((opt, oi) => {
+                const selected = answers[quizIndex] === oi;
+                return (
+                  <button
+                    key={opt}
+                    onClick={() =>
+                      setAnswers((prev) =>
+                        prev.map((a, i) => (i === quizIndex ? oi : a)),
+                      )
+                    }
+                    className={`flex w-full items-center gap-3 rounded-2xl border-2 p-4 text-left transition-all ${
+                      selected
+                        ? "border-primary bg-primary/10 shadow-glow"
+                        : "border-border bg-card hover:border-primary/50"
+                    }`}
+                  >
+                    <span className="flex-1 text-sm font-bold">{opt}</span>
+                    {selected && <Check className="h-5 w-5 text-primary" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <button
-          disabled={!canNext}
-          onClick={() => (step < totalSteps - 1 ? setStep((s) => s + 1) : finish())}
+          disabled={!canNext || saving}
+          onClick={() => (step < TOTAL_STEPS - 1 ? setStep((s) => s + 1) : finish())}
           className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl gradient-hero px-6 py-4 font-black text-white shadow-glow transition-transform hover:scale-[1.02] disabled:opacity-40 disabled:shadow-none"
         >
-          {step < totalSteps - 1 ? "Continue" : "Start learning"}
-          <ArrowRight className="h-5 w-5" />
+          {saving ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <>
+              {step < TOTAL_STEPS - 1 ? "Continue" : "Start learning"}
+              <ArrowRight className="h-5 w-5" />
+            </>
+          )}
         </button>
       </div>
     </div>

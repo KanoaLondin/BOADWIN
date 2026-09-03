@@ -4,6 +4,8 @@ import { ChevronRight, Sparkles, Flame, Zap } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { levels } from "@/lib/course-data";
 import { useAppState } from "@/lib/app-state";
+import { isKidCohort, recommendedUnitId } from "@/lib/cohort";
+
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -39,6 +41,9 @@ function Home() {
   const streak = useAppState((s) => s.streak);
   const completed = useAppState((s) => s.completedLessons);
   const boostUntil = useAppState((s) => s.xpBoostUntil);
+  const knowledgeLevel = useAppState((s) => s.knowledgeLevel);
+  const cohortAge = useAppState((s) => s.cohortAgeGroup);
+  const premium = useAppState((s) => s.premium);
 
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -51,11 +56,21 @@ function Home() {
 
   const dailyGoal = 50;
   const dailyXp = 30;
-  const currentLevel = levels[0];
-  const allLessons = currentLevel.units.flatMap((u) => u.lessons);
+
+  // "Continue learning" lands on the unit recommended for this learner's
+  // cohort, falling back to the next unfinished lesson anywhere.
+  const recommendedUnit = recommendedUnitId(knowledgeLevel, !!premium);
+  const allUnits = levels.flatMap((lv) => lv.units.map((u) => ({ unit: u, level: lv })));
+  const recommended = allUnits.find((x) => x.unit.id === recommendedUnit) ?? allUnits[0];
+  const isRecommendedStart = recommended.unit.lessons.some((l) => !completed.includes(l.id));
+  const target = isRecommendedStart
+    ? recommended
+    : (allUnits.find((x) => x.unit.lessons.some((l) => !completed.includes(l.id))) ?? allUnits[0]);
+  const currentLevel = target.level;
   const nextLesson =
-    allLessons.find((l) => !completed.includes(l.id)) ?? allLessons[0];
+    target.unit.lessons.find((l) => !completed.includes(l.id)) ?? target.unit.lessons[0];
   const tip = TIPS[new Date().getDay() % TIPS.length];
+  const kid = isKidCohort(cohortAge);
 
   return (
     <AppShell>
@@ -63,8 +78,11 @@ function Home() {
         <h2 className="text-3xl font-black text-foreground">
           Welcome back, {name}! 👋
         </h2>
-        <p className="mt-1 text-muted-foreground">Ready for today's AI lesson?</p>
+        <p className="mt-1 text-muted-foreground">
+          {kid ? "Let's learn something fun about AI today! 🌟" : "Ready for today's AI lesson?"}
+        </p>
       </section>
+
 
       {/* Quick stats */}
       <div className="mt-5 grid grid-cols-2 gap-3">
@@ -150,8 +168,14 @@ function Home() {
           <p className="text-xs font-black uppercase tracking-widest text-white/80">
             Prompt Engineering · {currentLevel.title}
           </p>
+          {isRecommendedStart && knowledgeLevel && knowledgeLevel !== "new" && (
+            <span className="mt-2 inline-block rounded-full bg-white/25 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white backdrop-blur">
+              ⭐ Recommended for you — start here
+            </span>
+          )}
           <h3 className="mt-2 text-2xl font-black text-white">{nextLesson.title}</h3>
-          <p className="mt-1 text-sm text-white/85">{currentLevel.units[0].title}</p>
+          <p className="mt-1 text-sm text-white/85">{target.unit.title}</p>
+
           <div className="mt-5 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-black text-white backdrop-blur">
