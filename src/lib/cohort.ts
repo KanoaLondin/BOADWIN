@@ -76,6 +76,11 @@ export const RECOMMENDED_UNIT_BY_COURSE: Record<string, Record<KnowledgeLevel, s
   "prompt-engineering": { new: "u1", some: "u3", experienced: "u5" },
   "how-ai-works": { new: "h1", some: "h3", experienced: "h7" },
   "agentic-coding": { new: "a1", some: "a3", experienced: "a5" },
+  "ai-agents": { new: "ag1", some: "ag3", experienced: "ag5" },
+  "ai-evaluation": { new: "ev1", some: "ev3", experienced: "ev5" },
+  "ai-security": { new: "sec1", some: "sec3", experienced: "sec5" },
+  "ai-ethics": { new: "eth1", some: "eth3", experienced: "eth5" },
+  "implementing-ai": { new: "imp1", some: "imp3", experienced: "imp5" },
 };
 
 /** Free-tier fallbacks so the recommendation is always actually reachable. */
@@ -83,7 +88,13 @@ export const RECOMMENDED_UNIT_FREE_BY_COURSE: Record<string, Record<KnowledgeLev
   "prompt-engineering": { new: "u1", some: "u3", experienced: "u4" },
   "how-ai-works": { new: "h1", some: "h2", experienced: "h3" },
   "agentic-coding": { new: "a1", some: "a2", experienced: "a3" },
+  "ai-agents": { new: "ag1", some: "ag2", experienced: "ag3" },
+  "ai-evaluation": { new: "ev1", some: "ev2", experienced: "ev3" },
+  "ai-security": { new: "sec1", some: "sec2", experienced: "sec3" },
+  "ai-ethics": { new: "eth1", some: "eth2", experienced: "eth3" },
+  "implementing-ai": { new: "imp1", some: "imp2", experienced: "imp3" },
 };
+
 
 export const DEFAULT_COURSE_ID = "prompt-engineering";
 
