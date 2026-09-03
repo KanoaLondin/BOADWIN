@@ -94,7 +94,26 @@ function Courses() {
         <p className="text-sm text-muted-foreground">
           {course.subtitle} · {courseLevels.length} lands · {unitCount} worlds · {lessonCount} lessons
         </p>
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          {course.levelLabel && (
+            <span className="rounded-full bg-purple/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-purple">
+              {course.levelLabel}
+            </span>
+          )}
+          {course.prerequisites && (
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold text-muted-foreground">
+              Prereqs: {course.prerequisites}
+            </span>
+          )}
+        </div>
+        {course.sources && (
+          <p className="mt-2 rounded-2xl border border-border bg-card px-3 py-2 text-[11px] leading-snug text-muted-foreground">
+            <span className="font-black uppercase tracking-wider text-foreground/70">Sources · </span>
+            {course.sources}
+          </p>
+        )}
       </header>
+
 
       {/* Course track switcher */}
       <div className="mb-6 grid grid-cols-2 gap-2">
