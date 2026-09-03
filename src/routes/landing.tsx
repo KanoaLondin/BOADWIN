@@ -143,6 +143,7 @@ function Nav() {
           <a href="#features" className="hover:text-foreground">Features</a>
           <a href="#ages" className="hover:text-foreground">For all ages</a>
           <a href="#pricing" className="hover:text-foreground">Pricing</a>
+          <Link to="/login" className="hover:text-foreground">Log in</Link>
           <a href="#download" className="rounded-full gradient-hero px-4 py-2 text-white shadow-glow">
             Get the app
           </a>
