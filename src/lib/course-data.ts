@@ -1,6 +1,11 @@
 // Course data for AIED: Prompt Engineering
 import { howAiWorksLevels } from "./course-how-ai-works";
 import { agenticCodingLevels } from "./course-agentic-coding";
+import { aiAgentsLevels } from "./course-ai-agents";
+import { aiEvaluationLevels } from "./course-ai-evaluation";
+import { aiSecurityLevels } from "./course-ai-security";
+import { aiEthicsLevels } from "./course-ai-ethics";
+import { implementingAiLevels } from "./course-implementing-ai";
 
 export type Exercise =
   | {
