@@ -389,9 +389,9 @@ export const agenticCodingLevels: Level[] = [
                 type: "matching",
                 instruction: "Sort each one:",
                 pairs: [
-                  { term: "Always run tests before finishing", definition: "Rule — put it in the file" },
+                  { term: "Always run tests before finishing", definition: "Rule — a habit for every session" },
                   { term: "Add a dark mode toggle today", definition: "Request — put it in your message" },
-                  { term: "Never edit the generated folder", definition: "Rule — put it in the file" },
+                  { term: "Never edit the generated folder", definition: "Rule — a permanent boundary" },
                 ],
               },
               {
@@ -446,9 +446,9 @@ export const agenticCodingLevels: Level[] = [
                 type: "matching",
                 instruction: "Match each to where it belongs:",
                 pairs: [
-                  { term: "Coding style rules", definition: "Instructions file" },
+                  { term: "Coding style rules", definition: "Instructions file — style conventions" },
                   { term: "Today's bug fix", definition: "Your message" },
-                  { term: "How to run the app", definition: "Instructions file" },
+                  { term: "How to run the app", definition: "Instructions file — setup steps" },
                 ],
               },
             ],
@@ -551,8 +551,8 @@ export const agenticCodingLevels: Level[] = [
                 instruction: "Rule or command?",
                 pairs: [
                   { term: "Never commit secrets", definition: "House rule — always on" },
-                  { term: "Run a full code review", definition: "Command — on demand" },
-                  { term: "Generate tests for a file", definition: "Command — on demand" },
+                  { term: "Run a full code review", definition: "Command — triggered when reviewing" },
+                  { term: "Generate tests for a file", definition: "Command — triggered when testing" },
                 ],
               },
               {
@@ -811,8 +811,8 @@ export const agenticCodingLevels: Level[] = [
                 instruction: "Match each hook to when it should run:",
                 pairs: [
                   { term: "Block edits to a protected file", definition: "Before the tool runs" },
-                  { term: "Auto-format the file just written", definition: "After the tool runs" },
-                  { term: "Log what changed", definition: "After the tool runs" },
+                  { term: "Auto-format the file just written", definition: "After the tool — tidy the result" },
+                  { term: "Log what changed", definition: "After the tool — record the change" },
                 ],
               },
               {
