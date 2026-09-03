@@ -429,6 +429,8 @@ export function completeLesson(
       completedLessons: done,
       perfectLessons: perf,
       lessonsSinceChest: s.lessonsSinceChest + 1,
+      // Completing a lesson restores hearts for the next one.
+      hearts: s.maxHearts,
     };
   });
   addGems(gemsEarned);
