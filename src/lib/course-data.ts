@@ -1,5 +1,6 @@
 // Course data for AIED: Prompt Engineering
 import { howAiWorksLevels } from "./course-how-ai-works";
+import { agenticCodingLevels } from "./course-agentic-coding";
 
 export type Exercise =
   | {
@@ -2111,6 +2112,13 @@ export const COURSES: Course[] = [
     subtitle: "The science inside the machine",
     emoji: "\ud83e\udde0",
     levels: howAiWorksLevels,
+  },
+  {
+    id: "agentic-coding",
+    title: "AI Coding Assistants",
+    subtitle: "Agentic coding 101",
+    emoji: "\ud83e\udd16",
+    levels: agenticCodingLevels,
   },
 ];
 
