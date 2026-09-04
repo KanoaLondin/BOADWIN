@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { Mascot } from "@/components/Mascot";
 import { signIn } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -15,6 +16,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,15 +31,45 @@ function Login() {
     }
     setSubmitting(true);
     setError(null);
+    setNotice(null);
     try {
-      await signIn({ email: email.trim(), password });
+      await signIn({ email: email.trim().toLowerCase(), password });
       navigate({ to: "/" });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Couldn't log you in.");
+      const message = err instanceof Error ? err.message : "";
+      setError(
+        /invalid login credentials/i.test(message)
+          ? "That email and password don't match an account. Check for typos, or use \u201cForgot password\u201d below."
+          : message || "Couldn't log you in.",
+      );
     } finally {
       setSubmitting(false);
     }
   }
+
+  async function handleForgot() {
+    if (submitting) return;
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("Enter your email above first, then tap Forgot password.");
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const { error: err } = await supabase.auth.resetPasswordForEmail(
+        email.trim().toLowerCase(),
+        { redirectTo: `${window.location.origin}/reset-password` },
+      );
+      if (err) throw err;
+      setNotice("Check your email for a link to set a new password.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't send the reset email.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
 
   return (
     <div className="grid min-h-screen place-items-center bg-gradient-to-br from-purple/5 via-background to-cyan/5 px-4 py-10">
@@ -80,6 +112,11 @@ function Login() {
               {error}
             </p>
           )}
+          {notice && (
+            <p className="rounded-xl bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary">
+              {notice}
+            </p>
+          )}
 
           <button
             type="submit"
@@ -94,6 +131,16 @@ function Login() {
               </>
             )}
           </button>
+
+          <button
+            type="button"
+            onClick={handleForgot}
+            disabled={submitting}
+            className="w-full py-1 text-center text-sm font-bold text-muted-foreground underline-offset-4 hover:underline disabled:opacity-40"
+          >
+            Forgot password?
+          </button>
+
         </form>
 
         <p className="mt-5 text-center text-sm text-muted-foreground">
