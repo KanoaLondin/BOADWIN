@@ -113,7 +113,12 @@ function SubscriptionPage() {
           const isCurrent =
             (p.id === "free" && current === false) || p.id === current;
           const isPaidSwitch = current !== false && p.id !== "free" && !isCurrent;
-          const cta = isPaidSwitch ? `Switch to ${p.name}` : p.cta;
+          const cta = isPaidSwitch
+            ? `Switch to ${p.name}`
+            : p.id === "free" && !isCurrent
+              ? "Switch to Free"
+              : p.cta;
+
           return (
             <div key={p.id} className={`relative rounded-3xl border-2 bg-card p-5 shadow-soft ${p.tone}`}>
               {"badge" in p && p.badge && (
