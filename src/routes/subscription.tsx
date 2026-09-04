@@ -1,8 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { ArrowLeft, Check, Crown, Sparkles, Users, Zap } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { setPremium, useAppState } from "@/lib/app-state";
 import { toast } from "sonner";
+
 
 export const Route = createFileRoute("/subscription")({
   component: SubscriptionPage,
@@ -56,6 +68,17 @@ const PLANS = [
 
 function SubscriptionPage() {
   const current = useAppState((s) => s.premium);
+  const renewalISO = useAppState((s) => s.premiumRenewalISO);
+  const [confirmCancel, setConfirmCancel] = useState(false);
+
+  const currentPlan = PLANS.find((p) => p.id === current);
+  const renewalLabel = renewalISO
+    ? new Date(renewalISO).toLocaleDateString(undefined, {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : null;
 
   function choose(id: "free" | "super" | "max" | "family") {
     if (id === "free") {
@@ -65,6 +88,12 @@ function SubscriptionPage() {
       setPremium(id);
       toast.success(`Welcome to ${PLANS.find((p) => p.id === id)!.name}!`);
     }
+  }
+
+  function cancelSubscription() {
+    setConfirmCancel(false);
+    setPremium(false);
+    toast.success("Your subscription has been cancelled.");
   }
 
   return (
@@ -83,6 +112,13 @@ function SubscriptionPage() {
         {PLANS.map((p) => {
           const isCurrent =
             (p.id === "free" && current === false) || p.id === current;
+          const isPaidSwitch = current !== false && p.id !== "free" && !isCurrent;
+          const cta = isPaidSwitch
+            ? `Switch to ${p.name}`
+            : p.id === "free" && !isCurrent
+              ? "Switch to Free"
+              : p.cta;
+
           return (
             <div key={p.id} className={`relative rounded-3xl border-2 bg-card p-5 shadow-soft ${p.tone}`}>
               {"badge" in p && p.badge && (
@@ -117,16 +153,72 @@ function SubscriptionPage() {
                   isCurrent ? "bg-muted text-muted-foreground" : "gradient-hero text-white shadow-glow hover:scale-[1.02]"
                 }`}
               >
-                {isCurrent ? "Current plan" : p.cta}
+                {isCurrent ? "Current plan" : cta}
               </button>
+
+              {isCurrent && current !== false && (
+                <div className="mt-3 text-center">
+                  {renewalLabel && (
+                    <p className="mb-1 text-[11px] text-muted-foreground">
+                      Renews on {renewalLabel}
+                    </p>
+                  )}
+                  <button
+                    onClick={() => setConfirmCancel(true)}
+                    className="text-xs font-black text-destructive underline underline-offset-4"
+                  >
+                    Cancel subscription
+                  </button>
+                </div>
+              )}
             </div>
           );
         })}
       </div>
 
       <p className="mt-6 text-center text-xs text-muted-foreground">
-        Subscriptions managed in the App Store or Google Play.
+        Plans are billed through your AIED account. You can switch plans or cancel any time right
+        here — no app store required.
       </p>
+
+      <AlertDialog open={confirmCancel} onOpenChange={setConfirmCancel}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Cancel {currentPlan?.name ?? "your subscription"}?
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-2 text-left">
+                <p>
+                  You'll keep your {currentPlan?.name ?? "paid"} features until
+                  {renewalLabel ? ` ${renewalLabel}` : " the end of your current billing period"},
+                  then your account moves to the Free plan.
+                </p>
+                <p>After that you'll lose:</p>
+                <ul className="list-disc space-y-1 pl-5">
+                  <li>Access to every level above Elementary</li>
+                  <li>Unlimited hearts and offline access</li>
+                  {(current === "max" || current === "family") && (
+                    <li>AL, your personal AI tutor, and your AIED certificate track</li>
+                  )}
+                  {current === "family" && <li>Family accounts and the parent dashboard</li>}
+                </ul>
+                <p>Your XP, streak, gems and cosmetics are kept — nothing is deleted.</p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep my plan</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={cancelSubscription}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Cancel subscription
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AppShell>
   );
 }
+

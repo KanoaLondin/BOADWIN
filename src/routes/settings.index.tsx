@@ -14,6 +14,9 @@ import {
   Heart,
   Sparkles,
   Info,
+  ShieldCheck,
+  ScrollText,
+
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import {
@@ -27,7 +30,7 @@ import { signOut } from "@/lib/auth";
 import { validateUsername } from "@/lib/profanity";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/settings")({
+export const Route = createFileRoute("/settings/")({
   component: Settings,
   head: () => ({ meta: [{ title: "Settings — AIED" }] }),
 });
@@ -190,7 +193,26 @@ function Settings() {
         />
       </Section>
 
+      {/* Legal */}
+      <Section title="Legal">
+        <Link to="/settings/privacy" className="block">
+          <Row
+            icon={<ShieldCheck className="h-5 w-5" />}
+            label="Privacy Policy"
+            right={<ChevronRight className="h-5 w-5 text-muted-foreground" />}
+          />
+        </Link>
+        <Link to="/settings/terms" className="block">
+          <Row
+            icon={<ScrollText className="h-5 w-5" />}
+            label="Terms of Service"
+            right={<ChevronRight className="h-5 w-5 text-muted-foreground" />}
+          />
+        </Link>
+      </Section>
+
       {/* About */}
+
       <Section title="About">
         <Row
           icon={<Sparkles className="h-5 w-5" />}

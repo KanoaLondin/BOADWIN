@@ -13,7 +13,6 @@ import { Route as WardrobeRouteImport } from './routes/wardrobe'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ShopRouteImport } from './routes/shop'
-import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ParentRouteImport } from './routes/parent'
@@ -24,6 +23,9 @@ import { Route as LandingRouteImport } from './routes/landing'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SettingsIndexRouteImport } from './routes/settings.index'
+import { Route as SettingsTermsRouteImport } from './routes/settings.terms'
+import { Route as SettingsPrivacyRouteImport } from './routes/settings.privacy'
 import { Route as LessonLessonIdRouteImport } from './routes/lesson.$lessonId'
 import { Route as FriendFriendIdRouteImport } from './routes/friend.$friendId'
 import { Route as ApiRedeemAdminCodeRouteImport } from './routes/api/redeem-admin-code'
@@ -47,11 +49,6 @@ const SignupRoute = SignupRouteImport.update({
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -104,6 +101,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsTermsRoute = SettingsTermsRouteImport.update({
+  id: '/settings/terms',
+  path: '/settings/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsPrivacyRoute = SettingsPrivacyRouteImport.update({
+  id: '/settings/privacy',
+  path: '/settings/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LessonLessonIdRoute = LessonLessonIdRouteImport.update({
   id: '/lesson/$lessonId',
   path: '/lesson/$lessonId',
@@ -136,7 +148,6 @@ export interface FileRoutesByFullPath {
   '/parent': typeof ParentRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/subscription': typeof SubscriptionRoute
@@ -145,6 +156,9 @@ export interface FileRoutesByFullPath {
   '/api/redeem-admin-code': typeof ApiRedeemAdminCodeRoute
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
+  '/settings/privacy': typeof SettingsPrivacyRoute
+  '/settings/terms': typeof SettingsTermsRoute
+  '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -157,7 +171,6 @@ export interface FileRoutesByTo {
   '/parent': typeof ParentRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/subscription': typeof SubscriptionRoute
@@ -166,6 +179,9 @@ export interface FileRoutesByTo {
   '/api/redeem-admin-code': typeof ApiRedeemAdminCodeRoute
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
+  '/settings/privacy': typeof SettingsPrivacyRoute
+  '/settings/terms': typeof SettingsTermsRoute
+  '/settings': typeof SettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -179,7 +195,6 @@ export interface FileRoutesById {
   '/parent': typeof ParentRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/subscription': typeof SubscriptionRoute
@@ -188,6 +203,9 @@ export interface FileRoutesById {
   '/api/redeem-admin-code': typeof ApiRedeemAdminCodeRoute
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
+  '/settings/privacy': typeof SettingsPrivacyRoute
+  '/settings/terms': typeof SettingsTermsRoute
+  '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -202,7 +220,6 @@ export interface FileRouteTypes {
     | '/parent'
     | '/profile'
     | '/reset-password'
-    | '/settings'
     | '/shop'
     | '/signup'
     | '/subscription'
@@ -211,6 +228,9 @@ export interface FileRouteTypes {
     | '/api/redeem-admin-code'
     | '/friend/$friendId'
     | '/lesson/$lessonId'
+    | '/settings/privacy'
+    | '/settings/terms'
+    | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -223,7 +243,6 @@ export interface FileRouteTypes {
     | '/parent'
     | '/profile'
     | '/reset-password'
-    | '/settings'
     | '/shop'
     | '/signup'
     | '/subscription'
@@ -232,6 +251,9 @@ export interface FileRouteTypes {
     | '/api/redeem-admin-code'
     | '/friend/$friendId'
     | '/lesson/$lessonId'
+    | '/settings/privacy'
+    | '/settings/terms'
+    | '/settings'
   id:
     | '__root__'
     | '/'
@@ -244,7 +266,6 @@ export interface FileRouteTypes {
     | '/parent'
     | '/profile'
     | '/reset-password'
-    | '/settings'
     | '/shop'
     | '/signup'
     | '/subscription'
@@ -253,6 +274,9 @@ export interface FileRouteTypes {
     | '/api/redeem-admin-code'
     | '/friend/$friendId'
     | '/lesson/$lessonId'
+    | '/settings/privacy'
+    | '/settings/terms'
+    | '/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -266,7 +290,6 @@ export interface RootRouteChildren {
   ParentRoute: typeof ParentRoute
   ProfileRoute: typeof ProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
   SignupRoute: typeof SignupRoute
   SubscriptionRoute: typeof SubscriptionRoute
@@ -275,6 +298,9 @@ export interface RootRouteChildren {
   ApiRedeemAdminCodeRoute: typeof ApiRedeemAdminCodeRoute
   FriendFriendIdRoute: typeof FriendFriendIdRoute
   LessonLessonIdRoute: typeof LessonLessonIdRoute
+  SettingsPrivacyRoute: typeof SettingsPrivacyRoute
+  SettingsTermsRoute: typeof SettingsTermsRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -305,13 +331,6 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -384,6 +403,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/': {
+      id: '/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/terms': {
+      id: '/settings/terms'
+      path: '/settings/terms'
+      fullPath: '/settings/terms'
+      preLoaderRoute: typeof SettingsTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/privacy': {
+      id: '/settings/privacy'
+      path: '/settings/privacy'
+      fullPath: '/settings/privacy'
+      preLoaderRoute: typeof SettingsPrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lesson/$lessonId': {
       id: '/lesson/$lessonId'
       path: '/lesson/$lessonId'
@@ -426,7 +466,6 @@ const rootRouteChildren: RootRouteChildren = {
   ParentRoute: ParentRoute,
   ProfileRoute: ProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
   SignupRoute: SignupRoute,
   SubscriptionRoute: SubscriptionRoute,
@@ -435,6 +474,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiRedeemAdminCodeRoute: ApiRedeemAdminCodeRoute,
   FriendFriendIdRoute: FriendFriendIdRoute,
   LessonLessonIdRoute: LessonLessonIdRoute,
+  SettingsPrivacyRoute: SettingsPrivacyRoute,
+  SettingsTermsRoute: SettingsTermsRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
