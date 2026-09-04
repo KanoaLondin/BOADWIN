@@ -45,7 +45,9 @@ function PrivacyPolicy() {
           items={[
             "Email address — used to create your account, sign you in, and send password resets.",
             "Display name and avatar — shown on your profile, the leaderboard and to friends.",
+            "Month and year of birth — used only to work out your age group and whether the account belongs to a child.",
             "Age group — kids, tweens, teens, adults or professional.",
+            "A parent or guardian's email address, for accounts belonging to under-13s — used to send the parental notice and let them manage the account.",
             "Learning progress — XP, level, streak, hearts, gems, lessons completed and cosmetics you own.",
             "Quiz and lesson answers — including which questions you got right, wrong, or used a hint on.",
             "Subscription tier — whether you are on Free, Super AIED, AIED Max or AIED Family.",
@@ -55,7 +57,7 @@ function PrivacyPolicy() {
         <H>Why we collect it</H>
         <Ul
           items={[
-            "Personalising lessons — your age group and quiz answers set the difficulty, the starting point in a course, and how AL (the AI tutor) talks to you.",
+            "Running the app — your age group tells us which child-safety protections to apply, and your quiz answers give us a recommended course to start with. Today they do not change lesson content, the order of units, or how AL writes; if that changes we'll update this page first.",
             "Progress tracking — so your XP, streak and completed lessons follow you to any device you sign in from.",
             "The Parent dashboard — so a parent can see how their child is doing.",
             "Running your subscription — unlocking the levels and features your plan includes.",
@@ -72,15 +74,64 @@ function PrivacyPolicy() {
 
         <H>AL, the AI tutor</H>
         <P>
-          When you chat with AL, your message and a short summary of your level and age group are sent
-          to an AI provider so AL can answer at the right level. Don't send AL personal details like
-          your address, phone number or school name — you don't need them to learn, and AL doesn't
-          need them to help.
+          AL runs on Google's Gemini models, reached through the Lovable AI Gateway. When you chat
+          with AL, your message and a short summary of your level and age group are sent there so AL
+          can answer at the right level.
+        </P>
+        <Ul
+          items={[
+            "Your messages to AL, and your quiz and lesson answers, are never used to train or improve any AI model — not ours, and not the model provider's.",
+            "Chat messages are kept for up to 30 days so a conversation can continue and so we can investigate safety reports, then deleted.",
+            "Quiz and lesson answers are kept while your account is open, because they are your progress, and are deleted with the account.",
+            "AL is also told, in the app itself, to remind learners not to share personal details.",
+          ]}
+        />
+        <P>
+          Don't send AL personal details like your address, phone number or school name — you don't
+          need them to learn, and AL doesn't need them to help.
         </P>
 
         <H>Children and parents</H>
         <P>
-          Accounts for children should be created with a parent or guardian. Parents can review a
+          When someone tells us at sign-up that they are under 13, we ask for a parent or guardian's
+          email and send that grown-up a notice explaining what we collect and why. The account
+          stays locked — no lessons, no progress, no tutor — until the parent opens the link in that
+          notice and approves it. Until then we hold only the sign-up basics: username, email, month
+          and year of birth, and the parent's email address. A parent can withdraw permission at any
+          time, which closes the account and deletes its data.
+        </P>
+        <H>Child-safe defaults</H>
+        <P>
+          These are switched on automatically for every account under 13, and for 13-17 year olds
+          too:
+        </P>
+        <Ul
+          items={[
+            "No third-party analytics and no tracking of any kind.",
+            "No advertising, and never any personalised advertising or ad profiles.",
+            "Real display names are never shown on the leaderboard or any public view — a nickname is shown instead.",
+            "Under-18s cannot change their own age group to Adult or Professional; only a grown-up with the Parent Zone PIN can.",
+          ]}
+        />
+        <H>How long we keep data</H>
+        <P>
+          We keep information only for as long as we need it for the purpose it was collected for,
+          and never indefinitely. Your profile and progress live for as long as the account is open
+          and are deleted when it's closed. AL chat messages are deleted after 30 days. Parental
+          notice records are kept while the account exists, as proof that permission was given.
+          Backups roll off within 30 days of deletion.
+        </P>
+        <H>Contacting us about privacy</H>
+        <P>
+          Parents, guardians and adult account holders can reach us about any privacy request —
+          reviewing, correcting or deleting data, or withdrawing permission — at{" "}
+          <a href="mailto:privacy@aied.app" className="font-bold text-primary underline">
+            privacy@aied.app
+          </a>
+          . We answer privacy requests within 30 days.
+        </P>
+        <H>More for parents</H>
+        <P> Parents can review a
           child's progress, answers and account details from the{" "}
           <Link to="/parent" className="font-bold text-primary underline">
             Parent dashboard

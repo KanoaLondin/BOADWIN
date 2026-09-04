@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
+import { needsParentConsent } from "@/lib/child-safety";
 
 /**
  * Sends brand-new accounts through the cohort onboarding once. Existing
@@ -14,7 +15,8 @@ export function CohortGate() {
   const needsOnboarding =
     status === "authed" &&
     !!profile &&
-    !(profile as { cohort_age_group?: string | null }).cohort_age_group;
+    !(profile as { cohort_age_group?: string | null }).cohort_age_group &&
+    !needsParentConsent(profile as never);
 
   useEffect(() => {
     if (needsOnboarding && pathname !== "/onboarding") {

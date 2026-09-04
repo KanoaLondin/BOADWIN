@@ -14,6 +14,7 @@ import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { useAuth } from "@/lib/auth";
+import { needsParentConsent } from "@/lib/child-safety";
 
 function NotFoundComponent() {
   return (
@@ -123,7 +124,13 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 // Routes that are part of the desktop marketing website.
 // Everything else is the mobile app and gets gated to /landing on desktop.
-const MARKETING_ROUTES = new Set<string>(["/landing", "/login", "/signup", "/reset-password"]);
+const MARKETING_ROUTES = new Set<string>([
+  "/landing",
+  "/login",
+  "/signup",
+  "/reset-password",
+  "/parent-consent",
+]);
 
 // Pages a signed-out visitor is allowed to see. Everything else requires an
 // account, per the app's "everyone signs in, progress follows you" design.
@@ -164,7 +171,19 @@ function RootComponent() {
 
   // Avoid a flash of gated content while we still don't know whether
   // there's a session, or right before the redirect above kicks in.
+  // A child account that is still waiting on a parent's approval can only see
+  // the approval screen — no lessons, no progress, no tutor.
+  const consentBlocked =
+    auth.status === "authed" &&
+    needsParentConsent(auth.profile as never) &&
+    pathname !== "/parent-consent";
+
+  useEffect(() => {
+    if (consentBlocked) navigate({ to: "/parent-consent", replace: true });
+  }, [consentBlocked, navigate]);
+
   const authGateBlocking =
+    consentBlocked ||
     auth.status === "loading" || (auth.status === "guest" && !PUBLIC_ROUTES.has(pathname));
 
   return (

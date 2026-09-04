@@ -78,20 +78,74 @@ export type Database = {
           },
         ]
       }
+      parent_consent_notices: {
+        Row: {
+          child_id: string
+          consented_at: string | null
+          created_at: string
+          delivery_error: string | null
+          id: string
+          parent_email: string
+          sent_at: string | null
+          status: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          child_id: string
+          consented_at?: string | null
+          created_at?: string
+          delivery_error?: string | null
+          id?: string
+          parent_email: string
+          sent_at?: string | null
+          status?: string
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          child_id?: string
+          consented_at?: string | null
+          created_at?: string
+          delivery_error?: string | null
+          id?: string
+          parent_email?: string
+          sent_at?: string | null
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parent_consent_notices_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           age_group: string
           al_outfit: string
           bio: string | null
+          birth_month: number | null
+          birth_year: number | null
           cohort_age_group: string | null
           created_at: string
           display_name: string | null
           gems: number
           hearts: number
           id: string
+          is_child: boolean
+          is_minor: boolean
           knowledge_level: string | null
           last_active_at: string
           member_since: string
+          parent_email: string | null
+          parental_consent_at: string | null
+          parental_consent_status: string
           premium: string
           profile_bg: string
           role: string
@@ -107,15 +161,22 @@ export type Database = {
           age_group?: string
           al_outfit?: string
           bio?: string | null
+          birth_month?: number | null
+          birth_year?: number | null
           cohort_age_group?: string | null
           created_at?: string
           display_name?: string | null
           gems?: number
           hearts?: number
           id: string
+          is_child?: boolean
+          is_minor?: boolean
           knowledge_level?: string | null
           last_active_at?: string
           member_since?: string
+          parent_email?: string | null
+          parental_consent_at?: string | null
+          parental_consent_status?: string
           premium?: string
           profile_bg?: string
           role?: string
@@ -131,15 +192,22 @@ export type Database = {
           age_group?: string
           al_outfit?: string
           bio?: string | null
+          birth_month?: number | null
+          birth_year?: number | null
           cohort_age_group?: string | null
           created_at?: string
           display_name?: string | null
           gems?: number
           hearts?: number
           id?: string
+          is_child?: boolean
+          is_minor?: boolean
           knowledge_level?: string | null
           last_active_at?: string
           member_since?: string
+          parent_email?: string | null
+          parental_consent_at?: string | null
+          parental_consent_status?: string
           premium?: string
           profile_bg?: string
           role?: string
@@ -191,6 +259,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      age_from_birth: { Args: { bm: number; byr: number }; Returns: number }
       expire_pending_friend_requests: { Args: never; Returns: undefined }
       normalize_for_moderation: { Args: { input: string }; Returns: string }
       pair_users: {

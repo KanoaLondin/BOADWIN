@@ -8,6 +8,12 @@ import { hydrateFromCloud, unbindCloud, type CloudProfile } from "./app-state";
 export type Profile = CloudProfile & {
   username: string;
   premium: string;
+  birth_month?: number | null;
+  birth_year?: number | null;
+  is_child?: boolean | null;
+  is_minor?: boolean | null;
+  parent_email?: string | null;
+  parental_consent_status?: "not_required" | "pending" | "granted" | null;
 };
 
 export type AuthStatus = "loading" | "authed" | "guest";
@@ -128,6 +134,11 @@ export type SignUpOptions = {
   password: string;
   username: string;
   ageGroup: string;
+  /** Month/year of birth — the database derives the age group and, for
+   *  under-13s, marks the account as a child awaiting parental consent. */
+  birthMonth: number;
+  birthYear: number;
+  parentEmail?: string;
   adminCode?: string;
 };
 
@@ -142,7 +153,16 @@ export async function signUp(opts: SignUpOptions) {
   const { data, error } = await supabase.auth.signUp({
     email: opts.email,
     password: opts.password,
-    options: { data: { username: opts.username, age_group: opts.ageGroup } },
+    options: {
+      data: {
+        username: opts.username,
+        age_group: opts.ageGroup,
+        birth_month: opts.birthMonth,
+        birth_year: opts.birthYear,
+        ...(opts.parentEmail ? { parent_email: opts.parentEmail } : {}),
+      },
+    },
+
   });
   if (error) throw error;
 
