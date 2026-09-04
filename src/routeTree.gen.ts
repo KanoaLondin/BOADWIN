@@ -24,6 +24,7 @@ import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
+import { Route as SettingsTermsRouteImport } from './routes/settings.terms'
 import { Route as SettingsPrivacyRouteImport } from './routes/settings.privacy'
 import { Route as LessonLessonIdRouteImport } from './routes/lesson.$lessonId'
 import { Route as FriendFriendIdRouteImport } from './routes/friend.$friendId'
@@ -105,6 +106,11 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   path: '/settings/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsTermsRoute = SettingsTermsRouteImport.update({
+  id: '/settings/terms',
+  path: '/settings/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsPrivacyRoute = SettingsPrivacyRouteImport.update({
   id: '/settings/privacy',
   path: '/settings/privacy',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
   '/settings/privacy': typeof SettingsPrivacyRoute
+  '/settings/terms': typeof SettingsTermsRoute
   '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
   '/settings/privacy': typeof SettingsPrivacyRoute
+  '/settings/terms': typeof SettingsTermsRoute
   '/settings': typeof SettingsIndexRoute
 }
 export interface FileRoutesById {
@@ -196,6 +204,7 @@ export interface FileRoutesById {
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
   '/settings/privacy': typeof SettingsPrivacyRoute
+  '/settings/terms': typeof SettingsTermsRoute
   '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRouteTypes {
@@ -220,6 +229,7 @@ export interface FileRouteTypes {
     | '/friend/$friendId'
     | '/lesson/$lessonId'
     | '/settings/privacy'
+    | '/settings/terms'
     | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -242,6 +252,7 @@ export interface FileRouteTypes {
     | '/friend/$friendId'
     | '/lesson/$lessonId'
     | '/settings/privacy'
+    | '/settings/terms'
     | '/settings'
   id:
     | '__root__'
@@ -264,6 +275,7 @@ export interface FileRouteTypes {
     | '/friend/$friendId'
     | '/lesson/$lessonId'
     | '/settings/privacy'
+    | '/settings/terms'
     | '/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -287,6 +299,7 @@ export interface RootRouteChildren {
   FriendFriendIdRoute: typeof FriendFriendIdRoute
   LessonLessonIdRoute: typeof LessonLessonIdRoute
   SettingsPrivacyRoute: typeof SettingsPrivacyRoute
+  SettingsTermsRoute: typeof SettingsTermsRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
@@ -397,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/terms': {
+      id: '/settings/terms'
+      path: '/settings/terms'
+      fullPath: '/settings/terms'
+      preLoaderRoute: typeof SettingsTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/privacy': {
       id: '/settings/privacy'
       path: '/settings/privacy'
@@ -455,6 +475,7 @@ const rootRouteChildren: RootRouteChildren = {
   FriendFriendIdRoute: FriendFriendIdRoute,
   LessonLessonIdRoute: LessonLessonIdRoute,
   SettingsPrivacyRoute: SettingsPrivacyRoute,
+  SettingsTermsRoute: SettingsTermsRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }
 export const routeTree = rootRouteImport
