@@ -14,6 +14,9 @@ import {
   Heart,
   Sparkles,
   Info,
+  ShieldCheck,
+  ScrollText,
+
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import {
