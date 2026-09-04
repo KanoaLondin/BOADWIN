@@ -13,7 +13,6 @@ import { Route as WardrobeRouteImport } from './routes/wardrobe'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ShopRouteImport } from './routes/shop'
-import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ParentRouteImport } from './routes/parent'
@@ -24,6 +23,7 @@ import { Route as LandingRouteImport } from './routes/landing'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as LessonLessonIdRouteImport } from './routes/lesson.$lessonId'
 import { Route as FriendFriendIdRouteImport } from './routes/friend.$friendId'
 import { Route as ApiRedeemAdminCodeRouteImport } from './routes/api/redeem-admin-code'
@@ -47,11 +47,6 @@ const SignupRoute = SignupRouteImport.update({
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -104,6 +99,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LessonLessonIdRoute = LessonLessonIdRouteImport.update({
   id: '/lesson/$lessonId',
   path: '/lesson/$lessonId',
@@ -136,7 +136,6 @@ export interface FileRoutesByFullPath {
   '/parent': typeof ParentRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/subscription': typeof SubscriptionRoute
@@ -145,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/api/redeem-admin-code': typeof ApiRedeemAdminCodeRoute
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
+  '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -157,7 +157,6 @@ export interface FileRoutesByTo {
   '/parent': typeof ParentRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/subscription': typeof SubscriptionRoute
@@ -166,6 +165,7 @@ export interface FileRoutesByTo {
   '/api/redeem-admin-code': typeof ApiRedeemAdminCodeRoute
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
+  '/settings': typeof SettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -179,7 +179,6 @@ export interface FileRoutesById {
   '/parent': typeof ParentRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/signup': typeof SignupRoute
   '/subscription': typeof SubscriptionRoute
@@ -188,6 +187,7 @@ export interface FileRoutesById {
   '/api/redeem-admin-code': typeof ApiRedeemAdminCodeRoute
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
+  '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -202,7 +202,6 @@ export interface FileRouteTypes {
     | '/parent'
     | '/profile'
     | '/reset-password'
-    | '/settings'
     | '/shop'
     | '/signup'
     | '/subscription'
@@ -211,6 +210,7 @@ export interface FileRouteTypes {
     | '/api/redeem-admin-code'
     | '/friend/$friendId'
     | '/lesson/$lessonId'
+    | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -223,7 +223,6 @@ export interface FileRouteTypes {
     | '/parent'
     | '/profile'
     | '/reset-password'
-    | '/settings'
     | '/shop'
     | '/signup'
     | '/subscription'
@@ -232,6 +231,7 @@ export interface FileRouteTypes {
     | '/api/redeem-admin-code'
     | '/friend/$friendId'
     | '/lesson/$lessonId'
+    | '/settings'
   id:
     | '__root__'
     | '/'
@@ -244,7 +244,6 @@ export interface FileRouteTypes {
     | '/parent'
     | '/profile'
     | '/reset-password'
-    | '/settings'
     | '/shop'
     | '/signup'
     | '/subscription'
@@ -253,6 +252,7 @@ export interface FileRouteTypes {
     | '/api/redeem-admin-code'
     | '/friend/$friendId'
     | '/lesson/$lessonId'
+    | '/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -266,7 +266,6 @@ export interface RootRouteChildren {
   ParentRoute: typeof ParentRoute
   ProfileRoute: typeof ProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
   SignupRoute: typeof SignupRoute
   SubscriptionRoute: typeof SubscriptionRoute
@@ -275,6 +274,7 @@ export interface RootRouteChildren {
   ApiRedeemAdminCodeRoute: typeof ApiRedeemAdminCodeRoute
   FriendFriendIdRoute: typeof FriendFriendIdRoute
   LessonLessonIdRoute: typeof LessonLessonIdRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -305,13 +305,6 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -384,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/': {
+      id: '/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lesson/$lessonId': {
       id: '/lesson/$lessonId'
       path: '/lesson/$lessonId'
@@ -426,7 +426,6 @@ const rootRouteChildren: RootRouteChildren = {
   ParentRoute: ParentRoute,
   ProfileRoute: ProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
   SignupRoute: SignupRoute,
   SubscriptionRoute: SubscriptionRoute,
@@ -435,6 +434,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiRedeemAdminCodeRoute: ApiRedeemAdminCodeRoute,
   FriendFriendIdRoute: FriendFriendIdRoute,
   LessonLessonIdRoute: LessonLessonIdRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

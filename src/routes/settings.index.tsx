@@ -27,7 +27,7 @@ import { signOut } from "@/lib/auth";
 import { validateUsername } from "@/lib/profanity";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/settings")({
+export const Route = createFileRoute("/settings/")({
   component: Settings,
   head: () => ({ meta: [{ title: "Settings — AIED" }] }),
 });
