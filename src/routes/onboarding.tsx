@@ -6,6 +6,13 @@ import { setAgeGroup, setCohort, setName } from "@/lib/app-state";
 import { validateUsername } from "@/lib/profanity";
 import { AGE_BANDS, KNOWLEDGE_QUESTIONS, appAgeGroupFor, type CohortAgeGroup } from "@/lib/cohort";
 import { saveCohort } from "@/lib/cohort.functions";
+import {
+  PERSONA_QUESTIONS,
+  asksQuestionnaire,
+  type PersonaAnswers,
+  type PersonaContext,
+  type PersonaGoal,
+} from "@/lib/persona";
 import { refreshProfile, useAuth } from "@/lib/auth";
 
 /** Age band implied by the date of birth captured at sign-up, if we have one. */
@@ -37,8 +44,9 @@ const GOALS = [
   { mins: 20, xp: 200, label: "Intense", desc: "20 min/day" },
 ];
 
-const QUIZ_START = 3;
-const TOTAL_STEPS = QUIZ_START + KNOWLEDGE_QUESTIONS.length; // age, name, goal, 5 questions
+const BASE_STEPS = 3; // age, name, daily goal
+/** Persona questions, asked only of teens and adults (never children). */
+const PERSONA_STEPS = ["usedAi", "context", "goal"] as const;
 
 function Onboarding() {
   const navigate = useNavigate();
@@ -55,10 +63,24 @@ function Onboarding() {
     KNOWLEDGE_QUESTIONS.map(() => -1),
   );
   const [saving, setSaving] = useState(false);
+  const [persona, setPersona] = useState<PersonaAnswers>({
+    usedAi: null,
+    context: null,
+    goal: null,
+  });
 
   const nameError = nameVal.trim() ? validateUsername(nameVal, 2) : null;
   const ageGroup: CohortAgeGroup =
     dobGroup ?? AGE_BANDS.find((b) => b.id === band)?.group ?? "adult";
+  const personaOn = asksQuestionnaire(ageGroup);
+  const personaCount = personaOn ? PERSONA_STEPS.length : 0;
+  const QUIZ_START = BASE_STEPS + personaCount;
+  const TOTAL_STEPS = QUIZ_START + KNOWLEDGE_QUESTIONS.length;
+  const personaIndex = step - BASE_STEPS;
+  const personaStep =
+    personaOn && personaIndex >= 0 && personaIndex < personaCount
+      ? PERSONA_STEPS[personaIndex]
+      : null;
   const quizIndex = step - QUIZ_START;
 
 
@@ -73,7 +95,11 @@ function Onboarding() {
     try {
       // Scored server-side; the user never sees a score, just personalization.
       const result = await saveCohort({
-        data: { ageGroup, answers: answers.map((a) => (a < 0 ? 9 : a)) },
+        data: {
+          ageGroup,
+          answers: answers.map((a) => (a < 0 ? 9 : a)),
+          persona: personaOn ? persona : undefined,
+        },
       });
       setCohort({ cohortAgeGroup: result.ageGroup, knowledgeLevel: result.knowledgeLevel });
       await refreshProfile();
@@ -89,6 +115,9 @@ function Onboarding() {
     (step === 0 && !!band && !dobGroup) ||
     (step === 1 && nameVal.trim().length >= 2 && !nameError) ||
     (step === 2 && goal != null) ||
+    (personaStep === "usedAi" && persona.usedAi !== null) ||
+    (personaStep === "context" && persona.context !== null) ||
+    (personaStep === "goal" && persona.goal !== null) ||
     (step >= QUIZ_START && answers[quizIndex] >= 0);
 
   return (
@@ -207,6 +236,55 @@ function Onboarding() {
                   <p className="mt-1 text-[11px] font-black text-warning">+{g.xp} XP</p>
                 </button>
               ))}
+            </div>
+          </div>
+        )}
+
+        {personaStep && (
+          <div className="animate-fade-in">
+            <div className="text-center">
+              <Mascot size={72} />
+              <p className="mt-4 text-xs font-black uppercase tracking-widest text-purple">
+                A little about you
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                This lets us tell every lesson in language that fits you.
+              </p>
+              <h1 className="mt-4 text-xl font-black">
+                {PERSONA_QUESTIONS[personaStep].prompt}
+              </h1>
+            </div>
+            <div className="mt-5 space-y-3">
+              {PERSONA_QUESTIONS[personaStep].options.map((opt) => {
+                const selected =
+                  personaStep === "usedAi"
+                    ? persona.usedAi === opt.value
+                    : personaStep === "context"
+                      ? persona.context === opt.value
+                      : persona.goal === opt.value;
+                return (
+                  <button
+                    key={String(opt.value)}
+                    onClick={() =>
+                      setPersona((p) =>
+                        personaStep === "usedAi"
+                          ? { ...p, usedAi: opt.value as boolean }
+                          : personaStep === "context"
+                            ? { ...p, context: opt.value as PersonaContext }
+                            : { ...p, goal: opt.value as PersonaGoal },
+                      )
+                    }
+                    className={`flex w-full items-center gap-3 rounded-2xl border-2 p-4 text-left transition-all ${
+                      selected
+                        ? "border-primary bg-primary/10 shadow-glow"
+                        : "border-border bg-card hover:border-primary/50"
+                    }`}
+                  >
+                    <span className="flex-1 text-sm font-bold">{opt.label}</span>
+                    {selected && <Check className="h-5 w-5 text-primary" />}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}

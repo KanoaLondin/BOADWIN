@@ -11,7 +11,7 @@ import { Mascot } from "@/components/Mascot";
 
 
 
-type LessonContext = { lessonTitle: string; unitTitle: string; levelTitle: string };
+type LessonContext = { lessonId?: string; lessonTitle: string; unitTitle: string; levelTitle: string };
 
 const CHAT_NAV_HEIGHT = "var(--bottom-nav-height)";
 const CHAT_SURFACE = "var(--al-chat-surface)";

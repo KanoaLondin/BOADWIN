@@ -6,12 +6,14 @@ import {
   type UIMessage,
 } from "ai";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway";
+import { curriculumContext } from "@/lib/course-knowledge";
 
 type AlTier = 1 | 2 | 3 | 4;
 
 type ChatBody = {
   messages?: unknown;
   lessonContext?: {
+    lessonId?: string;
     lessonTitle?: string;
     unitTitle?: string;
     levelTitle?: string;
@@ -102,6 +104,8 @@ function buildSystemPrompt(body: ChatBody): string {
     profileBlock,
     "",
     `CURRENT LESSON CONTEXT: ${lessonLine}`,
+    "",
+    curriculumContext(ctx?.lessonId),
     "",
     "ADAPTIVE RULES — follow the tier rules below for vocabulary, length, and tone:",
     TIER_RULES[tier],
