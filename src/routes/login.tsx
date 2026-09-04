@@ -112,6 +112,11 @@ function Login() {
               {error}
             </p>
           )}
+          {notice && (
+            <p className="rounded-xl bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary">
+              {notice}
+            </p>
+          )}
 
           <button
             type="submit"
@@ -126,6 +131,16 @@ function Login() {
               </>
             )}
           </button>
+
+          <button
+            type="button"
+            onClick={handleForgot}
+            disabled={submitting}
+            className="w-full py-1 text-center text-sm font-bold text-muted-foreground underline-offset-4 hover:underline disabled:opacity-40"
+          >
+            Forgot password?
+          </button>
+
         </form>
 
         <p className="mt-5 text-center text-sm text-muted-foreground">
