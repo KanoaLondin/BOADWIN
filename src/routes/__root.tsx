@@ -123,11 +123,11 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 // Routes that are part of the desktop marketing website.
 // Everything else is the mobile app and gets gated to /landing on desktop.
-const MARKETING_ROUTES = new Set<string>(["/landing", "/login", "/signup"]);
+const MARKETING_ROUTES = new Set<string>(["/landing", "/login", "/signup", "/reset-password"]);
 
 // Pages a signed-out visitor is allowed to see. Everything else requires an
 // account, per the app's "everyone signs in, progress follows you" design.
-const PUBLIC_ROUTES = new Set<string>(["/landing", "/login", "/signup"]);
+const PUBLIC_ROUTES = new Set<string>(["/landing", "/login", "/signup", "/reset-password"]);
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
