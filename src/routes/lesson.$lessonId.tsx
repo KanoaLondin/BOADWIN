@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   X,
   Heart,
@@ -11,7 +11,8 @@ import {
   AlertCircle,
   Zap,
 } from "lucide-react";
-import { findLesson, fuzzyMatch, wordBankFor, type Exercise } from "@/lib/course-data";
+import { findLesson, fuzzyMatch, wordBankFor, type Exercise, type Lesson } from "@/lib/course-data";
+import { getAdaptedLesson } from "@/lib/lesson-adapt.functions";
 import { AppShell } from "@/components/AppShell";
 import { ChestReward } from "@/components/ChestReward";
 import { Gem } from "@/components/GemBadge";
@@ -27,7 +28,27 @@ function LessonPage() {
   const { lessonId } = Route.useParams();
   const navigate = useNavigate();
   const data = findLesson(lessonId);
-  const lesson = data?.lesson;
+
+  // Persona-adapted wording: same questions and same correct answers, told in
+  // language that fits this learner. Falls back to the authored copy.
+  const [adapted, setAdapted] = useState<Lesson | null>(null);
+  const startedRef = useRef(false);
+  useEffect(() => {
+    let alive = true;
+    setAdapted(null);
+    startedRef.current = false;
+    getAdaptedLesson({ data: { lessonId } })
+      .then((res) => {
+        // Never swap wording out from under a learner who already started.
+        if (alive && res?.adapted && !startedRef.current) setAdapted(res.lesson);
+      })
+      .catch((err) => console.error("[lesson] adaptation unavailable", err));
+    return () => {
+      alive = false;
+    };
+  }, [lessonId]);
+
+  const lesson = adapted ?? data?.lesson;
 
   const steps = useMemo(() => {
     if (!lesson) return [] as ("intro" | number)[];
@@ -87,6 +108,7 @@ function LessonPage() {
     if (stepIdx + 1 >= steps.length) {
       setComplete(true);
     } else {
+      startedRef.current = true;
       setStepIdx((s) => s + 1);
     }
   }
@@ -102,6 +124,7 @@ function LessonPage() {
   }
 
   const lessonCtx = {
+    lessonId: lesson.id,
     lessonTitle: lesson.title,
     unitTitle: data.unit.title,
     levelTitle: data.level.title,

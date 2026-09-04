@@ -78,6 +78,30 @@ export type Database = {
           },
         ]
       }
+      lesson_adaptations: {
+        Row: {
+          created_at: string
+          id: string
+          lesson_id: string
+          payload: Json
+          persona_key: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lesson_id: string
+          payload: Json
+          persona_key: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lesson_id?: string
+          payload?: Json
+          persona_key?: string
+        }
+        Relationships: []
+      }
       parent_consent_notices: {
         Row: {
           child_id: string
@@ -146,6 +170,10 @@ export type Database = {
           parent_email: string | null
           parental_consent_at: string | null
           parental_consent_status: string
+          persona_context: string | null
+          persona_goal: string | null
+          persona_key: string | null
+          persona_used_ai: boolean | null
           premium: string
           profile_bg: string
           role: string
@@ -177,6 +205,10 @@ export type Database = {
           parent_email?: string | null
           parental_consent_at?: string | null
           parental_consent_status?: string
+          persona_context?: string | null
+          persona_goal?: string | null
+          persona_key?: string | null
+          persona_used_ai?: boolean | null
           premium?: string
           profile_bg?: string
           role?: string
@@ -208,6 +240,10 @@ export type Database = {
           parent_email?: string | null
           parental_consent_at?: string | null
           parental_consent_status?: string
+          persona_context?: string | null
+          persona_goal?: string | null
+          persona_key?: string | null
+          persona_used_ai?: boolean | null
           premium?: string
           profile_bg?: string
           role?: string
