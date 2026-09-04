@@ -298,6 +298,7 @@ export type Database = {
       age_from_birth: { Args: { bm: number; byr: number }; Returns: number }
       expire_pending_friend_requests: { Args: never; Returns: undefined }
       normalize_for_moderation: { Args: { input: string }; Returns: string }
+      normalize_for_moderation_raw: { Args: { input: string }; Returns: string }
       pair_users: {
         Args: { u1: string; u2: string }
         Returns: {
