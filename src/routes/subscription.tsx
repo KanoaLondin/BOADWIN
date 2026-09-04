@@ -1,8 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { ArrowLeft, Check, Crown, Sparkles, Users, Zap } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { setPremium, useAppState } from "@/lib/app-state";
 import { toast } from "sonner";
+
 
 export const Route = createFileRoute("/subscription")({
   component: SubscriptionPage,
