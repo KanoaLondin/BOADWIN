@@ -24,6 +24,7 @@ import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
+import { Route as SettingsPrivacyRouteImport } from './routes/settings.privacy'
 import { Route as LessonLessonIdRouteImport } from './routes/lesson.$lessonId'
 import { Route as FriendFriendIdRouteImport } from './routes/friend.$friendId'
 import { Route as ApiRedeemAdminCodeRouteImport } from './routes/api/redeem-admin-code'
@@ -104,6 +105,11 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   path: '/settings/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsPrivacyRoute = SettingsPrivacyRouteImport.update({
+  id: '/settings/privacy',
+  path: '/settings/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LessonLessonIdRoute = LessonLessonIdRouteImport.update({
   id: '/lesson/$lessonId',
   path: '/lesson/$lessonId',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/api/redeem-admin-code': typeof ApiRedeemAdminCodeRoute
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
+  '/settings/privacy': typeof SettingsPrivacyRoute
   '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/api/redeem-admin-code': typeof ApiRedeemAdminCodeRoute
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
+  '/settings/privacy': typeof SettingsPrivacyRoute
   '/settings': typeof SettingsIndexRoute
 }
 export interface FileRoutesById {
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/api/redeem-admin-code': typeof ApiRedeemAdminCodeRoute
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
+  '/settings/privacy': typeof SettingsPrivacyRoute
   '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRouteTypes {
@@ -210,6 +219,7 @@ export interface FileRouteTypes {
     | '/api/redeem-admin-code'
     | '/friend/$friendId'
     | '/lesson/$lessonId'
+    | '/settings/privacy'
     | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -231,6 +241,7 @@ export interface FileRouteTypes {
     | '/api/redeem-admin-code'
     | '/friend/$friendId'
     | '/lesson/$lessonId'
+    | '/settings/privacy'
     | '/settings'
   id:
     | '__root__'
@@ -252,6 +263,7 @@ export interface FileRouteTypes {
     | '/api/redeem-admin-code'
     | '/friend/$friendId'
     | '/lesson/$lessonId'
+    | '/settings/privacy'
     | '/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -274,6 +286,7 @@ export interface RootRouteChildren {
   ApiRedeemAdminCodeRoute: typeof ApiRedeemAdminCodeRoute
   FriendFriendIdRoute: typeof FriendFriendIdRoute
   LessonLessonIdRoute: typeof LessonLessonIdRoute
+  SettingsPrivacyRoute: typeof SettingsPrivacyRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
@@ -384,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/privacy': {
+      id: '/settings/privacy'
+      path: '/settings/privacy'
+      fullPath: '/settings/privacy'
+      preLoaderRoute: typeof SettingsPrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lesson/$lessonId': {
       id: '/lesson/$lessonId'
       path: '/lesson/$lessonId'
@@ -434,6 +454,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiRedeemAdminCodeRoute: ApiRedeemAdminCodeRoute,
   FriendFriendIdRoute: FriendFriendIdRoute,
   LessonLessonIdRoute: LessonLessonIdRoute,
+  SettingsPrivacyRoute: SettingsPrivacyRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }
 export const routeTree = rootRouteImport
