@@ -6,7 +6,19 @@ import { setAgeGroup, setCohort, setName } from "@/lib/app-state";
 import { validateUsername } from "@/lib/profanity";
 import { AGE_BANDS, KNOWLEDGE_QUESTIONS, appAgeGroupFor, type CohortAgeGroup } from "@/lib/cohort";
 import { saveCohort } from "@/lib/cohort.functions";
-import { refreshProfile } from "@/lib/auth";
+import { refreshProfile, useAuth } from "@/lib/auth";
+
+/** Age band implied by the date of birth captured at sign-up, if we have one. */
+function ageGroupFromProfile(
+  profile: { birth_year?: number | null; age_group?: string | null } | null,
+): CohortAgeGroup | null {
+  if (!profile?.birth_year) return null;
+  const g = profile.age_group ?? "adults";
+  if (g === "kids" || g === "tweens") return "kid";
+  if (g === "teens") return "teen";
+  return "adult";
+}
+
 
 export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
@@ -30,7 +42,12 @@ const TOTAL_STEPS = QUIZ_START + KNOWLEDGE_QUESTIONS.length; // age, name, goal,
 
 function Onboarding() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(0);
+  const { profile } = useAuth();
+  // Accounts that gave a date of birth at sign-up already have a verified age
+  // band, so we never ask again (and never let them re-answer it here).
+  const dobGroup = ageGroupFromProfile(profile);
+  const firstStep = dobGroup ? 1 : 0;
+  const [step, setStep] = useState(firstStep);
   const [band, setBand] = useState<string | null>(null);
   const [nameVal, setNameVal] = useState("");
   const [goal, setGoal] = useState<number | null>(null);
@@ -41,8 +58,9 @@ function Onboarding() {
 
   const nameError = nameVal.trim() ? validateUsername(nameVal, 2) : null;
   const ageGroup: CohortAgeGroup =
-    AGE_BANDS.find((b) => b.id === band)?.group ?? "adult";
+    dobGroup ?? AGE_BANDS.find((b) => b.id === band)?.group ?? "adult";
   const quizIndex = step - QUIZ_START;
+
 
   async function finish() {
     if (nameError || saving) return;
@@ -68,7 +86,7 @@ function Onboarding() {
   }
 
   const canNext =
-    (step === 0 && !!band) ||
+    (step === 0 && !!band && !dobGroup) ||
     (step === 1 && nameVal.trim().length >= 2 && !nameError) ||
     (step === 2 && goal != null) ||
     (step >= QUIZ_START && answers[quizIndex] >= 0);
@@ -78,7 +96,7 @@ function Onboarding() {
       <div className="w-full max-w-md">
         {/* Progress */}
         <div className="mb-6 flex items-center gap-2">
-          {step > 0 ? (
+          {step > firstStep ? (
             <button
               onClick={() => setStep((s) => s - 1)}
               className="grid h-8 w-8 place-items-center rounded-full border border-border bg-card text-muted-foreground"
@@ -89,11 +107,11 @@ function Onboarding() {
             <span className="h-8 w-8" />
           )}
           <div className="flex flex-1 gap-1.5">
-            {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+            {Array.from({ length: TOTAL_STEPS - firstStep }).map((_, i) => (
               <div
                 key={i}
                 className={`h-1.5 flex-1 rounded-full transition-all ${
-                  i <= step ? "gradient-hero shadow-glow" : "bg-secondary"
+                  i <= step - firstStep ? "gradient-hero shadow-glow" : "bg-secondary"
                 }`}
               />
             ))}

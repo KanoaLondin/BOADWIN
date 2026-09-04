@@ -15,6 +15,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ParentConsentRouteImport } from './routes/parent-consent'
 import { Route as ParentRouteImport } from './routes/parent'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
@@ -30,6 +31,7 @@ import { Route as LessonLessonIdRouteImport } from './routes/lesson.$lessonId'
 import { Route as FriendFriendIdRouteImport } from './routes/friend.$friendId'
 import { Route as ApiRedeemAdminCodeRouteImport } from './routes/api/redeem-admin-code'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiPublicParentConsentRouteImport } from './routes/api/public/parent-consent'
 
 const WardrobeRoute = WardrobeRouteImport.update({
   id: '/wardrobe',
@@ -59,6 +61,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParentConsentRoute = ParentConsentRouteImport.update({
+  id: '/parent-consent',
+  path: '/parent-consent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ParentRoute = ParentRouteImport.update({
@@ -136,6 +143,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicParentConsentRoute = ApiPublicParentConsentRouteImport.update({
+  id: '/api/public/parent-consent',
+  path: '/api/public/parent-consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -146,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/parent': typeof ParentRoute
+  '/parent-consent': typeof ParentConsentRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
@@ -159,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/settings/privacy': typeof SettingsPrivacyRoute
   '/settings/terms': typeof SettingsTermsRoute
   '/settings/': typeof SettingsIndexRoute
+  '/api/public/parent-consent': typeof ApiPublicParentConsentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -169,6 +183,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/parent': typeof ParentRoute
+  '/parent-consent': typeof ParentConsentRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
@@ -182,6 +197,7 @@ export interface FileRoutesByTo {
   '/settings/privacy': typeof SettingsPrivacyRoute
   '/settings/terms': typeof SettingsTermsRoute
   '/settings': typeof SettingsIndexRoute
+  '/api/public/parent-consent': typeof ApiPublicParentConsentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -193,6 +209,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/parent': typeof ParentRoute
+  '/parent-consent': typeof ParentConsentRoute
   '/profile': typeof ProfileRoute
   '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
@@ -206,6 +223,7 @@ export interface FileRoutesById {
   '/settings/privacy': typeof SettingsPrivacyRoute
   '/settings/terms': typeof SettingsTermsRoute
   '/settings/': typeof SettingsIndexRoute
+  '/api/public/parent-consent': typeof ApiPublicParentConsentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -218,6 +236,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/parent'
+    | '/parent-consent'
     | '/profile'
     | '/reset-password'
     | '/shop'
@@ -231,6 +250,7 @@ export interface FileRouteTypes {
     | '/settings/privacy'
     | '/settings/terms'
     | '/settings/'
+    | '/api/public/parent-consent'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -241,6 +261,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/parent'
+    | '/parent-consent'
     | '/profile'
     | '/reset-password'
     | '/shop'
@@ -254,6 +275,7 @@ export interface FileRouteTypes {
     | '/settings/privacy'
     | '/settings/terms'
     | '/settings'
+    | '/api/public/parent-consent'
   id:
     | '__root__'
     | '/'
@@ -264,6 +286,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/parent'
+    | '/parent-consent'
     | '/profile'
     | '/reset-password'
     | '/shop'
@@ -277,6 +300,7 @@ export interface FileRouteTypes {
     | '/settings/privacy'
     | '/settings/terms'
     | '/settings/'
+    | '/api/public/parent-consent'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -288,6 +312,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   ParentRoute: typeof ParentRoute
+  ParentConsentRoute: typeof ParentConsentRoute
   ProfileRoute: typeof ProfileRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ShopRoute: typeof ShopRoute
@@ -301,6 +326,7 @@ export interface RootRouteChildren {
   SettingsPrivacyRoute: typeof SettingsPrivacyRoute
   SettingsTermsRoute: typeof SettingsTermsRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
+  ApiPublicParentConsentRoute: typeof ApiPublicParentConsentRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -345,6 +371,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parent-consent': {
+      id: '/parent-consent'
+      path: '/parent-consent'
+      fullPath: '/parent-consent'
+      preLoaderRoute: typeof ParentConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/parent': {
@@ -452,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/parent-consent': {
+      id: '/api/public/parent-consent'
+      path: '/api/public/parent-consent'
+      fullPath: '/api/public/parent-consent'
+      preLoaderRoute: typeof ApiPublicParentConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -464,6 +504,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   ParentRoute: ParentRoute,
+  ParentConsentRoute: ParentConsentRoute,
   ProfileRoute: ProfileRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ShopRoute: ShopRoute,
@@ -477,6 +518,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsPrivacyRoute: SettingsPrivacyRoute,
   SettingsTermsRoute: SettingsTermsRoute,
   SettingsIndexRoute: SettingsIndexRoute,
+  ApiPublicParentConsentRoute: ApiPublicParentConsentRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

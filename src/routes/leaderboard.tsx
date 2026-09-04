@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Trophy, Flame, Crown, ArrowUp, ArrowDown, Minus, Clock } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { accountSafety, publicDisplayName } from "@/lib/child-safety";
 import { AppShell } from "@/components/AppShell";
 import { useAppState } from "@/lib/app-state";
 import { FRIENDS } from "@/lib/friends";
@@ -25,7 +27,12 @@ const TIERS = [
 ];
 
 function Leaderboard() {
-  const userName = useAppState((s) => s.name);
+  const { profile } = useAuth();
+  const realName = useAppState((s) => s.name);
+  // Under-18 accounts are never shown by their real display name in a public
+  // ranking; a stable nickname stands in for them.
+  const safety = accountSafety(profile as never);
+  const userName = publicDisplayName(realName, profile as never, (profile as { id?: string } | null)?.id);
   const userXp = useAppState((s) => s.xp);
   const userStreak = useAppState((s) => s.streak);
 
@@ -56,6 +63,11 @@ function Leaderboard() {
         <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-muted-foreground">
           <Clock className="h-3 w-3" /> {daysLeft}d left · Top 3 advance to Sapphire
         </p>
+        {safety.isMinor && (
+          <p className="mx-auto mt-2 max-w-xs rounded-xl bg-primary/5 px-3 py-2 text-[11px] font-semibold text-muted-foreground">
+            Others see you here as “{userName}”, never your real name.
+          </p>
+        )}
       </header>
 
       {/* Podium */}

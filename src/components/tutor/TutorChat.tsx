@@ -143,6 +143,11 @@ function PremiumChat({
   return (
     <ChatShell onClose={onClose}>
 
+      <div className="shrink-0 border-b border-black/5 bg-warning/10 px-4 py-2 text-[11px] font-semibold leading-snug text-warning-foreground">
+        Friendly reminder: don't tell AL personal things like your real full name, address, phone
+        number or school. You never need them to learn here.
+      </div>
+
       <div ref={scrollRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4" style={{ backgroundColor: CHAT_SURFACE }}>
         {messages.map((m) => (
           <Bubble key={m.id} role={m.role as "user" | "assistant"}>
@@ -259,7 +264,7 @@ function ChatShell({
         backgroundColor: CHAT_SURFACE,
       }}
     >
-      <header className="relative shrink-0 border-b border-border px-3 h-16" style={{ backgroundColor: CHAT_SURFACE }}>
+      <header className="relative shrink-0 border-b border-border px-3 h-20" style={{ backgroundColor: CHAT_SURFACE }}>
         <div className="flex h-16 items-center">
           <button
             onClick={onClose}

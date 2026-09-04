@@ -34,13 +34,16 @@ function TermsOfService() {
       <Prose>
         <P>
           By creating an account and using AIED, you agree to these terms. If you're under 18, a
-          parent or guardian should read them with you and agree on your behalf.
+          parent or guardian should read them with you and agree on your behalf. Accounts for
+          under-13s are not activated at all until we've emailed a parent or guardian a notice and
+          they have approved the account.
         </P>
 
         <H>Your account</H>
         <Ul
           items={[
             "One account per person. Keep your password private.",
+            "Tell us your real month and year of birth at sign-up. If you're under 13, a parent or guardian must approve the account before it works, and only they can change the age group afterwards.",
             "Give a real email address so we can help you recover your account.",
             "You're responsible for what happens on your account, including any purchases made on it.",
           ]}
@@ -91,6 +94,8 @@ function TermsOfService() {
           items={[
             "You can stop using AIED at any time, and you or a parent can ask for the account and its data to be deleted.",
             "We may suspend or close an account that breaks the acceptable-use rules above, abuses the payment system, or puts other learners at risk.",
+            "A parent or guardian can withdraw permission for a child's account at any time, which closes it and deletes its data.",
+            "We close accounts we find belong to an under-13 with no approved parental permission.",
             "If we close an account for a rule breach, any remaining paid time may be forfeited.",
           ]}
         />

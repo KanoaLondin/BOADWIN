@@ -16,6 +16,7 @@ import {
   Info,
   ShieldCheck,
   ScrollText,
+  Lock,
 
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
@@ -26,7 +27,8 @@ import {
   setBgAnimationsOff,
   type AppState,
 } from "@/lib/app-state";
-import { signOut } from "@/lib/auth";
+import { signOut, useAuth } from "@/lib/auth";
+import { accountSafety } from "@/lib/child-safety";
 import { validateUsername } from "@/lib/profanity";
 import { toast } from "sonner";
 
@@ -54,9 +56,15 @@ function Settings() {
   const [notif, setNotif] = useState(true);
   const [sound, setSound] = useState(true);
   const [nameInput, setNameInput] = useState(name);
+  const { profile } = useAuth();
+  // Under-18 accounts can't quietly re-label themselves as adults; only a
+  // grown-up with the Parent Zone PIN can change it.
+  const [parentUnlocked, setParentUnlocked] = useState(false);
+  const ageLocked = accountSafety(profile as never).isMinor && !parentUnlocked;
 
   useEffect(() => {
     setDark(document.documentElement.classList.contains("dark"));
+    setParentUnlocked(sessionStorage.getItem("aied:parentUnlocked") === "1");
   }, []);
 
   function toggleTheme() {
@@ -112,18 +120,33 @@ function Settings() {
             {AGES.map((a) => (
               <button
                 key={a.id}
-                onClick={() => setAgeGroup(a.id)}
+                onClick={() => {
+                  if (ageLocked) {
+                    toast.error(
+                      "This is set from your date of birth. A parent can change it in the Parent Zone.",
+                    );
+                    return;
+                  }
+                  setAgeGroup(a.id);
+                }}
                 className={`rounded-full border-2 px-3 py-1.5 text-xs font-black transition-all ${
                   ageGroup === a.id
                     ? "border-primary bg-primary/10 text-primary"
                     : "border-border text-muted-foreground"
-                }`}
+                } ${ageLocked && ageGroup !== a.id ? "opacity-40" : ""}`}
               >
                 {a.label}
               </button>
             ))}
           </div>
+          {ageLocked && (
+            <p className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
+              <Lock className="h-3 w-3" /> Locked because this account belongs to someone under 18.
+              A parent or guardian can change it after unlocking the Parent Zone with the PIN.
+            </p>
+          )}
         </div>
+
 
         <Row
           icon={<Crown className="h-5 w-5" />}
