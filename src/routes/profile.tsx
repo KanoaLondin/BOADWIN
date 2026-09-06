@@ -210,7 +210,7 @@ function Profile() {
             const isOn = streakColor === c;
             return (
               <button key={c} disabled={!isOwned} onClick={() => equipStreakColor(c)} className={`grid h-10 place-items-center rounded-xl border-2 ${isOn ? "border-primary" : "border-border"} bg-card text-xl ${!isOwned && "opacity-40"}`}>
-                <span className={`streak-${c}`}>🔥</span>
+                <StreakFlame className="h-5 w-5" color={c} />
               </button>
             );
           })}
