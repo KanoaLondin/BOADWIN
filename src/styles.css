@@ -446,3 +446,75 @@ body.bg-anim-off .animate-page-slide-right,
 body.bg-anim-off .animate-page-slide-left,
 body.bg-anim-off .animate-page-fade,
 body.bg-anim-off .animate-page-home { animation: page-fade 180ms ease-out both !important; }
+
+/* ---------- Streak flame effects (cosmetic tiers) ---------- */
+.streak-flame-wrap {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  line-height: 0;
+}
+.streak-fx-blue > svg {
+  filter: drop-shadow(0 0 5px rgba(125, 211, 252, 0.85));
+  animation: streak-frost 2.6s ease-in-out infinite;
+}
+@keyframes streak-frost {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(125,211,252,.6)); opacity: .92; }
+  50%      { filter: drop-shadow(0 0 10px rgba(224,242,254,1)); opacity: 1; }
+}
+.streak-fx-purple > svg {
+  filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.8));
+}
+.streak-bolt {
+  position: absolute;
+  top: -35%;
+  right: -45%;
+  font-size: 0.62em;
+  line-height: 1;
+  pointer-events: none;
+  animation: streak-crackle 1.9s steps(1, end) infinite;
+}
+@keyframes streak-crackle {
+  0%, 62%, 100% { opacity: 0; transform: scale(.7) rotate(-8deg); }
+  66%, 72%      { opacity: 1; transform: scale(1) rotate(6deg); }
+  76%           { opacity: 0; }
+  80%, 84%      { opacity: .9; transform: scale(.9) rotate(-10deg); }
+}
+.streak-fx-rainbow > svg {
+  animation: streak-prism 3.2s linear infinite;
+}
+@keyframes streak-prism {
+  0%   { color: #ef4444; }
+  25%  { color: #f59e0b; }
+  50%  { color: #22c55e; }
+  75%  { color: #06b6d4; }
+  100% { color: #ef4444; }
+}
+.streak-rainbow > svg { color: #f59e0b; }
+.streak-fx-green > svg { filter: drop-shadow(0 0 5px rgba(34,197,94,.65)); }
+
+/* ---------- Wizard AL: sparkle burst on correct answers ---------- */
+.wizard-spark {
+  position: absolute;
+  width: 8px; height: 8px;
+  border-radius: 9999px;
+  pointer-events: none;
+  animation: wizard-burst 1.1s ease-out forwards;
+}
+@keyframes wizard-burst {
+  0%   { transform: translate(0,0) scale(.3); opacity: 0; }
+  15%  { opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(1.1); opacity: 0; }
+}
+
+/* ---------- Astronaut AL: zero-gravity level up ---------- */
+@keyframes zero-g-drift {
+  0%   { transform: translateY(-8vh) translateX(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) translateX(var(--drift, 20px)) rotate(180deg); opacity: .5; }
+}
+.animate-zero-g { animation: zero-g-drift 6.5s cubic-bezier(.37,0,.63,1) forwards; }
+@keyframes zero-g-float {
+  0%, 100% { transform: translateY(-6px) rotate(-1.5deg); }
+  50%      { transform: translateY(6px) rotate(1.5deg); }
+}
+.animate-zero-g-float { animation: zero-g-float 4.5s ease-in-out infinite; }
