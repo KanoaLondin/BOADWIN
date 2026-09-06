@@ -66,10 +66,10 @@ const COSMETICS: Cosmetic[] = [
   { id: "fire",    name: "Fire Frame",    emoji: "🔥", desc: "Badge frame.", price: 25, cat: "frame" },
   { id: "ice",     name: "Ice Frame",     emoji: "🧊", desc: "Badge frame.", price: 25, cat: "frame" },
 
-  { id: "blue",    name: "Blue Ice Streak",      emoji: "🧊", desc: "Streak color.", price: 20, cat: "streak" },
-  { id: "purple",  name: "Purple Lightning",     emoji: "⚡", desc: "Streak color.", price: 20, cat: "streak" },
-  { id: "green",   name: "Green Toxic",          emoji: "🟢", desc: "Streak color.", price: 20, cat: "streak" },
-  { id: "rainbow", name: "Rainbow Streak",       emoji: "🌈", desc: "Streak color.", price: 20, cat: "streak" },
+  { id: "blue",    name: "Blue Ice Streak",      emoji: "🧊", desc: "Icy frost shimmer on your streak flame.", price: 20, cat: "streak" },
+  { id: "purple",  name: "Purple Lightning",     emoji: "⚡", desc: "Electric crackle around your streak flame.", price: 25, cat: "streak" },
+  { id: "green",   name: "Green Toxic",          emoji: "🟢", desc: "Toxic green glow on your streak flame.", price: 20, cat: "streak" },
+  { id: "rainbow", name: "Rainbow Streak",       emoji: "🌈", desc: "Top tier: prismatic colour-cycling flame.", price: 45, cat: "streak" },
 ];
 
 function Shop() {
