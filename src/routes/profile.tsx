@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Flame, Zap, Settings, GraduationCap, Lock, Share2, Pencil, Trophy, Sparkles, Award, Crown, ChevronRight } from "lucide-react";
+import { Zap, Settings, GraduationCap, Lock, Share2, Pencil, Trophy, Sparkles, Award, Crown, ChevronRight } from "lucide-react";
+import { StreakFlame } from "@/components/StreakFlame";
 import { AppShell } from "@/components/AppShell";
 import { Mascot } from "@/components/Mascot";
 import { LevelBadge } from "@/components/LevelBadge";
@@ -118,7 +119,7 @@ function Profile() {
           </div>
           <div className="mt-4 grid grid-cols-3 gap-2">
             <Stat icon={<Zap className="h-4 w-4" />} value={xp.toLocaleString()} label="Total XP" />
-            <Stat icon={<Flame className="h-4 w-4" />} value={streak} label="Day streak" />
+            <Stat icon={<StreakFlame className="h-4 w-4" />} value={streak} label="Day streak" />
             <Stat icon={<Sparkles className="h-4 w-4" />} value={`💎 ${gems}`} label="Gems" />
           </div>
         </div>

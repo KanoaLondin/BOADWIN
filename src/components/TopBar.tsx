@@ -36,7 +36,7 @@ export function TopBar({
         )}
         <div className="flex items-center gap-2">
           <Stat
-            icon={<Flame className="h-3.5 w-3.5 fill-current" />}
+            icon={<StreakFlame className="h-3.5 w-3.5" />}
             value={streak}
             color="bg-warning/12 text-warning"
           />
