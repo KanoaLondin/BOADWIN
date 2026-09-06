@@ -426,6 +426,8 @@ export function completeLesson(
     levelDone?: boolean;
     baseXp: number;
     hintedCount?: number;
+    /** Extra cosmetic multiplier (e.g. Ninja speed bonus). Stacks with XP Boost. */
+    xpMultiplier?: number;
   },
 ): {
   gemsEarned: number;
@@ -455,8 +457,10 @@ export function completeLesson(
   });
   addGems(gemsEarned);
   const boost = isBoostActive() ? 2 : 1;
-  const xpEarned = opts.baseXp * boost;
-  addXp(opts.baseXp);
+  const cosmetic = opts.xpMultiplier ?? 1;
+  const base = Math.round(opts.baseXp * cosmetic);
+  const xpEarned = base * boost;
+  addXp(base);
 
   let chest: ChestTier | null = null;
   if (opts.levelDone) chest = "gold";

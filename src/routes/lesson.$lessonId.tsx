@@ -18,6 +18,7 @@ import { ChestReward } from "@/components/ChestReward";
 import { Gem } from "@/components/GemBadge";
 import { HintButton } from "@/components/HintButton";
 import { completeLesson, loseHeart, useAppState, type ChestTier } from "@/lib/app-state";
+import { NINJA_MULTIPLIER, NINJA_PAR_MS, scienceFact, teacherNote } from "@/lib/outfit-effects";
 
 export const Route = createFileRoute("/lesson/$lessonId")({
   component: LessonPage,
@@ -71,6 +72,12 @@ function LessonPage() {
     chest: ChestTier | null;
   } | null>(null);
   const [chestOpen, setChestOpen] = useState<ChestTier | null>(null);
+  // Ninja AL speed bonus — timed from the moment the lesson opens.
+  const lessonStartRef = useRef(Date.now());
+  const [elapsedMs, setElapsedMs] = useState(0);
+  useEffect(() => {
+    lessonStartRef.current = Date.now();
+  }, [lessonId]);
 
   if (!data || !lesson) {
     return (
@@ -106,6 +113,7 @@ function LessonPage() {
 
   function next() {
     if (stepIdx + 1 >= steps.length) {
+      setElapsedMs(Date.now() - lessonStartRef.current);
       setComplete(true);
     } else {
       startedRef.current = true;
@@ -141,6 +149,7 @@ function LessonPage() {
         hearts={hearts}
         xpEarned={xpEarned}
         mistakes={mistakes}
+        elapsedMs={elapsedMs}
         reward={reward}
         setReward={setReward}
         chestOpen={chestOpen}
@@ -216,6 +225,8 @@ function LessonPage() {
             key={stepIdx}
             exercise={lesson.exercises![step as number]}
             exerciseId={`${lesson.id}:${step}`}
+            topic={`${lesson.title} ${data.unit.title}`}
+            seed={stepIdx}
             onCorrect={() => {
               onCorrect(10);
               next();
@@ -240,6 +251,7 @@ function CompleteScreen({
   hearts,
   xpEarned,
   mistakes,
+  elapsedMs,
   reward,
   setReward,
   chestOpen,
@@ -252,6 +264,7 @@ function CompleteScreen({
   hearts: number;
   xpEarned: number;
   mistakes: number;
+  elapsedMs: number;
   reward: { gemsEarned: number; xpEarned: number; chest: ChestTier | null } | null;
   setReward: (r: { gemsEarned: number; xpEarned: number; chest: ChestTier | null }) => void;
   chestOpen: ChestTier | null;
@@ -263,6 +276,8 @@ function CompleteScreen({
   const hintedQs = useAppState((s) => s.hintedQuestions);
   const hintedCount = hintedQs.filter((id) => id.startsWith(`${lesson.id}:`)).length;
   const boostActive = !!boostUntil && boostUntil > Date.now();
+  const outfit = useAppState((s) => s.alOutfit);
+  const ninjaBonus = outfit === "ninja" && elapsedMs > 0 && elapsedMs < NINJA_PAR_MS;
 
   useEffect(() => {
     if (reward) return;
@@ -276,6 +291,7 @@ function CompleteScreen({
       unitDone,
       levelDone,
       baseXp: lesson.xp + xpEarned,
+      xpMultiplier: ninjaBonus ? NINJA_MULTIPLIER : 1,
     });
     setReward(r);
     if (r.chest) setTimeout(() => setChestOpen(r.chest), 700);
@@ -294,6 +310,11 @@ function CompleteScreen({
             {mistakes === 0 ? "Perfect score! 🌟" : "You're making real progress."}
           </p>
 
+          {ninjaBonus && (
+            <div className="mt-4 mr-2 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-foreground to-primary px-4 py-1.5 text-xs font-black text-white shadow-glow animate-pop">
+              🥷 NINJA SPEED BONUS 1.5×
+            </div>
+          )}
           {boostActive && (
             <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-warning to-heart px-4 py-1.5 text-xs font-black text-white shadow-glow animate-pop">
               <Zap className="h-3.5 w-3.5 fill-current" />
@@ -307,9 +328,11 @@ function CompleteScreen({
               <p className="mt-1 text-xl font-black text-warning">
                 +{reward?.xpEarned ?? lesson.xp + xpEarned}
               </p>
-              {boostActive && (
+              {(boostActive || ninjaBonus) && (
                 <p className="text-[9px] font-black uppercase tracking-wider text-heart">
-                  2× boost
+                  {[ninjaBonus ? "1.5× ninja" : null, boostActive ? "2× boost" : null]
+                    .filter(Boolean)
+                    .join(" · ")}
                 </p>
               )}
             </div>
@@ -366,6 +389,8 @@ type Status = "idle" | "correct" | "close" | "wrong";
 function ExerciseStep({
   exercise,
   exerciseId,
+  topic,
+  seed,
   onCorrect,
   onClose,
   onWrong,
@@ -373,6 +398,8 @@ function ExerciseStep({
 }: {
   exercise: Exercise;
   exerciseId: string;
+  topic: string;
+  seed: number;
   onCorrect: () => void;
   onClose: () => void;
   onWrong: () => void;
@@ -438,6 +465,9 @@ function ExerciseStep({
           message={feedbackText}
           onContinue={handleContinue}
           fallbackCorrect={fallbackCorrectText(exercise)}
+          exercise={exercise}
+          topic={topic}
+          seed={seed}
         />
       )}
     </div>
@@ -933,13 +963,21 @@ function FeedbackBar({
   message,
   onContinue,
   fallbackCorrect,
+  exercise,
+  topic,
+  seed,
 }: {
   status: Status;
   message: string;
   onContinue: () => void;
   fallbackCorrect: string;
+  exercise: Exercise;
+  topic: string;
+  seed: number;
 }) {
   const kid = useAppState((s) => s.cohortAgeGroup) === "kid";
+  const outfit = useAppState((s) => s.alOutfit);
+  const animsOff = useAppState((s) => s.bgAnimationsOff);
   if (status === "idle") return null;
 
 
@@ -971,8 +1009,11 @@ function FeedbackBar({
             anim: "animate-shake",
           };
 
+  const right = status === "correct";
+
   return (
-    <div className={`mt-6 rounded-2xl border-2 p-5 ${cfg.ring} ${cfg.anim}`}>
+    <div className={`relative mt-6 rounded-2xl border-2 p-5 ${cfg.ring} ${cfg.anim}`}>
+      {right && outfit === "wizard" && !animsOff && <WizardSparkles />}
       <div className="flex items-center gap-3">
         <div className={`grid h-10 w-10 place-items-center rounded-full text-white ${cfg.btn}`}>
           {cfg.icon}
@@ -986,12 +1027,76 @@ function FeedbackBar({
           )}
         </div>
       </div>
+
+      {right && outfit === "teacher" && (
+        <div className="mt-4 rounded-2xl border border-primary/30 bg-primary/5 p-4 text-left">
+          <p className="text-[10px] font-black uppercase tracking-widest text-primary">
+            🎓 Teacher's Note
+          </p>
+          <ol className="mt-2 space-y-1.5">
+            {teacherNote(exercise, topic).map((line, i) => (
+              <li key={i} className="flex gap-2 text-sm leading-relaxed text-foreground/85">
+                <span className="font-black text-primary">{i + 1}.</span>
+                <span>{line}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {right && outfit === "scientist" && (
+        <div className="mt-4 rounded-2xl border border-cyan/30 bg-cyan/5 p-4 text-left">
+          <p className="text-[10px] font-black uppercase tracking-widest text-cyan">
+            🥽 Science Fact
+          </p>
+          <p className="mt-1.5 text-sm leading-relaxed text-foreground/85">
+            {scienceFact(topic, seed)}
+          </p>
+        </div>
+      )}
+
       <button
         onClick={onContinue}
-        className={`mt-4 w-full rounded-2xl px-6 py-3 font-bold text-white shadow-glow transition-transform hover:scale-[1.02] ${cfg.btn}`}
+        className={`relative z-10 mt-4 w-full rounded-2xl px-6 py-3 font-bold text-white shadow-glow transition-transform hover:scale-[1.02] ${cfg.btn}`}
       >
         Continue
       </button>
+    </div>
+  );
+}
+
+// Wizard AL: a short magical burst of glowing motes around the feedback area.
+function WizardSparkles() {
+  const motes = useMemo(
+    () =>
+      Array.from({ length: 14 }).map((_, i) => ({
+        id: i,
+        left: `${8 + Math.random() * 84}%`,
+        top: `${10 + Math.random() * 70}%`,
+        dx: `${(Math.random() - 0.5) * 120}px`,
+        dy: `${-30 - Math.random() * 70}px`,
+        color: ["#a855f7", "#facc15", "#22d3ee", "#f472b6"][i % 4],
+        delay: `${Math.random() * 0.35}s`,
+      })),
+    [],
+  );
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-visible" aria-hidden>
+      {motes.map((m) => (
+        <span
+          key={m.id}
+          className="wizard-spark"
+          style={{
+            left: m.left,
+            top: m.top,
+            background: m.color,
+            boxShadow: `0 0 10px ${m.color}`,
+            animationDelay: m.delay,
+            ["--dx" as string]: m.dx,
+            ["--dy" as string]: m.dy,
+          }}
+        />
+      ))}
     </div>
   );
 }

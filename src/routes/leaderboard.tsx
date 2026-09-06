@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Trophy, Flame, Crown, ArrowUp, ArrowDown, Minus, Clock } from "lucide-react";
+import { StreakFlame } from "@/components/StreakFlame";
 import { useAuth } from "@/lib/auth";
 import { accountSafety, publicDisplayName } from "@/lib/child-safety";
 import { AppShell } from "@/components/AppShell";
@@ -140,7 +141,7 @@ function Leaderboard() {
               <div className="flex-1">
                 <p className="text-sm font-black">{u.you ? "You" : u.name}</p>
                 <p className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                  <Flame className="h-3 w-3 text-warning" /> {u.streak} day streak
+                  {u.you ? <StreakFlame className="h-3 w-3" /> : <Flame className="h-3 w-3 text-warning" />} {u.streak} day streak
                 </p>
               </div>
               <TrendArrow trend={u.trend} />

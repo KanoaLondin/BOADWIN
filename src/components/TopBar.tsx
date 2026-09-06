@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Flame, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useAppState } from "@/lib/app-state";
 import { ALAvatar } from "@/components/ALAvatar";
+import { StreakFlame } from "@/components/StreakFlame";
 import { GemBadge } from "@/components/GemBadge";
+
 
 type LessonContext = {
   lessonTitle: string;
@@ -34,7 +36,7 @@ export function TopBar({
         )}
         <div className="flex items-center gap-2">
           <Stat
-            icon={<Flame className="h-3.5 w-3.5 fill-current" />}
+            icon={<StreakFlame className="h-3.5 w-3.5" />}
             value={streak}
             color="bg-warning/12 text-warning"
           />

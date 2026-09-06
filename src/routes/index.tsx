@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ChevronRight, Sparkles, Flame, Zap } from "lucide-react";
+import { ChevronRight, Sparkles, Zap } from "lucide-react";
+import { StreakFlame } from "@/components/StreakFlame";
 import { AppShell } from "@/components/AppShell";
 import { COURSES, allLevels, courseForUnit } from "@/lib/course-data";
 import { useAppState } from "@/lib/app-state";
@@ -88,7 +89,7 @@ function Home() {
       <div className="mt-5 grid grid-cols-2 gap-3">
         <div className="rounded-2xl bg-card border border-border p-4 shadow-soft">
           <div className="flex items-center gap-2 text-warning">
-            <Flame className="h-4 w-4 fill-current" />
+            <StreakFlame className="h-4 w-4" />
             <p className="text-[10px] font-black uppercase tracking-wider">Streak</p>
           </div>
           <p className="mt-1 text-2xl font-black">{streak} <span className="text-sm font-bold text-muted-foreground">days</span></p>
