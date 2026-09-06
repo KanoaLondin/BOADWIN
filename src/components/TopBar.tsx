@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Flame, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useAppState } from "@/lib/app-state";
 import { ALAvatar } from "@/components/ALAvatar";
+import { StreakFlame } from "@/components/StreakFlame";
 import { GemBadge } from "@/components/GemBadge";
+
 
 type LessonContext = {
   lessonTitle: string;
