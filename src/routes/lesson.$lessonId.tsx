@@ -1027,12 +1027,76 @@ function FeedbackBar({
           )}
         </div>
       </div>
+
+      {right && outfit === "teacher" && (
+        <div className="mt-4 rounded-2xl border border-primary/30 bg-primary/5 p-4 text-left">
+          <p className="text-[10px] font-black uppercase tracking-widest text-primary">
+            🎓 Teacher's Note
+          </p>
+          <ol className="mt-2 space-y-1.5">
+            {teacherNote(exercise, topic).map((line, i) => (
+              <li key={i} className="flex gap-2 text-sm leading-relaxed text-foreground/85">
+                <span className="font-black text-primary">{i + 1}.</span>
+                <span>{line}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {right && outfit === "scientist" && (
+        <div className="mt-4 rounded-2xl border border-cyan/30 bg-cyan/5 p-4 text-left">
+          <p className="text-[10px] font-black uppercase tracking-widest text-cyan">
+            🥽 Science Fact
+          </p>
+          <p className="mt-1.5 text-sm leading-relaxed text-foreground/85">
+            {scienceFact(topic, seed)}
+          </p>
+        </div>
+      )}
+
       <button
         onClick={onContinue}
-        className={`mt-4 w-full rounded-2xl px-6 py-3 font-bold text-white shadow-glow transition-transform hover:scale-[1.02] ${cfg.btn}`}
+        className={`relative z-10 mt-4 w-full rounded-2xl px-6 py-3 font-bold text-white shadow-glow transition-transform hover:scale-[1.02] ${cfg.btn}`}
       >
         Continue
       </button>
+    </div>
+  );
+}
+
+// Wizard AL: a short magical burst of glowing motes around the feedback area.
+function WizardSparkles() {
+  const motes = useMemo(
+    () =>
+      Array.from({ length: 14 }).map((_, i) => ({
+        id: i,
+        left: `${8 + Math.random() * 84}%`,
+        top: `${10 + Math.random() * 70}%`,
+        dx: `${(Math.random() - 0.5) * 120}px`,
+        dy: `${-30 - Math.random() * 70}px`,
+        color: ["#a855f7", "#facc15", "#22d3ee", "#f472b6"][i % 4],
+        delay: `${Math.random() * 0.35}s`,
+      })),
+    [],
+  );
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-visible" aria-hidden>
+      {motes.map((m) => (
+        <span
+          key={m.id}
+          className="wizard-spark"
+          style={{
+            left: m.left,
+            top: m.top,
+            background: m.color,
+            boxShadow: `0 0 10px ${m.color}`,
+            animationDelay: m.delay,
+            ["--dx" as string]: m.dx,
+            ["--dy" as string]: m.dy,
+          }}
+        />
+      ))}
     </div>
   );
 }
