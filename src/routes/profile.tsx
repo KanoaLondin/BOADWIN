@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Zap, Settings, GraduationCap, Lock, Share2, Pencil, Trophy, Sparkles, Award, Crown, ChevronRight } from "lucide-react";
+import { Zap, Settings, GraduationCap, Lock, Share2, Pencil, Trophy, Sparkles, Award, Crown, ChevronRight, Users } from "lucide-react";
 import { StreakFlame } from "@/components/StreakFlame";
 import { AppShell } from "@/components/AppShell";
 import { Mascot } from "@/components/Mascot";
@@ -232,6 +232,20 @@ function Profile() {
         </div>
         <Link to="/courses" className="mt-4 block rounded-2xl border-2 border-warning/40 bg-card px-4 py-2.5 text-center text-xs font-black text-warning">
           Continue your pathway →
+        </Link>
+      </section>
+
+      {/* Friends link */}
+      <section className="mt-5">
+        <Link to="/friends" className="flex items-center justify-between rounded-3xl border border-border bg-card p-4 shadow-soft">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-primary/15 text-primary"><Users className="h-5 w-5" /></div>
+            <div>
+              <p className="text-sm font-black">Friends</p>
+              <p className="text-[11px] text-muted-foreground">Find people you know and cheer each other on</p>
+            </div>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
         </Link>
       </section>
 
