@@ -157,6 +157,8 @@ export type Database = {
           birth_month: number | null
           birth_year: number | null
           cohort_age_group: string | null
+          consent_given_at: string | null
+          consent_version: string | null
           created_at: string
           display_name: string | null
           gems: number
@@ -176,6 +178,8 @@ export type Database = {
           persona_used_ai: boolean | null
           premium: string
           profile_bg: string
+          referral_code: string
+          referred_by: string | null
           role: string
           state: Json
           streak: number
@@ -192,6 +196,8 @@ export type Database = {
           birth_month?: number | null
           birth_year?: number | null
           cohort_age_group?: string | null
+          consent_given_at?: string | null
+          consent_version?: string | null
           created_at?: string
           display_name?: string | null
           gems?: number
@@ -211,6 +217,8 @@ export type Database = {
           persona_used_ai?: boolean | null
           premium?: string
           profile_bg?: string
+          referral_code: string
+          referred_by?: string | null
           role?: string
           state?: Json
           streak?: number
@@ -227,6 +235,8 @@ export type Database = {
           birth_month?: number | null
           birth_year?: number | null
           cohort_age_group?: string | null
+          consent_given_at?: string | null
+          consent_version?: string | null
           created_at?: string
           display_name?: string | null
           gems?: number
@@ -246,6 +256,8 @@ export type Database = {
           persona_used_ai?: boolean | null
           premium?: string
           profile_bg?: string
+          referral_code?: string
+          referred_by?: string | null
           role?: string
           state?: Json
           streak?: number
@@ -255,7 +267,15 @@ export type Database = {
           weekly_xp?: number
           xp?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_blocks: {
         Row: {
@@ -306,6 +326,7 @@ export type Database = {
           b: string
         }[]
       }
+      redeem_referral: { Args: { code: string }; Returns: boolean }
       username_available: { Args: { candidate: string }; Returns: boolean }
       username_is_allowed: { Args: { candidate: string }; Returns: boolean }
     }
