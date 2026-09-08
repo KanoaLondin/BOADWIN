@@ -11,6 +11,202 @@ export const aiEvaluationLevels: Level[] = [
     badge: "Beginner",
     units: [
       {
+        id: "ev0",
+        title: "Why AI output needs checking - hallucination & drift",
+        description: "Confident answers aren't always correct answers",
+        lessons: [
+          {
+            id: "ev0l1",
+            title: "Confidently wrong",
+            xp: 20,
+            content:
+              "AI models can state false things in the exact same calm, certain tone they use for true things. That's a hallucination: a fabricated answer stated with full confidence. The tone is not evidence. Models generate the most statistically likely next words, not verified facts, so confidence is a byproduct of fluency — not truth.",
+            exercises: [
+              {
+                type: "multiple-choice",
+                question:
+                  "An AI tells you, without hesitation, that the Eiffel Tower was completed in 1920. What does its confident tone tell you about whether that's true?",
+                options: [
+                  "Nothing - confidence and accuracy aren't linked in AI output",
+                  "It's very likely true, since the AI sounds sure",
+                ],
+                correctIndex: 0,
+                explanation:
+                  "Models generate the most statistically likely next words, not verified facts. Confidence is a byproduct of fluency, not truth (the tower was actually finished in 1889).",
+              },
+              {
+                type: "true-false",
+                statement: "Hallucinations only happen when you ask an AI about obscure or unusual topics.",
+                answer: false,
+                explanation:
+                  "Hallucinations can happen on common, everyday questions too. Confidence and topic familiarity don't guarantee accuracy.",
+              },
+            ],
+          },
+          {
+            id: "ev0l2",
+            title: "Where hallucinations sneak in",
+            xp: 20,
+            content:
+              "The usual suspects are invented citations, made-up statistics, wrong dates, and fabricated quotes. The more specific and checkable a claim looks, the more dangerous it can be — because it feels trustworthy even when it isn't. Vague claims are harder to disprove, which is exactly what makes them risky.",
+            exercises: [
+              {
+                type: "matching",
+                instruction: "Match each AI answer to the kind of hallucination it shows:",
+                pairs: [
+                  {
+                    term: "A citation to a paper that doesn't exist",
+                    definition: "Invented citation",
+                  },
+                  {
+                    term: "A quote someone never actually said",
+                    definition: "Fabricated quote",
+                  },
+                  {
+                    term: "A founding date that's wrong by years",
+                    definition: "Wrong date",
+                  },
+                ],
+              },
+              {
+                type: "multiple-choice",
+                question: "Which kind of claim is easiest to fact-check on the spot?",
+                options: [
+                  "A specific number like 'Revenue grew 14% in Q3 2025'",
+                  "A vague claim like 'the company has had a strong few years'",
+                ],
+                correctIndex: 0,
+                explanation:
+                  "Specific, checkable numbers can be verified in one search. Vague claims can't be disproven, which is what makes them risky.",
+              },
+            ],
+          },
+          {
+            id: "ev0l3",
+            title: "Drift - when AI gets it right, then wrong",
+            xp: 20,
+            content:
+              "Drift is what happens over a long conversation when the AI loses track of something it said earlier and contradicts itself, even though it started out accurate. Reliability doesn't build up over a conversation — long threads give more room for earlier details to get lost.",
+            exercises: [
+              {
+                type: "multiple-choice",
+                question:
+                  "Turn 1: the AI says the return window is 30 days. Turn 12 in the same chat: it says the return window is 14 days and the customer is out of luck. What happened?",
+                options: [
+                  "Drift - the AI contradicted a fact it stated earlier in the same conversation",
+                  "The policy genuinely changed mid-conversation",
+                ],
+                correctIndex: 0,
+                explanation:
+                  "This is drift: later in the conversation the model contradicted its own earlier answer.",
+              },
+              {
+                type: "true-false",
+                statement: "The longer a conversation goes, the more reliable each new answer becomes.",
+                answer: false,
+                explanation:
+                  "Reliability doesn't build up over a conversation. Long threads give more room for earlier details to get lost.",
+              },
+            ],
+          },
+          {
+            id: "ev0l4",
+            title: "Your two-second check",
+            xp: 20,
+            content:
+              "Before using an AI answer, ask two questions: does it contain a specific, checkable detail? And would you bet money on it? If you hesitate on either, verify before you rely on it. That hesitation is your signal that the answer hasn't earned your trust yet.",
+            exercises: [
+              {
+                type: "multiple-choice",
+                question:
+                  "An AI summarizing a report says it surveyed 4,200 people across 12 countries and found a 22 percent increase. What should you do before repeating the numbers anywhere that matters?",
+                options: [
+                  "Check the original report before repeating the numbers anywhere that matters",
+                  "Use it as-is, the numbers are specific so they're probably accurate",
+                ],
+                correctIndex: 0,
+                explanation:
+                  "Specific numbers feel trustworthy, but they still need verification against the original source.",
+              },
+              {
+                type: "true-false",
+                statement:
+                  "If an AI claim makes you hesitate to bet money on it, you should verify it before relying on it.",
+                answer: true,
+                explanation:
+                  "That hesitation is a useful signal. Verification protects you from confident but wrong answers.",
+              },
+            ],
+          },
+          {
+            id: "ev0q",
+            title: "Unit Review",
+            xp: 50,
+            isQuiz: true,
+            exercises: [
+              {
+                type: "multiple-choice",
+                question: "A hallucination is best defined as:",
+                options: [
+                  "A confident, fabricated answer",
+                  "A slow response from the model",
+                  "A question the user didn't ask",
+                  "A model refusing to answer",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "true-false",
+                statement: "Confident tone in an AI answer means the content is likely accurate.",
+                answer: false,
+                explanation:
+                  "Tone is not evidence. Confidence is a byproduct of fluency, not a guarantee of truth.",
+              },
+              {
+                type: "multiple-choice",
+                question: "A fabricated-citation hallucination is:",
+                options: [
+                  "A paper that doesn't exist, cited as real",
+                  "A paper the model summarized too briefly",
+                  "A citation with a broken URL",
+                  "A paper the user never read",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "multiple-choice",
+                question: "Drift describes:",
+                options: [
+                  "Contradicting an earlier fact in the same chat",
+                  "A model running slower over time",
+                  "A change in the model's training data",
+                  "A user switching topics mid-conversation",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "multiple-choice",
+                question: "The safest claim to fact-check quickly is one that is:",
+                options: [
+                  "Specific and numeric",
+                  "Vague and general",
+                  "Short and friendly",
+                  "Written in bullet points",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "true-false",
+                statement: "Before relying on an AI claim that matters, you should verify it independently first.",
+                answer: true,
+                explanation:
+                  "Verification is the practical antidote to both hallucinations and drift.",
+              },
+            ],
+          },
+        ],
+      },
+      {
         id: "ev1",
         title: "Why Evaluate?",
         description: "The cost of shipping blind",
