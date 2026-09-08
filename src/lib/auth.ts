@@ -117,6 +117,38 @@ export async function refreshProfile() {
   }
 }
 
+/**
+ * Changes the signed-in person's username. Runs the same safety checks the
+ * database enforces (format, profanity, uniqueness) so we can show a friendly
+ * message instead of a raw error.
+ */
+export async function changeUsername(next: string): Promise<void> {
+  const value = next.trim();
+  if (!state.userId) throw new Error("You need to be signed in to do that.");
+  const problem = validateUsername(value);
+  if (problem) throw new Error(problem);
+  if (state.profile?.username && value.toLowerCase() === state.profile.username.toLowerCase()) {
+    return;
+  }
+
+  const { data: available, error: checkError } = await supabase.rpc("username_available", {
+    candidate: value,
+  });
+  if (checkError) throw new Error("Couldn't check that username right now. Please try again.");
+  if (!available) throw new Error("That username is already taken — please pick another.");
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ username: value, username_changed_at: new Date().toISOString() })
+    .eq("id", state.userId);
+  if (error) {
+    if (error.message?.toLowerCase().includes("allowed")) throw new Error(error.message);
+    if (error.code === "23505") throw new Error("That username is already taken — please pick another.");
+    throw new Error("Couldn't save that username. Please try again.");
+  }
+  await refreshProfile();
+}
+
 async function redeemAdminCode(code: string, accessToken: string) {
   const res = await fetch("/api/redeem-admin-code", {
     method: "POST",
