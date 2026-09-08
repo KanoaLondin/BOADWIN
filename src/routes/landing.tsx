@@ -215,7 +215,7 @@ function PhoneMockup() {
             src={courseMapShot}
             alt="The AIED app's course map, showing completed lessons along a path through the What is AI? unit"
             width={585}
-            height={1266}
+            height={1060}
             loading="lazy"
             className="block w-full"
           />
