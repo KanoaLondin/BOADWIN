@@ -73,6 +73,22 @@ function PrivacyPolicy() {
           as much as is needed to do that job.
         </P>
 
+        <H>Payments and billing data</H>
+        <P>
+          Our order process is conducted by our online reseller and Merchant of Record,
+          Paddle.com. Paddle handles all payments, subscription billing, taxes and refunds for
+          AIED, and is the data controller for the billing information you enter at checkout.
+        </P>
+        <Ul
+          items={[
+            "Card numbers and bank details are entered directly with Paddle and never reach AIED — we never see or store them.",
+            "Paddle collects the billing details it needs to take payment and charge the right tax, such as your name, email address, country and postcode.",
+            "We receive back from Paddle only what we need to run your account: which plan you're on, whether it's active, and when it renews or ends.",
+            "Paddle handles this data under its own privacy notice, available at paddle.com.",
+            "Children do not pay for anything in AIED. Only a grown-up account holder can start a subscription.",
+          ]}
+        />
+
         <H>AL, the AI tutor</H>
         <P>
           AL runs on Google's Gemini models, reached through the Lovable AI Gateway. When you chat

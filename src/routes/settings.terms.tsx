@@ -33,7 +33,8 @@ function TermsOfService() {
 
       <Prose>
         <P>
-          By creating an account and using AIED, you agree to these terms. If you're under 18, a
+          AIED is operated by Coleklondin. By creating an account and using AIED, you agree to
+          these terms. If you're under 18, a
           parent or guardian should read them with you and agree on your behalf. Accounts for
           under-13s are not activated at all until we've emailed a parent or guardian a notice and
           they have approved the account.
