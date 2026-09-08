@@ -4,7 +4,7 @@ import { Crown, KeyRound, LogOut, Sparkles, User, Users, Zap, ArrowLeft } from "
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
-import { signOut, useAuth } from "@/lib/auth";
+import { changeUsername, signOut, useAuth } from "@/lib/auth";
 import { useAppState, setName, setPremium } from "@/lib/app-state";
 import { validateUsername } from "@/lib/profanity";
 import { useSubscription } from "@/hooks/useSubscription";
