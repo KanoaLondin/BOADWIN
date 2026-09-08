@@ -63,8 +63,29 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "friendships_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "friendships_user_a_fkey"
             columns: ["user_a"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friendships_user_a_fkey"
+            columns: ["user_a"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friendships_user_b_fkey"
+            columns: ["user_b"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -73,7 +94,7 @@ export type Database = {
             foreignKeyName: "friendships_user_b_fkey"
             columns: ["user_b"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -145,6 +166,13 @@ export type Database = {
             columns: ["child_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parent_consent_notices_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -275,6 +303,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       user_blocks: {
@@ -302,17 +337,72 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "user_blocks_blocked_fkey"
+            columns: ["blocked"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "user_blocks_blocker_fkey"
             columns: ["blocker"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_blocks_blocker_fkey"
+            columns: ["blocker"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          al_outfit: string | null
+          bio: string | null
+          display_name: string | null
+          id: string | null
+          is_minor: boolean | null
+          member_since: string | null
+          profile_bg: string | null
+          streak: number | null
+          username: string | null
+          weekly_xp: number | null
+          xp: number | null
+        }
+        Insert: {
+          al_outfit?: string | null
+          bio?: string | null
+          display_name?: string | null
+          id?: string | null
+          is_minor?: boolean | null
+          member_since?: string | null
+          profile_bg?: string | null
+          streak?: number | null
+          username?: string | null
+          weekly_xp?: number | null
+          xp?: number | null
+        }
+        Update: {
+          al_outfit?: string | null
+          bio?: string | null
+          display_name?: string | null
+          id?: string | null
+          is_minor?: boolean | null
+          member_since?: string | null
+          profile_bg?: string | null
+          streak?: number | null
+          username?: string | null
+          weekly_xp?: number | null
+          xp?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       age_from_birth: { Args: { bm: number; byr: number }; Returns: number }
