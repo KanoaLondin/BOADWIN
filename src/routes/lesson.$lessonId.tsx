@@ -149,6 +149,7 @@ function LessonPage() {
         hearts={hearts}
         xpEarned={xpEarned}
         mistakes={mistakes}
+        questionCount={lesson.exercises?.length ?? 0}
         elapsedMs={elapsedMs}
         reward={reward}
         setReward={setReward}
