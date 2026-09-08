@@ -1072,6 +1072,155 @@ export const aiSecurityLevels: Level[] = [
               },
             ],
           },
+
+          {
+            id: "sec5l2",
+            title: "Vector Store Poisoning",
+            xp: 25,
+            content:
+              "Vector store poisoning happens when an attacker gets malicious content embedded into the same index your retrieval system searches. That can mean submitting a support ticket, a wiki edit, or a public document that later gets ingested, chunked, and embedded alongside legitimate material. Once it is in the index, it will surface whenever a query is semantically close enough, and the model will treat it as retrieved context worth trusting. The attacker never touches your servers; they just get a document into whatever pipeline feeds your embeddings. Because relevance ranking is based on meaning rather than source, a well-written poisoned chunk can outrank the real answer, especially if it is written to closely match common queries. Defenses include vetting ingestion sources, tracking document provenance, and treating retrieved text as untrusted input rather than ground truth.",
+            exercises: [
+              {
+                type: "multiple-choice",
+                question: "How does an attacker typically get content into a vector store?",
+                options: [
+                  "By getting content into an ordinary ingestion source that later gets embedded, like a wiki edit or ticket",
+                  "By directly editing the embedding weights",
+                  "By hacking the GPU running the model",
+                  "By changing the user's login password",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "true-false",
+                statement: "A poisoned chunk can outrank the correct answer if it is written to closely match common queries.",
+                answer: true,
+                explanation: "Retrieval ranks by semantic similarity, not by whether the source is trustworthy.",
+              },
+              {
+                type: "fill-blank",
+                prompt: "Retrieved text should be treated as ____ input, not ground truth.",
+                answer: "untrusted",
+                wordBank: ["encrypted", "compiled", "verified"],
+              },
+            ],
+          },
+          {
+            id: "sec5l3",
+            title: "Dependency and Model Supply Chain",
+            xp: 25,
+            content:
+              "Supply-chain risk in AI systems extends well beyond the code your team writes. It includes the base model weights you download, the fine-tuning datasets you train on, the third-party libraries your pipeline imports, and the plugins or MCP servers you grant tool access to. A model checkpoint pulled from an untrusted host could contain a backdoor triggered by a specific phrase. A fine-tuning dataset scraped from the open web could carry poisoned examples designed to shift behavior in a narrow, hard-to-notice way. Even a well-intentioned open-source plugin can introduce a vulnerability if nobody audits its updates. The practical response looks like ordinary software supply-chain hygiene: pin and verify sources, review before upgrading, and limit the blast radius of anything you did not build yourself.",
+            exercises: [
+              {
+                type: "matching",
+                instruction: "Match each supply-chain component to its risk:",
+                pairs: [
+                  { term: "Downloaded model weights", definition: "May contain a hidden backdoor trigger" },
+                  { term: "Scraped fine-tuning data", definition: "May carry poisoned examples that shift behavior" },
+                  { term: "Third-party plugin", definition: "May introduce a vulnerability through an unaudited update" },
+                ],
+              },
+              {
+                type: "short-answer",
+                question: "Describe one practical step a team can take to reduce AI supply-chain risk.",
+                minWords: 15,
+                referenceAnswer:
+                  "Pin and verify the source of model weights and datasets, review dependencies before upgrading, and limit the permissions granted to any third-party plugin or tool.",
+              },
+              {
+                type: "true-false",
+                statement: "Supply-chain risk in AI only applies to the code a team writes internally.",
+                answer: false,
+                explanation: "It also covers model weights, training data, libraries, and third-party tools.",
+              },
+            ],
+          },
+          {
+            id: "sec5l4",
+            title: "Defending the Retrieval Pipeline",
+            xp: 25,
+            content:
+              "Defending a RAG pipeline means treating every stage as a potential trust boundary. At ingestion, vet sources and track provenance so you know where each chunk came from. At indexing, consider limiting how much influence any single low-trust source can have on ranking. At retrieval time, keep retrieved content clearly separated from system instructions so the model is less likely to treat it as authoritative, and consider a lightweight filter that flags retrieved chunks containing instruction-like language. At the tool layer, apply least privilege to every plugin and MCP server, granting only the access each one strictly needs. None of these measures eliminates risk on its own, but layered together they shrink the window in which a single poisoned document or compromised tool can cause real damage.",
+            exercises: [
+              {
+                type: "drag-drop",
+                instruction: "Put these RAG pipeline defenses in the order they apply, from earliest to latest stage:",
+                words: ["Vet sources at ingestion", "Limit influence at indexing", "Separate content from instructions at retrieval", "Apply least privilege to tools"],
+              },
+              {
+                type: "fill-blank",
+                prompt: "Every plugin and MCP server should be granted access under the principle of least ____.",
+                answer: "privilege",
+                wordBank: ["latency", "throughput", "popularity"],
+              },
+              {
+                type: "true-false",
+                statement: "Layered defenses across ingestion, indexing, retrieval, and tools eliminate RAG risk entirely.",
+                answer: false,
+                explanation: "They reduce risk and shrink the attack window, but no single layer or combination removes it completely.",
+              },
+            ],
+          },
+          {
+            id: "sec5q",
+            title: "Unit Review",
+            xp: 50,
+            isQuiz: true,
+            exercises: [
+              {
+                type: "multiple-choice",
+                question: "A RAG system's trust level is determined by:",
+                options: [
+                  "The trust level of everything it retrieves",
+                  "The speed of its vector database",
+                  "The number of documents it stores",
+                  "The programming language it is written in",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "multiple-choice",
+                question: "Vector store poisoning most often occurs through:",
+                options: [
+                  "Ordinary ingestion sources like wiki edits or tickets that get embedded",
+                  "Direct edits to model weights",
+                  "Physical access to the data center",
+                  "Changing a user's password",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "true-false",
+                statement: "A well-written poisoned chunk can outrank the correct answer in semantic search.",
+                answer: true,
+                explanation: "Ranking is based on meaning, not trustworthiness of the source.",
+              },
+              {
+                type: "multiple-choice",
+                question: "Which of these counts as an AI supply-chain risk?",
+                options: [
+                  "Downloaded model weights, training data, and third-party plugins",
+                  "Only the internal application code",
+                  "Only the user interface design",
+                  "Only the marketing copy",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "fill-blank",
+                prompt: "Every plugin or tool should be granted only the access it strictly needs, a principle called least ____.",
+                answer: "privilege",
+                wordBank: ["latency", "traffic", "storage"],
+              },
+              {
+                type: "true-false",
+                statement: "An agent's overall trustworthiness is limited by the least trustworthy tool it is permitted to call.",
+                answer: true,
+                explanation: "Any tool it can call becomes part of its effective trust boundary.",
+              },
+            ],
+          },
         ],
       },
       {
@@ -1109,6 +1258,158 @@ export const aiSecurityLevels: Level[] = [
                 statement: "Standardising tool access with MCP also standardises part of the attack surface.",
                 answer: true,
                 explanation: "A shared protocol means a shared set of exploit patterns.",
+              },
+            ],
+          },
+
+          {
+            id: "sec6l2",
+            title: "Tool Poisoning and Return-Value Injection",
+            xp: 25,
+            content:
+              "Tool poisoning targets the metadata around a tool rather than the tool's actual function. An MCP server can register a tool with an innocent-sounding name but a description that quietly instructs the model to take an extra step, such as also sending a copy of the output to an external address. Because the model reads tool descriptions as trusted configuration, it often follows the instruction without flagging anything unusual. Return-value injection works the same way in reverse: a tool that looks safe, like a weather lookup or a calculator, can be compromised or spoofed to return a result that itself contains an embedded instruction. The agent then reads that instruction as part of the tool's legitimate output and acts on it, even though the actual task had nothing to do with the attacker's goal.",
+            exercises: [
+              {
+                type: "multiple-choice",
+                question: "What does tool poisoning typically target?",
+                options: [
+                  "The tool's metadata or description rather than its core function",
+                  "The user's local hard drive",
+                  "The model's training data directly",
+                  "The network firewall",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "fill-blank",
+                prompt: "In return-value injection, a tool's output itself contains an embedded ____.",
+                answer: "instruction",
+                acceptableAnswers: ["instruction", "instructions"],
+                wordBank: ["password", "invoice", "timestamp"],
+              },
+              {
+                type: "true-false",
+                statement: "Models generally treat tool descriptions as trusted configuration rather than as untrusted input.",
+                answer: true,
+                explanation: "That trust is exactly what makes a poisoned tool description effective.",
+              },
+            ],
+          },
+          {
+            id: "sec6l3",
+            title: "Cross-Server and Multi-Agent Exploits",
+            xp: 25,
+            content:
+              "Once an agent can talk to multiple MCP servers or coordinate with other agents, the attack surface stops being about a single tool and becomes about the interactions between them. A compromised server can pass a poisoned instruction through a chain of otherwise-legitimate tool calls, with each hop adding a small amount of apparent legitimacy until the final action looks routine. In multi-agent setups, one compromised or manipulated agent can pass tainted context to another agent that trusts it implicitly, spreading the attack without ever touching the original human user. These exploits are hard to catch with single-tool audits because no individual step looks wrong in isolation; the danger only appears when you trace the full path a piece of data or an instruction takes across the system.",
+            exercises: [
+              {
+                type: "short-answer",
+                question: "Explain why a cross-server or multi-agent exploit can be hard to detect by auditing tools one at a time.",
+                minWords: 15,
+                referenceAnswer:
+                  "Each individual tool call or agent handoff can look legitimate on its own; the malicious pattern only becomes visible when tracing the full chain of data and instructions across servers or agents.",
+              },
+              {
+                type: "true-false",
+                statement: "A compromised agent can pass tainted context to another agent that trusts it implicitly.",
+                answer: true,
+                explanation: "Multi-agent systems can propagate an attack without any direct contact from the original attacker.",
+              },
+              {
+                type: "multiple-choice",
+                question: "What makes multi-hop tool chains dangerous?",
+                options: [
+                  "Each hop can add apparent legitimacy until the final action looks routine",
+                  "They always run slower than single-tool calls",
+                  "They require the user to approve every step",
+                  "They cannot access external data",
+                ],
+                correctIndex: 0,
+              },
+            ],
+          },
+          {
+            id: "sec6l4",
+            title: "Hardening MCP Deployments",
+            xp: 25,
+            content:
+              "Hardening an MCP deployment starts with treating every connected server as untrusted until proven otherwise, the same way you would treat any third-party dependency. Pin tool servers to known, reviewed versions, and diff tool descriptions on update rather than trusting that nothing changed. Log every tool call and its return value so that an unusual pattern, like an unexpected external address in an otherwise routine response, can be caught after the fact even if it was missed live. Where possible, sandbox tool execution and cap what any single tool can do, so a compromised server can act only within a narrow, pre-approved boundary. Finally, apply the same human-in-the-loop principle from earlier units: irreversible or high-impact actions triggered through a tool chain deserve a checkpoint, not silent automation.",
+            exercises: [
+              {
+                type: "drag-drop",
+                instruction: "Put these MCP hardening practices in order from setup to ongoing operation:",
+                words: ["Treat every server as untrusted", "Pin and review tool server versions", "Log every tool call and return value", "Add a human checkpoint for high-impact actions"],
+              },
+              {
+                type: "fill-blank",
+                prompt: "Diffing tool descriptions on update helps catch changes instead of ____ that nothing changed.",
+                answer: "assuming",
+                wordBank: ["encrypting", "compiling", "deleting"],
+              },
+              {
+                type: "true-false",
+                statement: "Sandboxing tool execution and capping what a single tool can do limits the damage a compromised server can cause.",
+                answer: true,
+                explanation: "A narrow, pre-approved boundary keeps a compromise from cascading into a larger incident.",
+              },
+            ],
+          },
+          {
+            id: "sec6q",
+            title: "Unit Review",
+            xp: 50,
+            isQuiz: true,
+            exercises: [
+              {
+                type: "multiple-choice",
+                question: "A confused-deputy scenario in an agentic system involves:",
+                options: [
+                  "An agent tricked into using a legitimate tool for an illegitimate purpose",
+                  "A tool server that runs out of memory",
+                  "A user who forgets their password",
+                  "Two models trained on the same dataset",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "multiple-choice",
+                question: "Tool poisoning typically works by manipulating:",
+                options: [
+                  "A tool's description or metadata",
+                  "The user's operating system",
+                  "The physical server hardware",
+                  "The billing system",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "true-false",
+                statement: "A tool's return value can itself carry an embedded instruction that the agent then follows.",
+                answer: true,
+                explanation: "This is return-value injection, and it exploits the model's trust in tool output.",
+              },
+              {
+                type: "multiple-choice",
+                question: "Why are cross-server or multi-agent exploits hard to catch with single-tool audits?",
+                options: [
+                  "No individual step looks wrong in isolation; only the full chain reveals the attack",
+                  "They never involve more than one tool call",
+                  "They only happen offline",
+                  "They require physical access to the server",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "fill-blank",
+                prompt: "Hardened MCP deployments treat every connected server as ____ until proven otherwise.",
+                answer: "untrusted",
+                wordBank: ["encrypted", "verified", "public"],
+              },
+              {
+                type: "true-false",
+                statement: "Standardizing tool access through a shared protocol like MCP also standardizes part of the attack surface.",
+                answer: true,
+                explanation: "A shared protocol means attackers can reuse the same exploit patterns across many deployments.",
               },
             ],
           },
@@ -1159,6 +1460,162 @@ export const aiSecurityLevels: Level[] = [
               },
             ],
           },
+
+          {
+            id: "sec7l2",
+            title: "Scoping and Rules of Engagement",
+            xp: 30,
+            content:
+              "Scoping a red-team engagement means writing down, before any testing begins, exactly which systems, environments, and data are in bounds, which are explicitly out of bounds, and what testing windows and escalation contacts apply if something unexpected happens. A rules-of-engagement document typically covers permitted techniques, whether production data can be touched, how to handle an accidental discovery of a live incident unrelated to the test, and who has authority to pause the engagement. Skipping this step does not make the work faster; it makes the results legally and organizationally unusable, because nobody can be sure what was actually authorized. A tight scope also protects the tester: it is the paper trail that proves the work was security research and not unauthorized access.",
+            exercises: [
+              {
+                type: "multiple-choice",
+                question: "Why is a written scope important before testing begins?",
+                options: [
+                  "It defines what is authorized and protects the tester with a clear paper trail",
+                  "It makes the engagement take longer for no benefit",
+                  "It is only needed for automated tools, not manual testing",
+                  "It replaces the need for a threat model",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "fill-blank",
+                prompt: "A rules-of-engagement document defines what is in bounds and what is explicitly ____ bounds.",
+                answer: "out",
+                wordBank: ["over", "under", "around"],
+              },
+              {
+                type: "true-false",
+                statement: "A clear scope document is part of what distinguishes authorized security research from unauthorized access.",
+                answer: true,
+                explanation: "Without documented authorization, there is no way to prove the testing was legitimate.",
+              },
+            ],
+          },
+          {
+            id: "sec7l3",
+            title: "Manual Testing Meets Automated Tooling",
+            xp: 30,
+            content:
+              "Effective red-teaming combines manual and automated testing because each catches what the other misses. Automated tools like PyRIT, Garak, or promptfoo can run thousands of adversarial prompts quickly, surfacing known jailbreak patterns and regressions at a scale no human could match by hand. But automated scans tend to miss context-specific weaknesses: a prompt injection that only works because of how a particular application formats retrieved documents, or a business-logic flaw in how an agent's tools are wired together. Manual testing, done by someone who understands the specific system's threat model, is what finds those. A mature engagement usually runs automated tooling first to clear the obvious ground, then spends the bulk of skilled human time on the system-specific weaknesses that only a person who has read the threat model would think to try.",
+            exercises: [
+              {
+                type: "matching",
+                instruction: "Match each testing approach to its strength:",
+                pairs: [
+                  { term: "Automated tooling (PyRIT, Garak, promptfoo)", definition: "Runs many known attack patterns quickly and at scale" },
+                  { term: "Manual testing", definition: "Finds context-specific and business-logic weaknesses" },
+                  { term: "Combining both", definition: "Clears obvious ground fast, then focuses skilled time on the rest" },
+                ],
+              },
+              {
+                type: "true-false",
+                statement: "Automated adversarial testing tools reliably catch business-logic flaws specific to one application's tool wiring.",
+                answer: false,
+                explanation: "Those flaws usually require a human who understands the specific system's threat model.",
+              },
+              {
+                type: "short-answer",
+                question: "Explain why a mature red-team engagement typically runs automated tools before manual testing.",
+                minWords: 15,
+                referenceAnswer:
+                  "Automated tools quickly surface known, common weaknesses at scale, which clears the obvious issues so skilled human testers can focus their limited time on system-specific and business-logic weaknesses automation would miss.",
+              },
+            ],
+          },
+          {
+            id: "sec7l4",
+            title: "From Findings to a Fix List",
+            xp: 30,
+            content:
+              "A red-team engagement is only useful if its output changes something. That means every finding needs a severity rating based on both the likelihood of exploitation and the impact if it succeeds, not just a raw list of things that went wrong. A prompt injection that leaks a harmless FAQ answer is not the same severity as one that triggers an unauthorized financial transaction, even though both are technically prompt injection. Findings should be written so an engineering team can act on them without needing the tester in the room: a clear reproduction step, the underlying cause, and a concrete suggested fix or mitigation. The final report should end with a prioritized list, because an organization with limited engineering time needs to know what to fix first, not just what is broken.",
+            exercises: [
+              {
+                type: "multiple-choice",
+                question: "How should severity be determined for a red-team finding?",
+                options: [
+                  "By combining likelihood of exploitation with impact if it succeeds",
+                  "By how long the finding took to discover",
+                  "By alphabetical order of the vulnerability name",
+                  "By whether the tester used a manual or automated method",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "true-false",
+                statement: "Two prompt injection findings should always get the same severity rating regardless of impact.",
+                answer: false,
+                explanation: "Severity depends on likelihood and impact, not just the attack category.",
+              },
+              {
+                type: "fill-blank",
+                prompt: "A useful finding includes a reproduction step, the underlying cause, and a concrete suggested ____.",
+                answer: "fix",
+                acceptableAnswers: ["fix", "mitigation"],
+                wordBank: ["excuse", "invoice", "password"],
+              },
+            ],
+          },
+          {
+            id: "sec7q",
+            title: "Unit Review",
+            xp: 50,
+            isQuiz: true,
+            exercises: [
+              {
+                type: "multiple-choice",
+                question: "A structured red-team engagement includes:",
+                options: [
+                  "Scoping, threat modelling, manual and automated testing, and severity classification",
+                  "Only running an automated scanner once",
+                  "Testing without any documentation",
+                  "Skipping severity ratings to save time",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "multiple-choice",
+                question: "Why write a rules-of-engagement document before testing?",
+                options: [
+                  "It defines authorized scope and protects the tester with a clear paper trail",
+                  "It is legally required in every country",
+                  "It replaces the need for a final report",
+                  "It guarantees the model has no vulnerabilities",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "true-false",
+                statement: "Automated tools like PyRIT, Garak, and promptfoo can replace the need for manual testing entirely.",
+                answer: false,
+                explanation: "They catch known patterns at scale but miss context-specific and business-logic weaknesses.",
+              },
+              {
+                type: "multiple-choice",
+                question: "Severity of a finding should be based on:",
+                options: [
+                  "Likelihood of exploitation combined with impact if it succeeds",
+                  "How much time it took to find",
+                  "The tester's personal opinion only",
+                  "Whether it was found manually",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "fill-blank",
+                prompt: "Threat model the ____ system, not attacks in general.",
+                answer: "specific",
+                wordBank: ["fastest", "cheapest", "public"],
+              },
+              {
+                type: "true-false",
+                statement: "A red-team report is most useful when it ends with a prioritized list of what to fix first.",
+                answer: true,
+                explanation: "Organizations with limited engineering time need to know what matters most, not just a list of issues.",
+              },
+            ],
+          },
         ],
       },
       {
@@ -1193,6 +1650,157 @@ export const aiSecurityLevels: Level[] = [
                   "A ban on all AI research",
                   "A single global AI licence",
                   "A benchmark leaderboard",
+                ],
+                correctIndex: 0,
+              },
+            ],
+          },
+
+          {
+            id: "sec8l2",
+            title: "Responsible Disclosure in Practice",
+            xp: 30,
+            content:
+              "Responsible disclosure is the agreed process for telling an organization about a vulnerability without putting users at risk in the meantime. The typical shape is a private report to the vendor or a designated security contact, a reasonable window for them to investigate and fix the issue, and only then a public write-up, if one happens at all. Many organizations formalize this with a bug bounty program or a published security.txt file spelling out how to report and what response time to expect. Going public immediately, sometimes called full disclosure, can pressure a slow vendor to act, but it also hands attackers a working exploit before a fix exists. Most professional AI red-teamers default to coordinated disclosure unless there is a specific reason, like an actively exploited and ignored report, to do otherwise.",
+            exercises: [
+              {
+                type: "multiple-choice",
+                question: "What is the typical shape of a responsible, coordinated disclosure process?",
+                options: [
+                  "Private report first, a reasonable fix window, then optional public write-up",
+                  "Immediate public posting with full exploit details",
+                  "No report at all, just quietly fix your own systems",
+                  "Selling the vulnerability to the highest bidder",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "true-false",
+                statement: "Full disclosure means publishing a vulnerability immediately, before the vendor has a chance to fix it.",
+                answer: true,
+                explanation: "That immediacy is exactly what distinguishes it from coordinated disclosure.",
+              },
+              {
+                type: "fill-blank",
+                prompt: "A published security.txt file spells out how to report a vulnerability and what response ____ to expect.",
+                answer: "time",
+                wordBank: ["salary", "font", "color"],
+              },
+            ],
+          },
+          {
+            id: "sec8l3",
+            title: "The Regulatory Landscape",
+            xp: 30,
+            content:
+              "AI regulation is still forming, but a few patterns are already visible across jurisdictions. The EU AI Act sorts systems into risk tiers, from minimal to unacceptable risk, and attaches heavier obligations, like documentation, testing, and human oversight, to higher-risk categories such as systems used in hiring or credit decisions. In the United States, the approach so far is more fragmented, with sector-specific rules, executive orders, and state-level laws filling the gaps rather than one comprehensive federal statute. Regardless of jurisdiction, a common thread is emerging: organizations deploying higher-risk AI systems are increasingly expected to document their risk assessments, testing, and mitigations, which means the red-team findings and threat models covered in this course are becoming compliance artifacts, not just internal engineering notes.",
+            exercises: [
+              {
+                type: "multiple-choice",
+                question: "How does the EU AI Act structure its obligations?",
+                options: [
+                  "By risk tier, with heavier obligations for higher-risk systems",
+                  "By company size only",
+                  "By programming language used",
+                  "By country of the model's creator",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "true-false",
+                statement: "The United States currently has one comprehensive federal AI law that covers all use cases.",
+                answer: false,
+                explanation: "The U.S. approach is more fragmented, relying on sector rules, executive orders, and state laws.",
+              },
+              {
+                type: "short-answer",
+                question: "Explain why red-team findings and threat models are becoming compliance artifacts, not just internal notes.",
+                minWords: 15,
+                referenceAnswer:
+                  "Regulations increasingly require organizations deploying higher-risk AI systems to document their risk assessments, testing, and mitigations, so the same threat models and red-team reports used internally now serve as evidence of regulatory compliance.",
+              },
+            ],
+          },
+          {
+            id: "sec8l4",
+            title: "Building an Ethical Testing Practice",
+            xp: 30,
+            content:
+              "A durable career or practice in AI red-teaming rests on a few non-negotiables. Get written authorization before testing anything, scoped clearly enough that everyone agrees on its boundaries. Handle any sensitive data you encounter during testing with the same care as the organization is supposed to give it, and delete it when the engagement ends unless retention is explicitly agreed. Report what you find through the agreed channel, not social media, even when a vendor is slow to respond, and give them a fair window before considering any public statement. And keep learning the regulatory landscape as it evolves, since what counts as adequate documentation or testing today may not be enough in a year. None of this is about being cautious for its own sake; it is what keeps security research distinguishable from the exact behavior it exists to find and prevent.",
+            exercises: [
+              {
+                type: "drag-drop",
+                instruction: "Put these ethical testing practices in a sensible order for a new engagement:",
+                words: ["Get written, scoped authorization", "Test within the agreed boundaries", "Handle any sensitive data with care", "Report findings through the agreed channel"],
+              },
+              {
+                type: "true-false",
+                statement: "Reporting a slow vendor's vulnerability on social media instead of the agreed channel is an acceptable shortcut.",
+                answer: false,
+                explanation: "It undermines coordinated disclosure and can put users at risk before a fix exists.",
+              },
+              {
+                type: "fill-blank",
+                prompt: "Ethical testing practices keep security research distinguishable from the exact behavior it exists to find and ____.",
+                answer: "prevent",
+                wordBank: ["encourage", "ignore", "publish"],
+              },
+            ],
+          },
+          {
+            id: "sec8q",
+            title: "Unit Review",
+            xp: 50,
+            isQuiz: true,
+            exercises: [
+              {
+                type: "true-false",
+                statement: "Testing a system without explicit authorization is a grey area rather than a clear violation.",
+                answer: false,
+                explanation: "It is the line between security research and unauthorized access, not a grey area.",
+              },
+              {
+                type: "multiple-choice",
+                question: "Coordinated (responsible) disclosure typically involves:",
+                options: [
+                  "A private report, a reasonable fix window, then optional public write-up",
+                  "Immediate public posting of the exploit",
+                  "Selling the finding privately",
+                  "Ignoring the vulnerability entirely",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "multiple-choice",
+                question: "The EU AI Act's core structural approach is to:",
+                options: [
+                  "Sort systems into risk tiers with heavier obligations for higher risk",
+                  "Ban all AI research outright",
+                  "Apply identical rules to every AI system regardless of use",
+                  "Regulate only open-source models",
+                ],
+                correctIndex: 0,
+              },
+              {
+                type: "fill-blank",
+                prompt: "Reporting a real vulnerability through agreed channels is called responsible ____.",
+                answer: "disclosure",
+                wordBank: ["deployment", "escalation", "monitoring"],
+              },
+              {
+                type: "true-false",
+                statement: "Red-team findings and threat models are increasingly treated as compliance artifacts, not just internal engineering notes.",
+                answer: true,
+                explanation: "Regulations increasingly require documented risk assessments and testing for higher-risk AI systems.",
+              },
+              {
+                type: "multiple-choice",
+                question: "A durable ethical testing practice requires:",
+                options: [
+                  "Written authorization, careful data handling, and reporting through agreed channels",
+                  "Testing anything reachable regardless of permission",
+                  "Publishing every finding immediately for credibility",
+                  "Skipping documentation to move faster",
                 ],
                 correctIndex: 0,
               },
