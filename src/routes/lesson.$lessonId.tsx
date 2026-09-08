@@ -19,6 +19,11 @@ import { Gem } from "@/components/GemBadge";
 import { HintButton } from "@/components/HintButton";
 import { completeLesson, loseHeart, useAppState, type ChestTier } from "@/lib/app-state";
 import { NINJA_MULTIPLIER, NINJA_PAR_MS, scienceFact, teacherNote } from "@/lib/outfit-effects";
+import {
+  lessonIsQuiz,
+  recordLessonCompletion,
+  recordQuizAttempt,
+} from "@/lib/progress-tracking";
 
 export const Route = createFileRoute("/lesson/$lessonId")({
   component: LessonPage,
@@ -149,6 +154,7 @@ function LessonPage() {
         hearts={hearts}
         xpEarned={xpEarned}
         mistakes={mistakes}
+        questionCount={lesson.exercises?.length ?? 0}
         elapsedMs={elapsedMs}
         reward={reward}
         setReward={setReward}
@@ -251,6 +257,7 @@ function CompleteScreen({
   hearts,
   xpEarned,
   mistakes,
+  questionCount,
   elapsedMs,
   reward,
   setReward,
@@ -264,6 +271,7 @@ function CompleteScreen({
   hearts: number;
   xpEarned: number;
   mistakes: number;
+  questionCount: number;
   elapsedMs: number;
   reward: { gemsEarned: number; xpEarned: number; chest: ChestTier | null } | null;
   setReward: (r: { gemsEarned: number; xpEarned: number; chest: ChestTier | null }) => void;
@@ -295,6 +303,12 @@ function CompleteScreen({
     });
     setReward(r);
     if (r.chest) setTimeout(() => setChestOpen(r.chest), 700);
+    // Analytics only — never blocks or changes what the learner sees.
+    void recordLessonCompletion(lesson.id);
+    if (lessonIsQuiz(lesson.id)) {
+      const total = questionCount;
+      void recordQuizAttempt({ quizId: lesson.id, correct: total - mistakes, total });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
