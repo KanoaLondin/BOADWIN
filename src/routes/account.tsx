@@ -238,6 +238,31 @@ function AccountPage() {
               Save
             </button>
           </div>
+
+          <label className="mt-5 block text-xs font-bold text-muted-foreground">Username</label>
+          <div className="mt-1 flex gap-2">
+            <input
+              value={usernameInput}
+              onChange={(e) => setUsernameInput(e.target.value)}
+              placeholder="username"
+              className="flex-1 rounded-2xl border-2 border-border bg-background px-4 py-3 font-semibold outline-none focus:border-primary"
+            />
+            <button
+              onClick={saveUsername}
+              className="rounded-2xl gradient-hero px-5 py-3 font-black text-white shadow-glow disabled:opacity-40"
+              disabled={
+                savingUsername ||
+                !usernameInput.trim() ||
+                usernameInput.trim() === (profile?.username ?? "")
+              }
+            >
+              {savingUsername ? "Saving…" : "Save"}
+            </button>
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Other learners see this name. It must be unique and appropriate.
+          </p>
+
           <p className="mt-3 text-xs text-muted-foreground">
             Signed in as <span className="font-bold text-foreground">{email}</span>
           </p>
