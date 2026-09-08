@@ -15,6 +15,7 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { useAuth } from "@/lib/auth";
 import { needsParentConsent } from "@/lib/child-safety";
+import { SubscriptionSync } from "@/components/SubscriptionSync";
 
 function NotFoundComponent() {
   return (
@@ -209,6 +210,7 @@ function RootComponent() {
       ) : (
         <Outlet />
       )}
+      {auth.status === "authed" && <SubscriptionSync />}
       <Toaster position="top-center" richColors closeButton />
     </QueryClientProvider>
   );

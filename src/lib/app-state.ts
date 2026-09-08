@@ -321,6 +321,18 @@ export function setPremium(p: AppState["premium"]) {
   }));
 }
 
+/**
+ * Applies the plan exactly as the payment provider reports it (via the billing
+ * record the webhook writes). Used by SubscriptionSync so web and app always
+ * show the same plan and renewal date.
+ */
+export function setPremiumFromBilling(
+  p: AppState["premium"],
+  renewalISO: string | null,
+) {
+  setState((s) => ({ ...s, premium: p, premiumRenewalISO: renewalISO }));
+}
+
 // ---------- Profile basics ----------
 export function setName(name: string) {
   setState((s) => ({ ...s, name }));

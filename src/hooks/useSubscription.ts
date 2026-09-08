@@ -1,6 +1,6 @@
 // Reads the signed-in learner's subscription row (written only by the payment
 // webhook) and keeps local app state's plan in sync with it.
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { getPaddleEnvironment, PRODUCT_TO_PLAN, type PlanId } from "@/lib/paddle";
@@ -16,6 +16,9 @@ export type SubscriptionRow = {
 
 export function useSubscription() {
   const { userId } = useAuth();
+  // Unique per hook instance: two components may both watch billing on the
+  // same screen, and Supabase rejects duplicate channel names.
+  const channelId = useId();
   const [subscription, setSubscription] = useState<SubscriptionRow | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +46,7 @@ export function useSubscription() {
     void refetch();
     if (!userId) return;
     const channel = supabase
-      .channel(`subscriptions:${userId}`)
+      .channel(`subscriptions:${userId}:${channelId}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "subscriptions", filter: `user_id=eq.${userId}` },
@@ -53,7 +56,7 @@ export function useSubscription() {
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [userId, refetch]);
+  }, [userId, refetch, channelId]);
 
   const end = subscription?.current_period_end ? new Date(subscription.current_period_end) : null;
   const inPeriod = !end || end > new Date();

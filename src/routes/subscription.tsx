@@ -16,6 +16,7 @@ import { setPremium, useAppState } from "@/lib/app-state";
 import { useAuth } from "@/lib/auth";
 import { useSubscription } from "@/hooks/useSubscription";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import { useCheckoutReturn } from "@/hooks/useCheckoutReturn";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { getPaddleEnvironment, PLAN_PRICE_IDS, type PlanId } from "@/lib/paddle";
 import { cancelPaddleSubscription, switchPaddlePlan } from "@/lib/payments.functions";
@@ -80,18 +81,14 @@ function SubscriptionPage() {
   const [busy, setBusy] = useState(false);
   const { userId, email } = useAuth();
   const { plan, isActive, subscription, refetch } = useSubscription();
+  useCheckoutReturn(refetch, isActive);
   const { openCheckout } = usePaddleCheckout();
 
-  // The subscription row is written by the payment webhook, so it is the
-  // authoritative plan — mirror it into local app state whenever it changes.
-  useEffect(() => {
-    if (!userId) return;
-    if (isActive && plan) {
-      if (current !== plan) setPremium(plan);
-    } else if (subscription && current !== false) {
-      setPremium(false);
-    }
-  }, [userId, plan, isActive, subscription, current]);
+  // The subscription row is written by the payment webhook and is the
+  // authoritative plan; <SubscriptionSync /> at the root mirrors it into local
+  // app state for every screen, web and app alike.
+
+
 
   const currentPlan = PLANS.find((p) => p.id === current);
   const renewalLabel = renewalISO
