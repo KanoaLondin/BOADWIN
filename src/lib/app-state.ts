@@ -218,7 +218,8 @@ export type CloudProfile = {
   age_group: string;
   cohort_age_group?: string | null;
   knowledge_level?: string | null;
-
+  premium?: string | null;
+  premium_renewal_at?: string | null;
 };
 
 /** Call once right after sign-in with the freshly-fetched profile row. */
