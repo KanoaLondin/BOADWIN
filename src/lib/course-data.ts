@@ -6,6 +6,7 @@ import { aiEvaluationLevels } from "./course-ai-evaluation";
 import { aiSecurityLevels } from "./course-ai-security";
 import { aiEthicsLevels } from "./course-ai-ethics";
 import { implementingAiLevels } from "./course-implementing-ai";
+import { mediaLiteracyLevels } from "./course-media-literacy";
 
 export type Exercise =
   | {
