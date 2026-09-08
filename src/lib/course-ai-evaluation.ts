@@ -31,8 +31,6 @@ export const aiEvaluationLevels: Level[] = [
                   "It's very likely true, since the AI sounds sure",
                 ],
                 correctIndex: 0,
-                explanation:
-                  "Models generate the most statistically likely next words, not verified facts. Confidence is a byproduct of fluency, not truth (the tower was actually finished in 1889).",
               },
               {
                 type: "true-false",
@@ -76,8 +74,6 @@ export const aiEvaluationLevels: Level[] = [
                   "A vague claim like 'the company has had a strong few years'",
                 ],
                 correctIndex: 0,
-                explanation:
-                  "Specific, checkable numbers can be verified in one search. Vague claims can't be disproven, which is what makes them risky.",
               },
             ],
           },
@@ -97,8 +93,6 @@ export const aiEvaluationLevels: Level[] = [
                   "The policy genuinely changed mid-conversation",
                 ],
                 correctIndex: 0,
-                explanation:
-                  "This is drift: later in the conversation the model contradicted its own earlier answer.",
               },
               {
                 type: "true-false",
@@ -125,8 +119,6 @@ export const aiEvaluationLevels: Level[] = [
                   "Use it as-is, the numbers are specific so they're probably accurate",
                 ],
                 correctIndex: 0,
-                explanation:
-                  "Specific numbers feel trustworthy, but they still need verification against the original source.",
               },
               {
                 type: "true-false",
