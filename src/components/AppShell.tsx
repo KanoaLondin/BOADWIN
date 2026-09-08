@@ -6,7 +6,6 @@ import { UpgradeRequiredModal } from "./UpgradeRequiredModal";
 import { LevelUpWatcher } from "./LevelUpWatcher";
 import { BoostWatcher } from "./BoostWatcher";
 import { CohortGate } from "./CohortGate";
-import { WelcomeBackWatcher } from "./WelcomeBackWatcher";
 
 import { useAppState } from "@/lib/app-state";
 
@@ -64,7 +63,6 @@ export function AppShell({
       <LevelUpWatcher />
       <BoostWatcher />
       <CohortGate />
-      <WelcomeBackWatcher />
 
     </div>
   );

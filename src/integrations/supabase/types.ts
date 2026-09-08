@@ -63,8 +63,29 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "friendships_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "friendships_user_a_fkey"
             columns: ["user_a"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friendships_user_a_fkey"
+            columns: ["user_a"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friendships_user_b_fkey"
+            columns: ["user_b"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -73,7 +94,7 @@ export type Database = {
             foreignKeyName: "friendships_user_b_fkey"
             columns: ["user_b"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -145,6 +166,13 @@ export type Database = {
             columns: ["child_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "parent_consent_notices_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -275,6 +303,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       user_blocks: {
@@ -302,35 +337,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "user_blocks_blocked_fkey"
+            columns: ["blocked"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "user_blocks_blocker_fkey"
             columns: ["blocker"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_blocks_blocker_fkey"
+            columns: ["blocker"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      // Hand-added ahead of the next Lovable schema sync (see migration
-      // 20260908000000_public_profiles_view.sql) — a narrow, safe-to-read
-      // subset of `profiles` for looking up *other* users (friend search,
-      // friends list, friend profile page) now that `profiles` itself is
-      // locked to "own row only". Regenerating this file from the live
-      // schema should produce an equivalent entry automatically.
       public_profiles: {
         Row: {
-          id: string
-          username: string
-          display_name: string | null
-          xp: number
-          streak: number
-          weekly_xp: number
-          al_outfit: string
-          profile_bg: string
+          al_outfit: string | null
           bio: string | null
-          is_minor: boolean
-          member_since: string
+          display_name: string | null
+          id: string | null
+          is_minor: boolean | null
+          member_since: string | null
+          profile_bg: string | null
+          streak: number | null
+          username: string | null
+          weekly_xp: number | null
+          xp: number | null
+        }
+        Insert: {
+          al_outfit?: string | null
+          bio?: string | null
+          display_name?: string | null
+          id?: string | null
+          is_minor?: boolean | null
+          member_since?: string | null
+          profile_bg?: string | null
+          streak?: number | null
+          username?: string | null
+          weekly_xp?: number | null
+          xp?: number | null
+        }
+        Update: {
+          al_outfit?: string | null
+          bio?: string | null
+          display_name?: string | null
+          id?: string | null
+          is_minor?: boolean | null
+          member_since?: string | null
+          profile_bg?: string | null
+          streak?: number | null
+          username?: string | null
+          weekly_xp?: number | null
+          xp?: number | null
         }
         Relationships: []
       }

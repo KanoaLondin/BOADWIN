@@ -55,14 +55,7 @@ export type AppState = {
   streakFreezeUsedAt: string | null;
   alTip: string | null;
   bgAnimationsOff: boolean;
-
-  // Spaced-repetition review queue (Leitner-style): exercises missed
-  // during a lesson resurface here on an increasing schedule until
-  // they're answered correctly enough times to graduate out.
-  reviewQueue: ReviewItem[];
 };
-
-export type ReviewItem = { id: string; box: number; dueAt: string };
 
 const DEFAULT_STATE: AppState = {
   name: "Alex",
@@ -103,8 +96,6 @@ const DEFAULT_STATE: AppState = {
   streakFreezeUsedAt: null,
   alTip: "Try a lesson today to keep your streak alive! 🔥",
   bgAnimationsOff: false,
-
-  reviewQueue: [],
 };
 
 let state: AppState = DEFAULT_STATE;
@@ -424,142 +415,6 @@ export function skipLessonWithToken(lessonId: string, baseXp: number): boolean {
   return true;
 }
 
-// ---------- Streak engine ----------
-// `streak`/`lastActiveISO` used to be plain numbers nobody ever advanced —
-// the UI displayed them, but nothing recomputed them from real elapsed
-// time, so a streak just sat wherever it started forever. This reconciles
-// the streak against actual calendar days between lesson-completion days,
-// with a streak freeze (if owned) covering one missed day per freeze.
-export type StreakOutcome =
-  | { kind: "same-day"; streak: number }
-  | { kind: "started"; streak: number }
-  | { kind: "extended"; streak: number }
-  | { kind: "freeze-saved"; streak: number; freezesUsed: number }
-  | { kind: "reset"; streak: number; brokenStreak: number };
-
-function calendarDaysBetween(fromISO: string, toISO: string): number {
-  const from = new Date(fromISO);
-  const to = new Date(toISO);
-  // Compare calendar days, not raw 24h windows, so "yesterday 11pm" to
-  // "today 1am" is a 1-day gap rather than 0.
-  const a = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
-  const b = Date.UTC(to.getFullYear(), to.getMonth(), to.getDate());
-  return Math.round((b - a) / 86_400_000);
-}
-
-function computeStreakOutcome(s: AppState, nowISO: string): StreakOutcome {
-  if (!s.lastActiveISO) return { kind: "started", streak: Math.max(1, s.streak || 1) };
-  const gap = calendarDaysBetween(s.lastActiveISO, nowISO);
-  if (gap <= 0) return { kind: "same-day", streak: s.streak };
-  if (gap === 1) return { kind: "extended", streak: s.streak + 1 };
-  const missedDays = gap - 1;
-  if (s.streakFreezes >= missedDays) {
-    return { kind: "freeze-saved", streak: s.streak + 1, freezesUsed: missedDays };
-  }
-  return { kind: "reset", streak: 1, brokenStreak: s.streak };
-}
-
-/**
- * Read-only look at what touchStreak() would do right now — for a
- * "welcome back" banner shown before the person has done anything today,
- * without spending a streak freeze or resetting anything on their behalf.
- */
-export function previewStreakOutcome(): StreakOutcome {
-  return computeStreakOutcome(getState(), new Date().toISOString());
-}
-
-/**
- * Reconciles the streak against real elapsed days. Called from
- * completeLesson() — the streak counts lesson-completion days, not just
- * app opens, so opening the app without doing anything can't farm it.
- * Safe to call more than once in a day: the second call sees a same-day
- * gap and no-ops.
- */
-export function touchStreak(): StreakOutcome {
-  const nowISO = new Date().toISOString();
-  const outcome = computeStreakOutcome(getState(), nowISO);
-  if (outcome.kind === "same-day") return outcome;
-  setState((x) => {
-    if (outcome.kind === "freeze-saved") {
-      return {
-        ...x,
-        streak: outcome.streak,
-        lastActiveISO: nowISO,
-        streakFreezes: x.streakFreezes - outcome.freezesUsed,
-        streakFreezeUsedAt: nowISO,
-      };
-    }
-    return { ...x, streak: outcome.streak, lastActiveISO: nowISO };
-  });
-  return outcome;
-}
-
-// ---------- Spaced-repetition review queue ----------
-// A lightweight Leitner system: an exercise you got wrong during a lesson
-// goes into the queue at box 1 (due immediately). Answering it correctly
-// in /practice advances it to the next box, pushing its next due date
-// further out; answering it wrong again drops it back to box 1. Five
-// correct reps in a row graduates it out of the queue entirely.
-const REVIEW_BOX_INTERVAL_DAYS = [0, 1, 3, 7, 14];
-
-/** Add (or re-demote) an exercise to box 1, due right away. */
-export function queueForReview(exerciseId: string) {
-  const nowISO = new Date().toISOString();
-  setState((s) => {
-    const exists = s.reviewQueue.some((r) => r.id === exerciseId);
-    return {
-      ...s,
-      reviewQueue: exists
-        ? s.reviewQueue.map((r) => (r.id === exerciseId ? { ...r, box: 1, dueAt: nowISO } : r))
-        : [...s.reviewQueue, { id: exerciseId, box: 1, dueAt: nowISO }],
-    };
-  });
-}
-
-/** Exercise ids currently due for review, soonest-due first. */
-export function dueReviewExercises(limit = 10): string[] {
-  const now = Date.now();
-  return getState()
-    .reviewQueue.filter((r) => new Date(r.dueAt).getTime() <= now)
-    .sort((a, b) => new Date(a.dueAt).getTime() - new Date(b.dueAt).getTime())
-    .slice(0, limit)
-    .map((r) => r.id);
-}
-
-export function reviewQueueSize(): number {
-  return getState().reviewQueue.length;
-}
-
-/** Drops an id from the queue outright — used when the exercise it points
- *  at can no longer be resolved (e.g. course content changed under it),
- *  as opposed to recordReviewOutcome() which reschedules a real attempt. */
-export function removeFromReviewQueue(exerciseId: string) {
-  setState((s) => ({ ...s, reviewQueue: s.reviewQueue.filter((r) => r.id !== exerciseId) }));
-}
-
-/** Records a practice-mode outcome and reschedules (or graduates) the item. */
-export function recordReviewOutcome(exerciseId: string, correct: boolean) {
-  setState((s) => {
-    const idx = s.reviewQueue.findIndex((r) => r.id === exerciseId);
-    if (idx === -1) return s;
-    const item = s.reviewQueue[idx];
-    if (!correct) {
-      const queue = [...s.reviewQueue];
-      queue[idx] = { ...item, box: 1, dueAt: new Date(Date.now() + 10 * 60_000).toISOString() };
-      return { ...s, reviewQueue: queue };
-    }
-    const nextBox = item.box + 1;
-    if (nextBox > REVIEW_BOX_INTERVAL_DAYS.length) {
-      // Mastered — graduate out of the queue.
-      return { ...s, reviewQueue: s.reviewQueue.filter((r) => r.id !== exerciseId) };
-    }
-    const dueAt = new Date(Date.now() + REVIEW_BOX_INTERVAL_DAYS[nextBox - 1] * 86_400_000).toISOString();
-    const queue = [...s.reviewQueue];
-    queue[idx] = { ...item, box: nextBox, dueAt };
-    return { ...s, reviewQueue: queue };
-  });
-}
-
 // ---------- Lesson completion ----------
 export type ChestTier = "bronze" | "silver" | "gold" | "diamond";
 
@@ -578,7 +433,6 @@ export function completeLesson(
   gemsEarned: number;
   xpEarned: number;
   chest: ChestTier | null;
-  streak: StreakOutcome;
 } {
   let gemsEarned = 5;
   if (opts.perfect) gemsEarned = 10;
@@ -615,8 +469,7 @@ export function completeLesson(
     chest = "bronze";
     setState((s) => ({ ...s, lessonsSinceChest: 0 }));
   }
-  const streak = touchStreak();
-  return { gemsEarned, xpEarned, chest, streak };
+  return { gemsEarned, xpEarned, chest };
 }
 
 export function openChest(tier: ChestTier): {

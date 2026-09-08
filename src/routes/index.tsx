@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Brain, ChevronRight, Sparkles, Zap } from "lucide-react";
+import { ChevronRight, Sparkles, Zap } from "lucide-react";
 import { StreakFlame } from "@/components/StreakFlame";
 import { AppShell } from "@/components/AppShell";
 import { COURSES, allLevels, courseForUnit } from "@/lib/course-data";
@@ -45,9 +45,6 @@ function Home() {
   const knowledgeLevel = useAppState((s) => s.knowledgeLevel);
   const cohortAge = useAppState((s) => s.cohortAgeGroup);
   const premium = useAppState((s) => s.premium);
-  const dueReviewCount = useAppState(
-    (s) => s.reviewQueue.filter((r) => new Date(r.dueAt).getTime() <= Date.now()).length,
-  );
 
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -196,25 +193,6 @@ function Home() {
           </div>
         </Link>
       </section>
-
-      {/* Practice queue — questions missed in a lesson, back for a spaced-out second try */}
-      {dueReviewCount > 0 && (
-        <Link
-          to="/practice"
-          className="mt-4 flex items-center gap-3 rounded-3xl border border-primary/30 bg-primary/5 p-4 transition-all hover:border-primary/50"
-        >
-          <div className="grid h-10 w-10 place-items-center rounded-2xl bg-primary/15 text-primary">
-            <Brain className="h-5 w-5" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-black">
-              {dueReviewCount} question{dueReviewCount === 1 ? "" : "s"} ready to review
-            </p>
-            <p className="text-xs text-muted-foreground">Quick spaced-repetition practice</p>
-          </div>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-        </Link>
-      )}
 
       {/* Your courses */}
       <section className="mt-6">
