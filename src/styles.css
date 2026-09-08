@@ -437,15 +437,22 @@ body.has-env-bg .border-border { border-color: color-mix(in oklab, var(--border)
   0% { transform: scale(0.97); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
-.animate-page-slide-right { animation: page-slide-right 280ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
-.animate-page-slide-left  { animation: page-slide-left  280ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
-.animate-page-fade        { animation: page-fade        260ms ease-out both; }
-.animate-page-home        { animation: page-home        260ms ease-out both; }
+.animate-page-slide-right { animation: page-slide-right 140ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+.animate-page-slide-left  { animation: page-slide-left  140ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+.animate-page-fade        { animation: page-fade        120ms ease-out both; }
+.animate-page-home        { animation: page-home        120ms ease-out both; }
 
 body.bg-anim-off .animate-page-slide-right,
 body.bg-anim-off .animate-page-slide-left,
 body.bg-anim-off .animate-page-fade,
-body.bg-anim-off .animate-page-home { animation: page-fade 180ms ease-out both !important; }
+body.bg-anim-off .animate-page-home { animation: page-fade 90ms ease-out both !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-page-slide-right,
+  .animate-page-slide-left,
+  .animate-page-fade,
+  .animate-page-home { animation: none !important; }
+}
 
 /* ---------- Streak flame effects (cosmetic tiers) ---------- */
 .streak-flame-wrap {

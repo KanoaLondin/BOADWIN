@@ -23,6 +23,7 @@ import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as LandingRouteImport } from './routes/landing'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as AchievementsRouteImport } from './routes/achievements'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsTermsRouteImport } from './routes/settings.terms'
@@ -105,6 +106,11 @@ const AchievementsRoute = AchievementsRouteImport.update({
   path: '/achievements',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -164,6 +170,7 @@ const ApiPublicPaymentsWebhookRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/achievements': typeof AchievementsRoute
   '/courses': typeof CoursesRoute
   '/landing': typeof LandingRoute
@@ -191,6 +198,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/achievements': typeof AchievementsRoute
   '/courses': typeof CoursesRoute
   '/landing': typeof LandingRoute
@@ -219,6 +227,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/achievements': typeof AchievementsRoute
   '/courses': typeof CoursesRoute
   '/landing': typeof LandingRoute
@@ -248,6 +257,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/achievements'
     | '/courses'
     | '/landing'
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/achievements'
     | '/courses'
     | '/landing'
@@ -302,6 +313,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/account'
     | '/achievements'
     | '/courses'
     | '/landing'
@@ -330,6 +342,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
   AchievementsRoute: typeof AchievementsRoute
   CoursesRoute: typeof CoursesRoute
   LandingRoute: typeof LandingRoute
@@ -456,6 +469,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AchievementsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -538,6 +558,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
   AchievementsRoute: AchievementsRoute,
   CoursesRoute: CoursesRoute,
   LandingRoute: LandingRoute,

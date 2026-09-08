@@ -4,6 +4,8 @@ import {
   Sparkles, Shield, Trophy, Zap, BookOpen, Heart, Brain,
   Apple, Smartphone, Star, Users, GraduationCap,
 } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import courseMapShot from "@/assets/course-map-screenshot.jpg";
 
 export const Route = createFileRoute("/landing")({
   component: Landing,
@@ -130,6 +132,7 @@ function DesktopSite() {
 }
 
 function Nav() {
+  const { status } = useAuth();
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
@@ -143,7 +146,11 @@ function Nav() {
           <a href="#features" className="hover:text-foreground">Features</a>
           <a href="#ages" className="hover:text-foreground">For all ages</a>
           <a href="#pricing" className="hover:text-foreground">Pricing</a>
-          <Link to="/login" className="hover:text-foreground">Log in</Link>
+          {status === "authed" ? (
+            <Link to="/account" className="hover:text-foreground">My account</Link>
+          ) : (
+            <Link to="/login" className="hover:text-foreground">Log in</Link>
+          )}
           <a href="#download" className="rounded-full gradient-hero px-4 py-2 text-white shadow-glow">
             Get the app
           </a>
@@ -185,41 +192,36 @@ function Hero() {
           </div>
         </div>
 
-        {/* Phone mockup */}
-        <div className="relative mx-auto">
-          <div className="absolute inset-0 -z-10 rounded-[3rem] bg-gradient-to-br from-purple/30 to-cyan/30 blur-3xl" />
-          <div className="relative aspect-[9/19] w-[290px] overflow-hidden rounded-[2.5rem] border-[10px] border-foreground bg-background shadow-glow">
-            <div className="flex h-full flex-col bg-gradient-to-br from-purple/10 via-background to-cyan/10 p-4">
-              <div className="flex items-center justify-between text-xs font-black">
-                <span className="text-gradient">AIED</span>
-                <span className="rounded-full bg-warning/20 px-2 py-0.5 text-warning">🔥 7</span>
-              </div>
-              <div className="mt-4 rounded-2xl gradient-hero p-4 text-white shadow-glow">
-                <p className="text-[10px] font-black uppercase opacity-90">Daily Goal</p>
-                <p className="text-2xl font-black">30 / 50 XP</p>
-                <div className="mt-2 h-1.5 rounded-full bg-white/30">
-                  <div className="h-full w-3/5 rounded-full bg-white" />
-                </div>
-              </div>
-              <p className="mt-4 text-[10px] font-black uppercase text-muted-foreground">Prompt Engineering</p>
-              <div className="mt-2 space-y-2">
-                {["Meet Your AI Friend", "How Does AI Think?", "Talking to AI"].map((t, i) => (
-                  <div key={t} className="flex items-center gap-2 rounded-xl border border-border bg-card p-2">
-                    <div className={`grid h-8 w-8 place-items-center rounded-full text-xs font-black text-white ${i === 0 ? "bg-success" : i === 1 ? "bg-primary animate-pop" : "bg-muted text-muted-foreground"}`}>
-                      {i === 0 ? "✓" : i === 1 ? "▶" : "🔒"}
-                    </div>
-                    <p className="text-[11px] font-bold">{t}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-auto rounded-2xl border-2 border-primary/30 bg-primary/5 p-3">
-                <p className="text-[11px] font-black text-primary">💎 Earn gems · Unlock chests</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <PhoneMockup />
       </div>
     </section>
+  );
+}
+
+/** Real in-app course map screenshot inside a clean device frame. */
+function PhoneMockup() {
+  return (
+    <div className="relative mx-auto">
+      <div className="absolute inset-0 -z-10 rounded-[3rem] bg-gradient-to-br from-purple/30 to-cyan/30 blur-3xl" />
+      <div className="relative w-[300px] rounded-[3rem] border-[12px] border-foreground bg-foreground p-0 shadow-glow">
+        {/* side buttons */}
+        <span className="absolute -left-[15px] top-28 h-12 w-[3px] rounded-l bg-foreground/70" />
+        <span className="absolute -left-[15px] top-44 h-12 w-[3px] rounded-l bg-foreground/70" />
+        <span className="absolute -right-[15px] top-32 h-16 w-[3px] rounded-r bg-foreground/70" />
+        <div className="relative overflow-hidden rounded-[2.2rem] bg-background">
+          {/* notch */}
+          <div className="absolute left-1/2 top-2 z-10 h-6 w-28 -translate-x-1/2 rounded-full bg-foreground" />
+          <img
+            src={courseMapShot}
+            alt="The AIED app's course map, showing completed lessons along a path through the What is AI? unit"
+            width={585}
+            height={1266}
+            loading="lazy"
+            className="block w-full"
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
