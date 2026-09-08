@@ -57,6 +57,25 @@ function Settings() {
   const [sound, setSound] = useState(true);
   const [nameInput, setNameInput] = useState(name);
   const { profile } = useAuth();
+  const [usernameInput, setUsernameInput] = useState(profile?.username ?? "");
+  const [savingUsername, setSavingUsername] = useState(false);
+
+  useEffect(() => {
+    if (profile?.username) setUsernameInput(profile.username);
+  }, [profile?.username]);
+
+  async function saveUsername() {
+    setSavingUsername(true);
+    try {
+      await changeUsername(usernameInput);
+      toast.success("Username updated!");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't update your username.");
+      setUsernameInput(profile?.username ?? "");
+    } finally {
+      setSavingUsername(false);
+    }
+  }
   // Under-18 accounts can't quietly re-label themselves as adults; only a
   // grown-up with the Parent Zone PIN can change it.
   const [parentUnlocked, setParentUnlocked] = useState(false);
