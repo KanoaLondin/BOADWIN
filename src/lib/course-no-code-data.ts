@@ -1,11 +1,12 @@
-// Course track 10: "No-Code AI Data Analysis" (Beginner, Premium).
+// Course track 10: "No-Code AI Data Analysis" (Beginner, Free for now — re-gate
+// as Premium once more units exist).
 import type { Level } from "./course-data";
 
 export const noCodeDataLevels: Level[] = [
   {
     id: "ncL1",
     title: "No-Code Data Analysis",
-    tier: "Premium",
+    tier: "Free",
     ageRange: "Ages 13+",
     badge: "Beginner",
     units: [
