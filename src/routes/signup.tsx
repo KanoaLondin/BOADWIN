@@ -22,11 +22,15 @@ function ageFrom(month: number, year: number): number {
 
 export const Route = createFileRoute("/signup")({
   component: SignUp,
+  validateSearch: (search: Record<string, unknown>): { ref?: string } => ({
+    ...(typeof search.ref === "string" ? { ref: search.ref } : {}),
+  }),
   head: () => ({ meta: [{ title: "Sign up — AIED" }] }),
 });
 
 function SignUp() {
   const navigate = useNavigate();
+  const { ref } = Route.useSearch();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -70,6 +74,7 @@ function SignUp() {
         birthYear: by,
         ...(isChild ? { parentEmail: parentEmail.trim().toLowerCase() } : {}),
         adminCode: adminCode.trim() || undefined,
+        referralCode: ref,
       });
       navigate({ to: isChild ? "/parent-consent" : "/onboarding" });
     } catch (err) {
@@ -97,6 +102,11 @@ function SignUp() {
           <p className="mt-1 text-sm text-muted-foreground">
             Your progress is saved and follows you anywhere you sign in.
           </p>
+          {ref && (
+            <p className="mt-3 inline-block rounded-full border-2 border-dashed border-primary/40 bg-primary/5 px-3 py-1.5 text-[11px] font-black text-primary">
+              🎁 Invite code applied — you'll both get 50 gems
+            </p>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-3">

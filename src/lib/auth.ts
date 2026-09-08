@@ -14,6 +14,8 @@ export type Profile = CloudProfile & {
   is_minor?: boolean | null;
   parent_email?: string | null;
   parental_consent_status?: "not_required" | "pending" | "granted" | null;
+  referral_code: string;
+  referred_by?: string | null;
 };
 
 export type AuthStatus = "loading" | "authed" | "guest";
@@ -26,6 +28,7 @@ type AuthState = {
 };
 
 const PENDING_CODE_KEY = "aied:pendingAdminCode";
+const PENDING_REFERRAL_KEY = "aied:pendingReferralCode";
 
 const LOADING_STATE: AuthState = { status: "loading", userId: null, email: null, profile: null };
 let state: AuthState = LOADING_STATE;
@@ -59,6 +62,21 @@ async function redeemPendingAdminCodeIfAny(accessToken: string) {
   });
 }
 
+/**
+ * Redeems a referral code stashed during signup when there was no session
+ * yet (email confirmation required). Safe to call on every sign-in: the
+ * key is cleared after the first attempt, and redeem_referral() itself
+ * silently no-ops for an account that's already been referred.
+ */
+async function redeemPendingReferralIfAny() {
+  if (typeof window === "undefined") return;
+  const code = window.localStorage.getItem(PENDING_REFERRAL_KEY);
+  if (!code) return;
+  window.localStorage.removeItem(PENDING_REFERRAL_KEY);
+  const { error } = await supabase.rpc("redeem_referral", { code });
+  if (error) console.error("[auth] pending referral redemption failed", error);
+}
+
 let initialized = false;
 
 async function applySession(session: { access_token?: string; user?: { id: string; email?: string | null } } | null) {
@@ -72,6 +90,7 @@ async function applySession(session: { access_token?: string; user?: { id: strin
   if (session?.access_token) {
     await redeemPendingAdminCodeIfAny(session.access_token);
   }
+  await redeemPendingReferralIfAny();
   const profile = await fetchProfile(user.id);
   if (profile) hydrateFromCloud(profile);
   set({ status: "authed", userId: user.id, email: user.email ?? null, profile });
@@ -140,6 +159,8 @@ export type SignUpOptions = {
   birthYear: number;
   parentEmail?: string;
   adminCode?: string;
+  /** Another user's referral code, if this signup came from an invite link. */
+  referralCode?: string;
 };
 
 /**
@@ -172,6 +193,14 @@ export async function signUp(opts: SignUpOptions) {
     } else if (typeof window !== "undefined") {
       // No session yet (email confirmation required) — redeem on first login.
       window.localStorage.setItem(PENDING_CODE_KEY, opts.adminCode);
+    }
+  }
+  if (opts.referralCode) {
+    if (data.session) {
+      const { error } = await supabase.rpc("redeem_referral", { code: opts.referralCode });
+      if (error) console.error("[auth] referral redemption failed", error);
+    } else if (typeof window !== "undefined") {
+      window.localStorage.setItem(PENDING_REFERRAL_KEY, opts.referralCode);
     }
   }
   return data;

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Zap, Settings, GraduationCap, Lock, Share2, Pencil, Trophy, Sparkles, Award, Crown, ChevronRight, Users } from "lucide-react";
+import { Zap, Settings, GraduationCap, Lock, Share2, Pencil, Trophy, Sparkles, Award, Crown, ChevronRight, Users, Gift } from "lucide-react";
+import { toast } from "sonner";
 import { StreakFlame } from "@/components/StreakFlame";
 import { AppShell } from "@/components/AppShell";
 import { Mascot } from "@/components/Mascot";
@@ -8,6 +9,7 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 import {
   useAppState, equipOutfit, equipStreakColor, equipProfileBg, equipBadgeFrame,
 } from "@/lib/app-state";
+import { useAuth } from "@/lib/auth";
 import { allLevels } from "@/lib/course-data";
 import { getLevelInfo, getProgressToNext } from "@/lib/level-system";
 
@@ -32,6 +34,7 @@ const PLAN_LABEL: Record<string, string> = {
 };
 
 function Profile() {
+  const { profile } = useAuth();
   const name = useAppState((s) => s.name);
   const xp = useAppState((s) => s.xp);
   const streak = useAppState((s) => s.streak);
@@ -59,6 +62,27 @@ function Profile() {
   const lvlProgress = getProgressToNext(xp);
   const planName = premium ? PLAN_LABEL[premium] : "Free";
   const renewalDate = renewal ? new Date(renewal).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : null;
+
+  async function handleShareInvite() {
+    const code = profile?.referral_code;
+    if (!code) return;
+    const url = `${window.location.origin}/signup?ref=${code}`;
+    const text = "Join me on AIED and we'll both get 50 gems!";
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "AIED", text, url });
+        return;
+      } catch {
+        return; // cancelled — don't also dump it to the clipboard
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Invite link copied!");
+    } catch {
+      toast.error("Couldn't copy the link");
+    }
+  }
 
   return (
     <AppShell>
@@ -248,6 +272,27 @@ function Profile() {
           <ChevronRight className="h-5 w-5 text-muted-foreground" />
         </Link>
       </section>
+
+      {/* Invite friends */}
+      {profile?.referral_code && (
+        <section className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-cyan/15 text-cyan">
+              <Gift className="h-5 w-5" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-black">Invite friends, get 50 gems</p>
+              <p className="text-[11px] text-muted-foreground">They get 50 gems too when they sign up with your link.</p>
+            </div>
+          </div>
+          <button
+            onClick={handleShareInvite}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-2.5 text-xs font-black text-primary-foreground shadow-soft"
+          >
+            <Share2 className="h-3.5 w-3.5" /> Share invite link
+          </button>
+        </section>
+      )}
 
       {/* Achievements link */}
       <section className="mt-5 mb-2">
