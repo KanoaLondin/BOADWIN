@@ -415,6 +415,76 @@ export function skipLessonWithToken(lessonId: string, baseXp: number): boolean {
   return true;
 }
 
+// ---------- Streak engine ----------
+// `streak`/`lastActiveISO` used to be plain numbers nobody ever advanced —
+// the UI displayed them, but nothing recomputed them from real elapsed
+// time, so a streak just sat wherever it started forever. This reconciles
+// the streak against actual calendar days between lesson-completion days,
+// with a streak freeze (if owned) covering one missed day per freeze.
+export type StreakOutcome =
+  | { kind: "same-day"; streak: number }
+  | { kind: "started"; streak: number }
+  | { kind: "extended"; streak: number }
+  | { kind: "freeze-saved"; streak: number; freezesUsed: number }
+  | { kind: "reset"; streak: number; brokenStreak: number };
+
+function calendarDaysBetween(fromISO: string, toISO: string): number {
+  const from = new Date(fromISO);
+  const to = new Date(toISO);
+  // Compare calendar days, not raw 24h windows, so "yesterday 11pm" to
+  // "today 1am" is a 1-day gap rather than 0.
+  const a = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
+  const b = Date.UTC(to.getFullYear(), to.getMonth(), to.getDate());
+  return Math.round((b - a) / 86_400_000);
+}
+
+function computeStreakOutcome(s: AppState, nowISO: string): StreakOutcome {
+  if (!s.lastActiveISO) return { kind: "started", streak: Math.max(1, s.streak || 1) };
+  const gap = calendarDaysBetween(s.lastActiveISO, nowISO);
+  if (gap <= 0) return { kind: "same-day", streak: s.streak };
+  if (gap === 1) return { kind: "extended", streak: s.streak + 1 };
+  const missedDays = gap - 1;
+  if (s.streakFreezes >= missedDays) {
+    return { kind: "freeze-saved", streak: s.streak + 1, freezesUsed: missedDays };
+  }
+  return { kind: "reset", streak: 1, brokenStreak: s.streak };
+}
+
+/**
+ * Read-only look at what touchStreak() would do right now — for a
+ * "welcome back" banner shown before the person has done anything today,
+ * without spending a streak freeze or resetting anything on their behalf.
+ */
+export function previewStreakOutcome(): StreakOutcome {
+  return computeStreakOutcome(getState(), new Date().toISOString());
+}
+
+/**
+ * Reconciles the streak against real elapsed days. Called from
+ * completeLesson() — the streak counts lesson-completion days, not just
+ * app opens, so opening the app without doing anything can't farm it.
+ * Safe to call more than once in a day: the second call sees a same-day
+ * gap and no-ops.
+ */
+export function touchStreak(): StreakOutcome {
+  const nowISO = new Date().toISOString();
+  const outcome = computeStreakOutcome(getState(), nowISO);
+  if (outcome.kind === "same-day") return outcome;
+  setState((x) => {
+    if (outcome.kind === "freeze-saved") {
+      return {
+        ...x,
+        streak: outcome.streak,
+        lastActiveISO: nowISO,
+        streakFreezes: x.streakFreezes - outcome.freezesUsed,
+        streakFreezeUsedAt: nowISO,
+      };
+    }
+    return { ...x, streak: outcome.streak, lastActiveISO: nowISO };
+  });
+  return outcome;
+}
+
 // ---------- Lesson completion ----------
 export type ChestTier = "bronze" | "silver" | "gold" | "diamond";
 
@@ -433,6 +503,7 @@ export function completeLesson(
   gemsEarned: number;
   xpEarned: number;
   chest: ChestTier | null;
+  streak: StreakOutcome;
 } {
   let gemsEarned = 5;
   if (opts.perfect) gemsEarned = 10;
@@ -469,7 +540,8 @@ export function completeLesson(
     chest = "bronze";
     setState((s) => ({ ...s, lessonsSinceChest: 0 }));
   }
-  return { gemsEarned, xpEarned, chest };
+  const streak = touchStreak();
+  return { gemsEarned, xpEarned, chest, streak };
 }
 
 export function openChest(tier: ChestTier): {

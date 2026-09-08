@@ -17,7 +17,7 @@ import { AppShell } from "@/components/AppShell";
 import { ChestReward } from "@/components/ChestReward";
 import { Gem } from "@/components/GemBadge";
 import { HintButton } from "@/components/HintButton";
-import { completeLesson, loseHeart, useAppState, type ChestTier } from "@/lib/app-state";
+import { completeLesson, loseHeart, useAppState, type ChestTier, type StreakOutcome } from "@/lib/app-state";
 import { NINJA_MULTIPLIER, NINJA_PAR_MS, scienceFact, teacherNote } from "@/lib/outfit-effects";
 
 export const Route = createFileRoute("/lesson/$lessonId")({
@@ -70,6 +70,7 @@ function LessonPage() {
     gemsEarned: number;
     xpEarned: number;
     chest: ChestTier | null;
+    streak: StreakOutcome;
   } | null>(null);
   const [chestOpen, setChestOpen] = useState<ChestTier | null>(null);
   // Ninja AL speed bonus — timed from the moment the lesson opens.
@@ -265,8 +266,8 @@ function CompleteScreen({
   xpEarned: number;
   mistakes: number;
   elapsedMs: number;
-  reward: { gemsEarned: number; xpEarned: number; chest: ChestTier | null } | null;
-  setReward: (r: { gemsEarned: number; xpEarned: number; chest: ChestTier | null }) => void;
+  reward: { gemsEarned: number; xpEarned: number; chest: ChestTier | null; streak: StreakOutcome } | null;
+  setReward: (r: { gemsEarned: number; xpEarned: number; chest: ChestTier | null; streak: StreakOutcome }) => void;
   chestOpen: ChestTier | null;
   setChestOpen: (t: ChestTier | null) => void;
   navigate: ReturnType<typeof useNavigate>;
@@ -322,6 +323,8 @@ function CompleteScreen({
             </div>
           )}
 
+          {reward?.streak && <StreakOutcomeBanner outcome={reward.streak} />}
+
           <div className="mt-6 grid grid-cols-3 gap-3">
             <div className="rounded-2xl bg-card border border-border p-3 shadow-soft">
               <p className="text-[10px] uppercase text-muted-foreground">XP</p>
@@ -364,6 +367,30 @@ function CompleteScreen({
       </div>
       {chestOpen && <ChestReward tier={chestOpen} onClose={() => setChestOpen(null)} />}
     </AppShell>
+  );
+}
+
+function StreakOutcomeBanner({ outcome }: { outcome: StreakOutcome }) {
+  if (outcome.kind === "same-day") return null; // already counted today, nothing new to say
+  if (outcome.kind === "freeze-saved") {
+    return (
+      <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan to-primary px-4 py-1.5 text-xs font-black text-white shadow-glow animate-pop">
+        ❄️ Streak Freeze saved your {outcome.streak}-day streak!
+      </div>
+    );
+  }
+  if (outcome.kind === "reset") {
+    return (
+      <div className="mt-4 inline-flex items-center gap-2 rounded-full border-2 border-heart/40 bg-heart/10 px-4 py-1.5 text-xs font-black text-heart animate-pop">
+        💔 Your {outcome.brokenStreak}-day streak reset — day 1 of a new one starts now!
+      </div>
+    );
+  }
+  // "extended" or "started"
+  return (
+    <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-warning to-amber-400 px-4 py-1.5 text-xs font-black text-white shadow-glow animate-pop">
+      🔥 {outcome.streak}-day streak!
+    </div>
   );
 }
 
