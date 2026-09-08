@@ -2203,6 +2203,16 @@ export const COURSES: Course[] = [
     prerequisites: "None",
     levels: mediaLiteracyLevels,
   },
+  },
+  {
+    id: "no-code-ai-data",
+    title: "No-Code AI Data Analysis",
+    subtitle: "Ask your spreadsheet a question in plain English",
+    emoji: "📊",
+    levelLabel: "Beginner",
+    prerequisites: "None",
+    levels: noCodeDataLevels,
+  },
 ];
 
 
