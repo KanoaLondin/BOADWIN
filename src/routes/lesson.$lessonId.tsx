@@ -19,6 +19,11 @@ import { Gem } from "@/components/GemBadge";
 import { HintButton } from "@/components/HintButton";
 import { completeLesson, loseHeart, useAppState, type ChestTier } from "@/lib/app-state";
 import { NINJA_MULTIPLIER, NINJA_PAR_MS, scienceFact, teacherNote } from "@/lib/outfit-effects";
+import {
+  lessonIsQuiz,
+  recordLessonCompletion,
+  recordQuizAttempt,
+} from "@/lib/progress-tracking";
 
 export const Route = createFileRoute("/lesson/$lessonId")({
   component: LessonPage,
