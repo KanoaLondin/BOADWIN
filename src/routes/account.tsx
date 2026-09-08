@@ -11,6 +11,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { PLAN_PRICE_IDS, getPaddleEnvironment, type PlanId } from "@/lib/paddle";
 import { cancelPaddleSubscription, switchPaddlePlan } from "@/lib/payments.functions";
+import { useCheckoutReturn } from "@/hooks/useCheckoutReturn";
 
 export const Route = createFileRoute("/account")({
   component: AccountPage,
@@ -47,6 +48,7 @@ function AccountPage() {
   const current = useAppState((s) => s.premium);
   const renewalISO = useAppState((s) => s.premiumRenewalISO);
   const { plan, isActive, subscription, refetch } = useSubscription();
+  useCheckoutReturn(refetch, isActive);
   const { openCheckout } = usePaddleCheckout();
 
   const [nameInput, setNameInput] = useState(name);
@@ -61,14 +63,10 @@ function AccountPage() {
     if (status === "guest") navigate({ to: "/login", replace: true });
   }, [status, navigate]);
 
-  useEffect(() => {
-    if (!userId) return;
-    if (isActive && plan) {
-      if (current !== plan) setPremium(plan);
-    } else if (subscription && current !== false) {
-      setPremium(false);
-    }
-  }, [userId, plan, isActive, subscription, current]);
+  // Plan mirroring lives in <SubscriptionSync /> at the root so web and app
+  // stay in step wherever the user happens to be.
+
+
 
   const currentPlan = PLANS.find((p) => p.id === current) ?? PLANS[0];
   const renewalLabel = renewalISO
