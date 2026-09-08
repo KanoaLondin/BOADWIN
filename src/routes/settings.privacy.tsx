@@ -36,8 +36,9 @@ function PrivacyPolicy() {
 
       <Prose>
         <P>
-          AIED is used by kids, tweens, teens and adults, so we keep this short and plain. This page
-          explains what we collect, why we collect it, and what you can do about it.
+          AIED is operated by Coleklondin. It is used by kids, tweens, teens and adults, so we keep
+          this short and plain. This page explains what we collect, why we collect it, and what you
+          can do about it.
         </P>
 
         <H>What we collect</H>

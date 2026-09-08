@@ -26,6 +26,7 @@ import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsTermsRouteImport } from './routes/settings.terms'
+import { Route as SettingsRefundsRouteImport } from './routes/settings.refunds'
 import { Route as SettingsPrivacyRouteImport } from './routes/settings.privacy'
 import { Route as LessonLessonIdRouteImport } from './routes/lesson.$lessonId'
 import { Route as FriendFriendIdRouteImport } from './routes/friend.$friendId'
@@ -119,6 +120,11 @@ const SettingsTermsRoute = SettingsTermsRouteImport.update({
   path: '/settings/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRefundsRoute = SettingsRefundsRouteImport.update({
+  id: '/settings/refunds',
+  path: '/settings/refunds',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsPrivacyRoute = SettingsPrivacyRouteImport.update({
   id: '/settings/privacy',
   path: '/settings/privacy',
@@ -177,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
   '/settings/privacy': typeof SettingsPrivacyRoute
+  '/settings/refunds': typeof SettingsRefundsRoute
   '/settings/terms': typeof SettingsTermsRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/public/parent-consent': typeof ApiPublicParentConsentRoute
@@ -203,6 +210,7 @@ export interface FileRoutesByTo {
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
   '/settings/privacy': typeof SettingsPrivacyRoute
+  '/settings/refunds': typeof SettingsRefundsRoute
   '/settings/terms': typeof SettingsTermsRoute
   '/settings': typeof SettingsIndexRoute
   '/api/public/parent-consent': typeof ApiPublicParentConsentRoute
@@ -230,6 +238,7 @@ export interface FileRoutesById {
   '/friend/$friendId': typeof FriendFriendIdRoute
   '/lesson/$lessonId': typeof LessonLessonIdRoute
   '/settings/privacy': typeof SettingsPrivacyRoute
+  '/settings/refunds': typeof SettingsRefundsRoute
   '/settings/terms': typeof SettingsTermsRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/public/parent-consent': typeof ApiPublicParentConsentRoute
@@ -258,6 +267,7 @@ export interface FileRouteTypes {
     | '/friend/$friendId'
     | '/lesson/$lessonId'
     | '/settings/privacy'
+    | '/settings/refunds'
     | '/settings/terms'
     | '/settings/'
     | '/api/public/parent-consent'
@@ -284,6 +294,7 @@ export interface FileRouteTypes {
     | '/friend/$friendId'
     | '/lesson/$lessonId'
     | '/settings/privacy'
+    | '/settings/refunds'
     | '/settings/terms'
     | '/settings'
     | '/api/public/parent-consent'
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/friend/$friendId'
     | '/lesson/$lessonId'
     | '/settings/privacy'
+    | '/settings/refunds'
     | '/settings/terms'
     | '/settings/'
     | '/api/public/parent-consent'
@@ -337,6 +349,7 @@ export interface RootRouteChildren {
   FriendFriendIdRoute: typeof FriendFriendIdRoute
   LessonLessonIdRoute: typeof LessonLessonIdRoute
   SettingsPrivacyRoute: typeof SettingsPrivacyRoute
+  SettingsRefundsRoute: typeof SettingsRefundsRoute
   SettingsTermsRoute: typeof SettingsTermsRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   ApiPublicParentConsentRoute: typeof ApiPublicParentConsentRoute
@@ -464,6 +477,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsTermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/refunds': {
+      id: '/settings/refunds'
+      path: '/settings/refunds'
+      fullPath: '/settings/refunds'
+      preLoaderRoute: typeof SettingsRefundsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/privacy': {
       id: '/settings/privacy'
       path: '/settings/privacy'
@@ -537,6 +557,7 @@ const rootRouteChildren: RootRouteChildren = {
   FriendFriendIdRoute: FriendFriendIdRoute,
   LessonLessonIdRoute: LessonLessonIdRoute,
   SettingsPrivacyRoute: SettingsPrivacyRoute,
+  SettingsRefundsRoute: SettingsRefundsRoute,
   SettingsTermsRoute: SettingsTermsRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   ApiPublicParentConsentRoute: ApiPublicParentConsentRoute,
