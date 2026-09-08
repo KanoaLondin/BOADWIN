@@ -13,6 +13,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { setPremium, useAppState } from "@/lib/app-state";
+import { useAuth } from "@/lib/auth";
+import { useSubscription } from "@/hooks/useSubscription";
+import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { getPaddleEnvironment, PLAN_PRICE_IDS, type PlanId } from "@/lib/paddle";
+import { cancelPaddleSubscription, switchPaddlePlan } from "@/lib/payments.functions";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 
@@ -70,6 +77,21 @@ function SubscriptionPage() {
   const current = useAppState((s) => s.premium);
   const renewalISO = useAppState((s) => s.premiumRenewalISO);
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const { userId, email } = useAuth();
+  const { plan, isActive, subscription, refetch } = useSubscription();
+  const { openCheckout } = usePaddleCheckout();
+
+  // The subscription row is written by the payment webhook, so it is the
+  // authoritative plan — mirror it into local app state whenever it changes.
+  useEffect(() => {
+    if (!userId) return;
+    if (isActive && plan) {
+      if (current !== plan) setPremium(plan);
+    } else if (subscription && current !== false) {
+      setPremium(false);
+    }
+  }, [userId, plan, isActive, subscription, current]);
 
   const currentPlan = PLANS.find((p) => p.id === current);
   const renewalLabel = renewalISO
@@ -80,24 +102,60 @@ function SubscriptionPage() {
       })
     : null;
 
-  function choose(id: "free" | "super" | "max" | "family") {
+  async function choose(id: "free" | "super" | "max" | "family") {
     if (id === "free") {
-      setPremium(false);
-      toast.success("Switched to the Free plan");
-    } else {
-      setPremium(id);
-      toast.success(`Welcome to ${PLANS.find((p) => p.id === id)!.name}!`);
+      setConfirmCancel(true);
+      return;
+    }
+    if (!userId) {
+      toast.error("Please sign in first to start a plan.");
+      return;
+    }
+    const priceId = PLAN_PRICE_IDS[id as PlanId];
+    setBusy(true);
+    try {
+      if (isActive) {
+        await switchPaddlePlan({ data: { priceId, environment: getPaddleEnvironment() } });
+        toast.success(`You're now on ${PLANS.find((p) => p.id === id)!.name}.`);
+        setTimeout(() => void refetch(), 1500);
+      } else {
+        await openCheckout({
+          priceId,
+          customerEmail: email ?? undefined,
+          customData: { userId },
+          successUrl: `${window.location.origin}/subscription?checkout=success`,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong starting that plan. Please try again.");
+    } finally {
+      setBusy(false);
     }
   }
 
-  function cancelSubscription() {
+  async function cancelSubscription() {
     setConfirmCancel(false);
-    setPremium(false);
-    toast.success("Your subscription has been cancelled.");
+    if (!isActive) {
+      setPremium(false);
+      return;
+    }
+    setBusy(true);
+    try {
+      await cancelPaddleSubscription({ data: { environment: getPaddleEnvironment() } });
+      toast.success("Your plan is cancelled — you keep access until the end of the period.");
+      setTimeout(() => void refetch(), 1500);
+    } catch (err) {
+      console.error(err);
+      toast.error("We couldn't cancel that plan. Please try again.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
     <AppShell>
+      <PaymentTestModeBanner />
       <header className="mb-4 flex items-center gap-3">
         <Link to="/profile" className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-card">
           <ArrowLeft className="h-4 w-4" />
@@ -147,7 +205,7 @@ function SubscriptionPage() {
                 ))}
               </ul>
               <button
-                disabled={isCurrent}
+                disabled={isCurrent || busy}
                 onClick={() => choose(p.id)}
                 className={`mt-5 w-full rounded-2xl px-6 py-3 font-black transition-transform ${
                   isCurrent ? "bg-muted text-muted-foreground" : "gradient-hero text-white shadow-glow hover:scale-[1.02]"

@@ -32,6 +32,7 @@ import { Route as FriendFriendIdRouteImport } from './routes/friend.$friendId'
 import { Route as ApiRedeemAdminCodeRouteImport } from './routes/api/redeem-admin-code'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiPublicParentConsentRouteImport } from './routes/api/public/parent-consent'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const WardrobeRoute = WardrobeRouteImport.update({
   id: '/wardrobe',
@@ -148,6 +149,12 @@ const ApiPublicParentConsentRoute = ApiPublicParentConsentRouteImport.update({
   path: '/api/public/parent-consent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -173,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/settings/terms': typeof SettingsTermsRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/public/parent-consent': typeof ApiPublicParentConsentRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -198,6 +206,7 @@ export interface FileRoutesByTo {
   '/settings/terms': typeof SettingsTermsRoute
   '/settings': typeof SettingsIndexRoute
   '/api/public/parent-consent': typeof ApiPublicParentConsentRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -224,6 +233,7 @@ export interface FileRoutesById {
   '/settings/terms': typeof SettingsTermsRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/public/parent-consent': typeof ApiPublicParentConsentRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/settings/terms'
     | '/settings/'
     | '/api/public/parent-consent'
+    | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/settings/terms'
     | '/settings'
     | '/api/public/parent-consent'
+    | '/api/public/payments/webhook'
   id:
     | '__root__'
     | '/'
@@ -301,6 +313,7 @@ export interface FileRouteTypes {
     | '/settings/terms'
     | '/settings/'
     | '/api/public/parent-consent'
+    | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -327,6 +340,7 @@ export interface RootRouteChildren {
   SettingsTermsRoute: typeof SettingsTermsRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   ApiPublicParentConsentRoute: typeof ApiPublicParentConsentRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -492,6 +506,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicParentConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -519,6 +540,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsTermsRoute: SettingsTermsRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   ApiPublicParentConsentRoute: ApiPublicParentConsentRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

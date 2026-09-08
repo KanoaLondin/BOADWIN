@@ -218,7 +218,8 @@ export type CloudProfile = {
   age_group: string;
   cohort_age_group?: string | null;
   knowledge_level?: string | null;
-
+  premium?: string | null;
+  premium_renewal_at?: string | null;
 };
 
 /** Call once right after sign-in with the freshly-fetched profile row. */
@@ -252,7 +253,14 @@ export function hydrateFromCloud(profile: CloudProfile) {
     // Admins see every level and lesson unlocked locally, regardless of
     // their actual `premium` column — this is never written back to the
     // database, it's purely a local override for rendering.
-    premium: cloudIsAdmin ? "max" : (cloudState.premium ?? DEFAULT_STATE.premium),
+    // The billing column on the profile is the source of truth — only the
+    // payment webhook (service role) can write it.
+    premium: cloudIsAdmin
+      ? "max"
+      : profile.premium && profile.premium !== "free"
+        ? (profile.premium as AppState["premium"])
+        : false,
+    premiumRenewalISO: profile.premium_renewal_at ?? null,
   }));
   hydrating = false;
 }
