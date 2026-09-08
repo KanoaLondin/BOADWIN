@@ -24,10 +24,13 @@ export function BottomNav() {
             <Link
               key={to}
               to={to}
-              className={`flex flex-1 flex-col items-center gap-1 rounded-2xl px-1 py-2 transition-all ${
+              // The six tabs are the app's main screens — load their code up
+              // front so tapping never waits on a download.
+              preload="render"
+              className={`flex flex-1 touch-manipulation flex-col items-center gap-1 rounded-2xl px-1 py-2 transition-transform duration-100 active:scale-95 ${
                 active
                   ? "bg-primary/12 text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground active:text-foreground"
               }`}
             >
               <Icon className={`h-5 w-5 ${active ? "scale-110" : ""} transition-transform`} />

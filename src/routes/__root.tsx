@@ -130,6 +130,7 @@ const MARKETING_ROUTES = new Set<string>([
   "/signup",
   "/reset-password",
   "/parent-consent",
+  "/account",
   "/settings/privacy",
   "/settings/terms",
   "/settings/refunds",
@@ -171,14 +172,16 @@ function RootComponent() {
   }, [ready, isDesktop, pathname, navigate]);
 
   useEffect(() => {
-    if (auth.status === "loading") return;
+    if (auth.status === "loading" || !ready) return;
     if (auth.status === "guest" && !PUBLIC_ROUTES.has(pathname)) {
       navigate({ to: "/login", replace: true });
     }
     if (auth.status === "authed" && (pathname === "/login" || pathname === "/signup")) {
-      navigate({ to: "/", replace: true });
+      // On the desktop marketing site there is no learning app — signed-in
+      // visitors land in the web account area instead.
+      navigate({ to: isDesktop ? "/account" : "/", replace: true });
     }
-  }, [auth.status, pathname, navigate]);
+  }, [auth.status, pathname, navigate, isDesktop, ready]);
 
   // Avoid a flash of gated content while we still don't know whether
   // there's a session, or right before the redirect above kicks in.
