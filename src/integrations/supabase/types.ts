@@ -205,6 +205,7 @@ export type Database = {
           persona_key: string | null
           persona_used_ai: boolean | null
           premium: string
+          premium_renewal_at: string | null
           profile_bg: string
           referral_code: string
           referred_by: string | null
@@ -244,6 +245,7 @@ export type Database = {
           persona_key?: string | null
           persona_used_ai?: boolean | null
           premium?: string
+          premium_renewal_at?: string | null
           profile_bg?: string
           referral_code: string
           referred_by?: string | null
@@ -283,6 +285,7 @@ export type Database = {
           persona_key?: string | null
           persona_used_ai?: boolean | null
           premium?: string
+          premium_renewal_at?: string | null
           profile_bg?: string
           referral_code?: string
           referred_by?: string | null
@@ -311,6 +314,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          environment: string
+          id: string
+          paddle_customer_id: string
+          paddle_subscription_id: string
+          price_id: string
+          product_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          paddle_customer_id: string
+          paddle_subscription_id: string
+          price_id: string
+          product_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          paddle_customer_id?: string
+          paddle_subscription_id?: string
+          price_id?: string
+          product_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_blocks: {
         Row: {
@@ -407,6 +458,10 @@ export type Database = {
     Functions: {
       age_from_birth: { Args: { bm: number; byr: number }; Returns: number }
       expire_pending_friend_requests: { Args: never; Returns: undefined }
+      has_active_subscription: {
+        Args: { check_env?: string; user_uuid: string }
+        Returns: boolean
+      }
       normalize_for_moderation: { Args: { input: string }; Returns: string }
       normalize_for_moderation_raw: { Args: { input: string }; Returns: string }
       pair_users: {
