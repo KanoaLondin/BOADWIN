@@ -257,6 +257,7 @@ function CompleteScreen({
   hearts,
   xpEarned,
   mistakes,
+  questionCount,
   elapsedMs,
   reward,
   setReward,
@@ -270,6 +271,7 @@ function CompleteScreen({
   hearts: number;
   xpEarned: number;
   mistakes: number;
+  questionCount: number;
   elapsedMs: number;
   reward: { gemsEarned: number; xpEarned: number; chest: ChestTier | null } | null;
   setReward: (r: { gemsEarned: number; xpEarned: number; chest: ChestTier | null }) => void;
