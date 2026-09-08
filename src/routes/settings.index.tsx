@@ -115,6 +115,32 @@ function Settings() {
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-4">
+          <p className="text-[10px] font-bold uppercase text-muted-foreground">Username</p>
+          <div className="mt-1 flex gap-2">
+            <input
+              value={usernameInput}
+              onChange={(e) => setUsernameInput(e.target.value)}
+              placeholder="username"
+              className="min-w-0 flex-1 bg-transparent text-base font-black outline-none"
+            />
+            <button
+              onClick={saveUsername}
+              disabled={
+                savingUsername ||
+                !usernameInput.trim() ||
+                usernameInput.trim() === (profile?.username ?? "")
+              }
+              className="rounded-xl bg-primary px-3 py-1.5 text-xs font-black text-white disabled:opacity-40"
+            >
+              {savingUsername ? "Saving…" : "Save"}
+            </button>
+          </div>
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            This is the name other learners see. It has to be unique and appropriate.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-4">
           <p className="text-[10px] font-bold uppercase text-muted-foreground">Age group</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {AGES.map((a) => (
