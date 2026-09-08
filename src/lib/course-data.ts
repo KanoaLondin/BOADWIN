@@ -6,6 +6,7 @@ import { aiEvaluationLevels } from "./course-ai-evaluation";
 import { aiSecurityLevels } from "./course-ai-security";
 import { aiEthicsLevels } from "./course-ai-ethics";
 import { implementingAiLevels } from "./course-implementing-ai";
+import { mediaLiteracyLevels } from "./course-media-literacy";
 
 export type Exercise =
   | {
@@ -2191,6 +2192,15 @@ export const COURSES: Course[] = [
     sources:
       "GitHub\u2019s AI Adoption Playbook (CC-BY-4.0), Anthropic Economic Index research, Salesforce Ventures AI Implementation Playbook",
     levels: implementingAiLevels,
+  },
+  {
+    id: "media-literacy",
+    title: "Spotting AI Fakes & Media Literacy",
+    subtitle: "Tell real from AI-generated - images, video, and voice",
+    emoji: "\ud83d\udcf8",
+    levelLabel: "Beginner",
+    prerequisites: "None",
+    levels: mediaLiteracyLevels,
   },
 ];
 
