@@ -27,7 +27,7 @@ import {
   setBgAnimationsOff,
   type AppState,
 } from "@/lib/app-state";
-import { signOut, useAuth } from "@/lib/auth";
+import { changeUsername, signOut, useAuth } from "@/lib/auth";
 import { accountSafety } from "@/lib/child-safety";
 import { validateUsername } from "@/lib/profanity";
 import { toast } from "sonner";
@@ -57,6 +57,25 @@ function Settings() {
   const [sound, setSound] = useState(true);
   const [nameInput, setNameInput] = useState(name);
   const { profile } = useAuth();
+  const [usernameInput, setUsernameInput] = useState(profile?.username ?? "");
+  const [savingUsername, setSavingUsername] = useState(false);
+
+  useEffect(() => {
+    if (profile?.username) setUsernameInput(profile.username);
+  }, [profile?.username]);
+
+  async function saveUsername() {
+    setSavingUsername(true);
+    try {
+      await changeUsername(usernameInput);
+      toast.success("Username updated!");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't update your username.");
+      setUsernameInput(profile?.username ?? "");
+    } finally {
+      setSavingUsername(false);
+    }
+  }
   // Under-18 accounts can't quietly re-label themselves as adults; only a
   // grown-up with the Parent Zone PIN can change it.
   const [parentUnlocked, setParentUnlocked] = useState(false);
@@ -112,6 +131,32 @@ function Settings() {
               />
             </div>
           </div>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <p className="text-[10px] font-bold uppercase text-muted-foreground">Username</p>
+          <div className="mt-1 flex gap-2">
+            <input
+              value={usernameInput}
+              onChange={(e) => setUsernameInput(e.target.value)}
+              placeholder="username"
+              className="min-w-0 flex-1 bg-transparent text-base font-black outline-none"
+            />
+            <button
+              onClick={saveUsername}
+              disabled={
+                savingUsername ||
+                !usernameInput.trim() ||
+                usernameInput.trim() === (profile?.username ?? "")
+              }
+              className="rounded-xl bg-primary px-3 py-1.5 text-xs font-black text-white disabled:opacity-40"
+            >
+              {savingUsername ? "Saving…" : "Save"}
+            </button>
+          </div>
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            This is the name other learners see. It has to be unique and appropriate.
+          </p>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-4">

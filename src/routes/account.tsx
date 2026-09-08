@@ -4,7 +4,7 @@ import { Crown, KeyRound, LogOut, Sparkles, User, Users, Zap, ArrowLeft } from "
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
-import { signOut, useAuth } from "@/lib/auth";
+import { changeUsername, signOut, useAuth } from "@/lib/auth";
 import { useAppState, setName, setPremium } from "@/lib/app-state";
 import { validateUsername } from "@/lib/profanity";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -43,7 +43,7 @@ const PLANS = [
 
 function AccountPage() {
   const navigate = useNavigate();
-  const { status, email, userId } = useAuth();
+  const { status, email, userId, profile } = useAuth();
   const name = useAppState((s) => s.name);
   const current = useAppState((s) => s.premium);
   const renewalISO = useAppState((s) => s.premiumRenewalISO);
@@ -52,12 +52,18 @@ function AccountPage() {
   const { openCheckout } = usePaddleCheckout();
 
   const [nameInput, setNameInput] = useState(name);
+  const [usernameInput, setUsernameInput] = useState(profile?.username ?? "");
+  const [savingUsername, setSavingUsername] = useState(false);
   const [busy, setBusy] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
   useEffect(() => setNameInput(name), [name]);
+
+  useEffect(() => {
+    if (profile?.username) setUsernameInput(profile.username);
+  }, [profile?.username]);
 
   useEffect(() => {
     if (status === "guest") navigate({ to: "/login", replace: true });
@@ -87,6 +93,19 @@ function AccountPage() {
     }
     setName(next);
     toast.success("Name saved.");
+  }
+
+  async function saveUsername() {
+    setSavingUsername(true);
+    try {
+      await changeUsername(usernameInput);
+      toast.success("Username updated!");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't update your username.");
+      setUsernameInput(profile?.username ?? "");
+    } finally {
+      setSavingUsername(false);
+    }
   }
 
   async function choosePlan(id: PlanId) {
@@ -219,6 +238,31 @@ function AccountPage() {
               Save
             </button>
           </div>
+
+          <label className="mt-5 block text-xs font-bold text-muted-foreground">Username</label>
+          <div className="mt-1 flex gap-2">
+            <input
+              value={usernameInput}
+              onChange={(e) => setUsernameInput(e.target.value)}
+              placeholder="username"
+              className="flex-1 rounded-2xl border-2 border-border bg-background px-4 py-3 font-semibold outline-none focus:border-primary"
+            />
+            <button
+              onClick={saveUsername}
+              className="rounded-2xl gradient-hero px-5 py-3 font-black text-white shadow-glow disabled:opacity-40"
+              disabled={
+                savingUsername ||
+                !usernameInput.trim() ||
+                usernameInput.trim() === (profile?.username ?? "")
+              }
+            >
+              {savingUsername ? "Saving…" : "Save"}
+            </button>
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Other learners see this name. It must be unique and appropriate.
+          </p>
+
           <p className="mt-3 text-xs text-muted-foreground">
             Signed in as <span className="font-bold text-foreground">{email}</span>
           </p>
