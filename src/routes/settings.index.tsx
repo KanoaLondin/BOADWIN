@@ -27,7 +27,7 @@ import {
   setBgAnimationsOff,
   type AppState,
 } from "@/lib/app-state";
-import { signOut, useAuth } from "@/lib/auth";
+import { changeUsername, signOut, useAuth } from "@/lib/auth";
 import { accountSafety } from "@/lib/child-safety";
 import { validateUsername } from "@/lib/profanity";
 import { toast } from "sonner";
