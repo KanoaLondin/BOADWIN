@@ -2203,7 +2203,6 @@ export const COURSES: Course[] = [
     prerequisites: "None",
     levels: mediaLiteracyLevels,
   },
-  },
   {
     id: "no-code-ai-data",
     title: "No-Code AI Data Analysis",
