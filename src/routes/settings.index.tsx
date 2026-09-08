@@ -22,14 +22,12 @@ import {
 import { AppShell } from "@/components/AppShell";
 import {
   useAppState,
-  setName,
   setAgeGroup,
   setBgAnimationsOff,
   type AppState,
 } from "@/lib/app-state";
 import { changeUsername, signOut, useAuth } from "@/lib/auth";
 import { accountSafety } from "@/lib/child-safety";
-import { validateUsername } from "@/lib/profanity";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/settings/")({
@@ -47,7 +45,6 @@ const AGES: { id: AppState["ageGroup"]; label: string }[] = [
 
 function Settings() {
   const navigate = useNavigate();
-  const name = useAppState((s) => s.name);
   const ageGroup = useAppState((s) => s.ageGroup);
   const premium = useAppState((s) => s.premium);
   const bgAnimOff = useAppState((s) => s.bgAnimationsOff);
@@ -55,7 +52,6 @@ function Settings() {
   const [dark, setDark] = useState(false);
   const [notif, setNotif] = useState(true);
   const [sound, setSound] = useState(true);
-  const [nameInput, setNameInput] = useState(name);
   const { profile } = useAuth();
   const [usernameInput, setUsernameInput] = useState(profile?.username ?? "");
   const [savingUsername, setSavingUsername] = useState(false);
@@ -92,17 +88,6 @@ function Settings() {
     document.documentElement.classList.toggle("dark", next);
   }
 
-  function saveName() {
-    const next = nameInput.trim();
-    if (!next || next === name) return;
-    const problem = validateUsername(next, 2);
-    if (problem) {
-      toast.error(problem);
-      setNameInput(name); // keep the old name; they can try another
-      return;
-    }
-    setName(next);
-  }
 
   function resetPin() {
     localStorage.removeItem("aied:parentPin");
@@ -116,22 +101,6 @@ function Settings() {
 
       {/* Account */}
       <Section title="Account">
-        <div className="rounded-2xl border border-border bg-card p-4">
-          <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-xl gradient-hero text-white">
-              <User className="h-5 w-5" />
-            </div>
-            <div className="flex-1">
-              <p className="text-[10px] font-bold uppercase text-muted-foreground">Display name</p>
-              <input
-                value={nameInput}
-                onChange={(e) => setNameInput(e.target.value)}
-                onBlur={saveName}
-                className="w-full bg-transparent text-base font-black outline-none"
-              />
-            </div>
-          </div>
-        </div>
 
         <div className="rounded-2xl border border-border bg-card p-4">
           <p className="text-[10px] font-bold uppercase text-muted-foreground">Username</p>
