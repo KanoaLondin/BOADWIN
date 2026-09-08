@@ -52,12 +52,18 @@ function AccountPage() {
   const { openCheckout } = usePaddleCheckout();
 
   const [nameInput, setNameInput] = useState(name);
+  const [usernameInput, setUsernameInput] = useState(profile?.username ?? "");
+  const [savingUsername, setSavingUsername] = useState(false);
   const [busy, setBusy] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
   useEffect(() => setNameInput(name), [name]);
+
+  useEffect(() => {
+    if (profile?.username) setUsernameInput(profile.username);
+  }, [profile?.username]);
 
   useEffect(() => {
     if (status === "guest") navigate({ to: "/login", replace: true });
