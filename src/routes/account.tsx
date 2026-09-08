@@ -177,8 +177,8 @@ function AccountPage() {
             <span className="text-2xl font-black text-gradient">AIED</span>
           </Link>
           <button
-            onClick={async () => {
-              await signOut();
+            onClick={() => {
+              void signOut();
               navigate({ to: "/landing", replace: true });
             }}
             className="flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-bold text-muted-foreground hover:text-foreground"
