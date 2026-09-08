@@ -130,11 +130,22 @@ const MARKETING_ROUTES = new Set<string>([
   "/signup",
   "/reset-password",
   "/parent-consent",
+  "/settings/privacy",
+  "/settings/terms",
+  "/settings/refunds",
 ]);
 
 // Pages a signed-out visitor is allowed to see. Everything else requires an
 // account, per the app's "everyone signs in, progress follows you" design.
-const PUBLIC_ROUTES = new Set<string>(["/landing", "/login", "/signup", "/reset-password"]);
+const PUBLIC_ROUTES = new Set<string>([
+  "/landing",
+  "/login",
+  "/signup",
+  "/reset-password",
+  "/settings/privacy",
+  "/settings/terms",
+  "/settings/refunds",
+]);
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
