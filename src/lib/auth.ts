@@ -4,6 +4,7 @@
 import { useSyncExternalStore } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { hydrateFromCloud, unbindCloud, type CloudProfile } from "./app-state";
+import { validateUsername } from "./profanity";
 
 export type Profile = CloudProfile & {
   username: string;
