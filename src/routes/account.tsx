@@ -43,7 +43,7 @@ const PLANS = [
 
 function AccountPage() {
   const navigate = useNavigate();
-  const { status, email, userId } = useAuth();
+  const { status, email, userId, profile } = useAuth();
   const name = useAppState((s) => s.name);
   const current = useAppState((s) => s.premium);
   const renewalISO = useAppState((s) => s.premiumRenewalISO);
