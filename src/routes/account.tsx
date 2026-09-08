@@ -89,6 +89,19 @@ function AccountPage() {
     toast.success("Name saved.");
   }
 
+  async function saveUsername() {
+    setSavingUsername(true);
+    try {
+      await changeUsername(usernameInput);
+      toast.success("Username updated!");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't update your username.");
+      setUsernameInput(profile?.username ?? "");
+    } finally {
+      setSavingUsername(false);
+    }
+  }
+
   async function choosePlan(id: PlanId) {
     if (!userId) return;
     setBusy(true);
