@@ -312,7 +312,28 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      // Hand-added ahead of the next Lovable schema sync (see migration
+      // 20260908000000_public_profiles_view.sql) — a narrow, safe-to-read
+      // subset of `profiles` for looking up *other* users (friend search,
+      // friends list, friend profile page) now that `profiles` itself is
+      // locked to "own row only". Regenerating this file from the live
+      // schema should produce an equivalent entry automatically.
+      public_profiles: {
+        Row: {
+          id: string
+          username: string
+          display_name: string | null
+          xp: number
+          streak: number
+          weekly_xp: number
+          al_outfit: string
+          profile_bg: string
+          bio: string | null
+          is_minor: boolean
+          member_since: string
+        }
+        Relationships: []
+      }
     }
     Functions: {
       age_from_birth: { Args: { bm: number; byr: number }; Returns: number }

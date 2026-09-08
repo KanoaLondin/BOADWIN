@@ -60,8 +60,8 @@ export async function searchUsers(query: string, myId: string): Promise<RealProf
   const q = query.trim();
   if (q.length < 2) return [];
   const [{ data: exact }, { data: partial }] = await Promise.all([
-    supabase.from("profiles").select(PROFILE_COLS).ilike("username", q).neq("id", myId).limit(5),
-    supabase.from("profiles").select(PROFILE_COLS).ilike("username", `%${q}%`).eq("is_minor", false).neq("id", myId).limit(15),
+    supabase.from("public_profiles").select(PROFILE_COLS).ilike("username", q).neq("id", myId).limit(5),
+    supabase.from("public_profiles").select(PROFILE_COLS).ilike("username", `%${q}%`).eq("is_minor", false).neq("id", myId).limit(15),
   ]);
   const byId = new Map<string, RealProfile>();
   for (const row of [...(exact ?? []), ...(partial ?? [])]) byId.set(row.id, toProfile(row));
@@ -190,7 +190,7 @@ export function useFriendsData(): FriendsData {
           setState({ loading: false, friends: [], incoming: [], outgoing: [] });
           return;
         }
-        const { data: profiles } = await supabase.from("profiles").select(PROFILE_COLS).in("id", otherIds);
+        const { data: profiles } = await supabase.from("public_profiles").select(PROFILE_COLS).in("id", otherIds);
         if (cancelled) return;
         const byId = new Map((profiles ?? []).map((p) => [p.id, toProfile(p)]));
 

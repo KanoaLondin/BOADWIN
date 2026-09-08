@@ -55,8 +55,11 @@ export const Route = createFileRoute("/friend/$friendId")({
   loader: async ({ params }): Promise<LoaderFriend> => {
     const mock = getFriend(params.friendId);
     if (mock) return { friend: mock, isReal: false };
+    // Looking up someone else's profile by id — profiles itself is locked to
+    // "own row only", so this goes through the public_profiles view, which
+    // exposes only the columns that are fine to show another signed-in user.
     const { data } = await supabase
-      .from("profiles")
+      .from("public_profiles")
       .select("id,username,display_name,xp,streak,al_outfit,profile_bg,bio,is_minor")
       .eq("id", params.friendId)
       .maybeSingle();
