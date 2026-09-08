@@ -82,7 +82,6 @@ export const RECOMMENDED_UNIT_BY_COURSE: Record<string, Record<KnowledgeLevel, s
   "ai-ethics": { new: "eth1", some: "eth3", experienced: "eth5" },
   "implementing-ai": { new: "imp1", some: "imp3", experienced: "imp5" },
   "media-literacy": { new: "ml0", some: "ml0", experienced: "ml0" },
-  "no-code-ai-data": { new: "nc0", some: "nc0", experienced: "nc0" },
 };
 
 /** Free-tier fallbacks so the recommendation is always actually reachable. */
@@ -96,7 +95,7 @@ export const RECOMMENDED_UNIT_FREE_BY_COURSE: Record<string, Record<KnowledgeLev
   "ai-ethics": { new: "eth1", some: "eth2", experienced: "eth3" },
   "implementing-ai": { new: "imp1", some: "imp2", experienced: "imp3" },
   "media-literacy": { new: "ml0", some: "ml0", experienced: "ml0" },
-  "no-code-ai-data": { new: "nc0", some: "nc0", experienced: "nc0" },
+  
 };
 
 
