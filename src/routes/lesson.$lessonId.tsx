@@ -295,6 +295,12 @@ function CompleteScreen({
     });
     setReward(r);
     if (r.chest) setTimeout(() => setChestOpen(r.chest), 700);
+    // Analytics only — never blocks or changes what the learner sees.
+    void recordLessonCompletion(lesson.id);
+    if (lessonIsQuiz(lesson.id)) {
+      const total = questionCount;
+      void recordQuizAttempt({ quizId: lesson.id, correct: total - mistakes, total });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
