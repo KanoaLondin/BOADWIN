@@ -353,11 +353,24 @@ function Footer() {
           <span className="font-black text-foreground">AIED</span>
           <span>· Saving futures through AI literacy</span>
         </div>
-        <div className="flex gap-5 font-bold">
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-          <a href="#">Contact</a>
+        <div className="flex flex-wrap gap-5 font-bold">
+          <Link to="/settings/privacy" className="hover:text-foreground">
+            Privacy
+          </Link>
+          <Link to="/settings/terms" className="hover:text-foreground">
+            Terms
+          </Link>
+          <Link to="/settings/refunds" className="hover:text-foreground">
+            Refunds
+          </Link>
+          <a href="mailto:support@aied.app" className="hover:text-foreground">
+            Contact
+          </a>
         </div>
+      </div>
+      <div className="mx-auto mt-6 max-w-6xl text-xs text-muted-foreground">
+        © {new Date().getFullYear()} Coleklondin. Payments are processed by our reseller and
+        Merchant of Record, Paddle.com.
       </div>
     </footer>
   );

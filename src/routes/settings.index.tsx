@@ -232,6 +232,13 @@ function Settings() {
             right={<ChevronRight className="h-5 w-5 text-muted-foreground" />}
           />
         </Link>
+        <Link to="/settings/refunds" className="block">
+          <Row
+            icon={<ScrollText className="h-5 w-5" />}
+            label="Refund Policy"
+            right={<ChevronRight className="h-5 w-5 text-muted-foreground" />}
+          />
+        </Link>
       </Section>
 
       {/* About */}
