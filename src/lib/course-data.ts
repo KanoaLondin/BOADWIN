@@ -7,6 +7,7 @@ import { aiSecurityLevels } from "./course-ai-security";
 import { aiEthicsLevels } from "./course-ai-ethics";
 import { implementingAiLevels } from "./course-implementing-ai";
 import { mediaLiteracyLevels } from "./course-media-literacy";
+import { noCodeDataLevels } from "./course-no-code-data";
 
 export type Exercise =
   | {
@@ -2201,6 +2202,15 @@ export const COURSES: Course[] = [
     levelLabel: "Beginner",
     prerequisites: "None",
     levels: mediaLiteracyLevels,
+  },
+  {
+    id: "no-code-ai-data",
+    title: "No-Code AI Data Analysis",
+    subtitle: "Ask your spreadsheet a question in plain English",
+    emoji: "📊",
+    levelLabel: "Beginner",
+    prerequisites: "None",
+    levels: noCodeDataLevels,
   },
 ];
 
