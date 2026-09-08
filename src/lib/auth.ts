@@ -140,7 +140,12 @@ export async function changeUsername(next: string): Promise<void> {
 
   const { error } = await supabase
     .from("profiles")
-    .update({ username: value, username_changed_at: new Date().toISOString() })
+    // Username and display name are always kept identical.
+    .update({
+      username: value,
+      display_name: value,
+      username_changed_at: new Date().toISOString(),
+    })
     .eq("id", state.userId);
   if (error) {
     if (error.message?.toLowerCase().includes("allowed")) throw new Error(error.message);

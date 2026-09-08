@@ -5,8 +5,7 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { changeUsername, signOut, useAuth } from "@/lib/auth";
-import { useAppState, setName, setPremium } from "@/lib/app-state";
-import { validateUsername } from "@/lib/profanity";
+import { useAppState, setPremium } from "@/lib/app-state";
 import { useSubscription } from "@/hooks/useSubscription";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { PLAN_PRICE_IDS, getPaddleEnvironment, type PlanId } from "@/lib/paddle";
@@ -44,22 +43,18 @@ const PLANS = [
 function AccountPage() {
   const navigate = useNavigate();
   const { status, email, userId, profile } = useAuth();
-  const name = useAppState((s) => s.name);
   const current = useAppState((s) => s.premium);
   const renewalISO = useAppState((s) => s.premiumRenewalISO);
   const { plan, isActive, subscription, refetch } = useSubscription();
   useCheckoutReturn(refetch, isActive);
   const { openCheckout } = usePaddleCheckout();
 
-  const [nameInput, setNameInput] = useState(name);
   const [usernameInput, setUsernameInput] = useState(profile?.username ?? "");
   const [savingUsername, setSavingUsername] = useState(false);
   const [busy, setBusy] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-
-  useEffect(() => setNameInput(name), [name]);
 
   useEffect(() => {
     if (profile?.username) setUsernameInput(profile.username);
@@ -83,17 +78,6 @@ function AccountPage() {
       })
     : null;
 
-  function saveName() {
-    const next = nameInput.trim();
-    if (!next || next === name) return;
-    const problem = validateUsername(next, 2);
-    if (problem) {
-      toast.error(problem);
-      return;
-    }
-    setName(next);
-    toast.success("Name saved.");
-  }
 
   async function saveUsername() {
     setSavingUsername(true);
@@ -223,23 +207,7 @@ function AccountPage() {
           <h2 className="flex items-center gap-2 text-lg font-black">
             <User className="h-5 w-5 text-primary" /> Profile
           </h2>
-          <label className="mt-4 block text-xs font-bold text-muted-foreground">Display name</label>
-          <div className="mt-1 flex gap-2">
-            <input
-              value={nameInput}
-              onChange={(e) => setNameInput(e.target.value)}
-              className="flex-1 rounded-2xl border-2 border-border bg-background px-4 py-3 font-semibold outline-none focus:border-primary"
-            />
-            <button
-              onClick={saveName}
-              className="rounded-2xl gradient-hero px-5 py-3 font-black text-white shadow-glow disabled:opacity-40"
-              disabled={busy || !nameInput.trim() || nameInput.trim() === name}
-            >
-              Save
-            </button>
-          </div>
-
-          <label className="mt-5 block text-xs font-bold text-muted-foreground">Username</label>
+          <label className="mt-4 block text-xs font-bold text-muted-foreground">Username</label>
           <div className="mt-1 flex gap-2">
             <input
               value={usernameInput}

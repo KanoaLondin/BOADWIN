@@ -242,10 +242,9 @@ export function hydrateFromCloud(profile: CloudProfile) {
     gems: profile.gems,
     alOutfit: profile.al_outfit || DEFAULT_STATE.alOutfit,
     profileBg: (profile.profile_bg as ProfileBg) || DEFAULT_STATE.profileBg,
-    // The username the person chose at sign-up is the source of truth for
-    // greetings; display_name only wins if they later renamed themselves in
-    // onboarding/settings. Never fall back to a placeholder for a real account.
-    name: profile.display_name || profile.username || DEFAULT_STATE.name,
+    // The username the person chose at sign-up is always the displayed name —
+    // username and display name are kept identical everywhere in the app.
+    name: profile.username || profile.display_name || DEFAULT_STATE.name,
     ageGroup: (profile.age_group as AppState["ageGroup"]) || DEFAULT_STATE.ageGroup,
     cohortAgeGroup: (profile.cohort_age_group as AppState["cohortAgeGroup"]) ?? null,
     knowledgeLevel: (profile.knowledge_level as AppState["knowledgeLevel"]) ?? null,
