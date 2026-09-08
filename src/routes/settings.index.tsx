@@ -10,7 +10,6 @@ import {
   ChevronRight,
   Crown,
   KeyRound,
-  User,
   Heart,
   Sparkles,
   Info,
