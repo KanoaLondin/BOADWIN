@@ -65,14 +65,21 @@ function TermsOfService() {
         />
 
         <H>Subscriptions and billing</H>
+        <P>
+          Our order process is conducted by our online reseller and Merchant of Record,
+          Paddle.com. Paddle is the seller of record for all AIED subscriptions and handles
+          payment, billing, tax and refunds. Your purchase is also subject to Paddle's own terms
+          and buyer terms, and your receipts and card statements will show Paddle.
+        </P>
         <Ul
           items={[
             "Free gives you the beginner levels. Super AIED, AIED Max and AIED Family unlock further levels and features, described on the Plans page.",
             "Paid plans are billed in advance on a recurring basis — monthly or yearly, depending on the plan you pick — and renew automatically until you cancel.",
-            "Prices shown on the Plans page are in US dollars and exclude any taxes that may apply where you live.",
-            "You can switch between paid plans at any time from the Plans page. A switch takes effect immediately.",
+            "Prices shown on the Plans page are in US dollars; Paddle adds any sales tax or VAT that applies where you live.",
+            "You can switch between paid plans at any time from the Plans page. A switch takes effect immediately and is pro-rated.",
             "You can cancel at any time from the Plans page. Your paid features stay active until the end of the period you've already paid for, then the account moves to Free.",
-            "Cancelling does not automatically refund the current period. If something went wrong with a charge, contact us and we'll look at it.",
+            "You can request a full refund within 14 days of any payment. Cancelling on its own is not a refund — see the Refund Policy for how to request one.",
+            "Billing questions and refund requests can go to billing@aied.app, or directly to Paddle at paddle.net.",
             "AIED Family covers up to six accounts under one payer. The payer is responsible for the plan.",
           ]}
         />
