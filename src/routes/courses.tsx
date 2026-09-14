@@ -57,27 +57,18 @@ function Courses() {
   // Cohort recommendation — a highlight only, nothing extra gets locked.
   const recommendedUnit = recommendedUnitId(knowledgeLevel, hasPaidAccess, course.id);
 
-  // Current lesson = first non-completed in the recommended unit, else the
-  // first non-completed lesson in the first unlocked level.
+  // Current lesson = the next unfinished lesson in straight course order.
+  // Progression is purely sequential: it never skips ahead to a recommended
+  // unit, which used to leave every lesson of the following land padlocked
+  // even after the learner had finished the land before it.
   let current: string | null = null;
-  for (const lv of courseLevels) {
+  outer: for (const lv of courseLevels) {
     if (lv.tier !== "Free" && !hasPaidAccess) break;
-    const unit = lv.units.find((u) => u.id === recommendedUnit);
-    const lesson = unit?.lessons.find((l) => !completed.has(l.id));
-    if (lesson) {
-      current = lesson.id;
-      break;
-    }
-  }
-  if (!current) {
-    outer: for (const lv of courseLevels) {
-      if (lv.tier !== "Free" && !hasPaidAccess) break;
-      for (const u of lv.units) {
-        for (const l of u.lessons) {
-          if (!completed.has(l.id)) {
-            current = l.id;
-            break outer;
-          }
+    for (const u of lv.units) {
+      for (const l of u.lessons) {
+        if (!completed.has(l.id)) {
+          current = l.id;
+          break outer;
         }
       }
     }
