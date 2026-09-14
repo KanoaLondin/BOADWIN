@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Lock, Check, Star, Trophy, Crown } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { COURSES, COURSE_GROUPS, type Unit, type Level } from "@/lib/course-data";
+import { COURSES, COURSE_GROUPS, courseTitle, type Unit, type Level } from "@/lib/course-data";
 import { useAppState } from "@/lib/app-state";
 import { recommendedUnitId } from "@/lib/cohort";
 import { useAuth } from "@/lib/auth";
