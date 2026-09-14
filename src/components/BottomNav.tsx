@@ -1,13 +1,10 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, BookOpen, Trophy, Award, User, ShoppingBag } from "lucide-react";
+import { Home, BookOpen, User } from "lucide-react";
 
 const items = [
   { to: "/", label: "Home", icon: Home },
   { to: "/courses", label: "Courses", icon: BookOpen },
-  { to: "/leaderboard", label: "Ranks", icon: Trophy },
-  { to: "/achievements", label: "Badges", icon: Award },
   { to: "/profile", label: "Profile", icon: User },
-  { to: "/shop", label: "Shop", icon: ShoppingBag },
 ] as const;
 
 export function BottomNav() {
@@ -24,7 +21,7 @@ export function BottomNav() {
             <Link
               key={to}
               to={to}
-              // The six tabs are the app's main screens — load their code up
+              // The three tabs are the app's main screens — load their code up
               // front so tapping never waits on a download.
               preload="render"
               className={`flex flex-1 touch-manipulation flex-col items-center gap-1 rounded-2xl px-1 py-2 transition-transform duration-100 active:scale-95 ${

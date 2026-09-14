@@ -18,6 +18,8 @@ import { ChestReward } from "@/components/ChestReward";
 import { Gem } from "@/components/GemBadge";
 import { HintButton } from "@/components/HintButton";
 import { completeLesson, loseHeart, useAppState, type ChestTier } from "@/lib/app-state";
+import { useAuth } from "@/lib/auth";
+import { hasPaidCourseAccess } from "@/lib/access";
 import { NINJA_MULTIPLIER, NINJA_PAR_MS, scienceFact, teacherNote } from "@/lib/outfit-effects";
 import {
   lessonIsQuiz,
@@ -66,6 +68,8 @@ function LessonPage() {
   }, [lesson]);
 
   const premiumState = useAppState((s) => s.premium);
+  const { profile } = useAuth();
+  const hasPaidAccess = hasPaidCourseAccess(profile?.premium, premiumState);
   const [stepIdx, setStepIdx] = useState(0);
   const [hearts, setHearts] = useState(useAppState((s) => s.hearts));
   const [xpEarned, setXpEarned] = useState(0);
@@ -99,7 +103,7 @@ function LessonPage() {
 
   // Guard direct links, not just the course-map UI: a non-premium user
   // typing a Premium-tier lesson URL by hand shouldn't get in either.
-  if (data.level.tier !== "Free" && !premiumState) {
+  if (data.level.tier !== "Free" && !hasPaidAccess) {
     return (
       <div className="grid min-h-screen place-items-center px-4">
         <div className="text-center">

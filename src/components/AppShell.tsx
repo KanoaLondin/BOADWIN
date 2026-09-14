@@ -9,7 +9,7 @@ import { CohortGate } from "./CohortGate";
 
 import { useAppState } from "@/lib/app-state";
 
-const NAV_ORDER = ["/", "/courses", "/leaderboard", "/achievements", "/profile", "/shop"];
+const NAV_ORDER = ["/", "/courses", "/profile"];
 
 export function AppShell({
   children,

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Zap, Settings, GraduationCap, Lock, Share2, Pencil, Trophy, Sparkles, Award, Crown, ChevronRight } from "lucide-react";
+import { Zap, Settings, GraduationCap, Lock, Share2, Pencil, Trophy, Sparkles, Award, Crown, ChevronRight, ShoppingBag } from "lucide-react";
 import { StreakFlame } from "@/components/StreakFlame";
 import { AppShell } from "@/components/AppShell";
 import { Mascot } from "@/components/Mascot";
@@ -235,20 +235,54 @@ function Profile() {
         </Link>
       </section>
 
-      {/* Achievements link */}
+      {/* Profile activity hub */}
       <section className="mt-5 mb-2">
-        <Link to="/achievements" className="flex items-center justify-between rounded-3xl border border-border bg-card p-4 shadow-soft">
-          <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-warning/15 text-warning"><Trophy className="h-5 w-5" /></div>
-            <div>
-              <p className="text-sm font-black">Achievements</p>
-              <p className="text-[11px] text-muted-foreground">Browse all badges</p>
-            </div>
-          </div>
-          <Award className="h-5 w-5 text-warning" />
-        </Link>
+        <h2 className="mb-3 text-sm font-black uppercase tracking-wider text-muted-foreground">Your activity</h2>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <ProfileDestination
+            to="/leaderboard"
+            icon={<Trophy className="h-5 w-5" />}
+            title="Weekly ranks"
+            description="See your league position"
+          />
+          <ProfileDestination
+            to="/shop"
+            icon={<ShoppingBag className="h-5 w-5" />}
+            title="Gem shop"
+            description="Power-ups and cosmetics"
+          />
+          <ProfileDestination
+            to="/achievements"
+            icon={<Award className="h-5 w-5" />}
+            title="Achievements"
+            description="Browse all badges"
+          />
+        </div>
       </section>
     </AppShell>
+  );
+}
+
+function ProfileDestination({
+  to,
+  icon,
+  title,
+  description,
+}: {
+  to: "/leaderboard" | "/shop" | "/achievements";
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <Link to={to} preload="render" className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft transition-transform active:scale-[0.98]">
+      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/12 text-primary">{icon}</div>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-black">{title}</p>
+        <p className="text-[11px] text-muted-foreground">{description}</p>
+      </div>
+      <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+    </Link>
   );
 }
 

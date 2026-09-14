@@ -2111,6 +2111,13 @@ export interface Course {
   levels: Level[];
 }
 
+export type CourseGroup = {
+  id: "start" | "build" | "deeper";
+  title: string;
+  description: string;
+  courseIds: string[];
+};
+
 export const COURSES: Course[] = [
   {
     id: "prompt-engineering",
@@ -2211,6 +2218,27 @@ export const COURSES: Course[] = [
     levelLabel: "Beginner",
     prerequisites: "None",
     levels: noCodeDataLevels,
+  },
+];
+
+export const COURSE_GROUPS: CourseGroup[] = [
+  {
+    id: "start",
+    title: "Start Here",
+    description: "Build a clear foundation without too many choices at once.",
+    courseIds: ["prompt-engineering", "how-ai-works", "media-literacy"],
+  },
+  {
+    id: "build",
+    title: "Build Skills",
+    description: "Put AI to work in coding, workflows, and everyday decisions.",
+    courseIds: ["agentic-coding", "ai-agents", "implementing-ai", "no-code-ai-data"],
+  },
+  {
+    id: "deeper",
+    title: "Go Deeper",
+    description: "Evaluate, secure, and use AI responsibly.",
+    courseIds: ["ai-evaluation", "ai-security", "ai-ethics"],
   },
 ];
 
