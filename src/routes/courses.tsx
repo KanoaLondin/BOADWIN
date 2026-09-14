@@ -103,12 +103,6 @@ function Courses() {
             </span>
           )}
         </div>
-        {course.sources && (
-          <p className="mt-2 rounded-2xl border border-border bg-card px-3 py-2 text-[11px] leading-snug text-muted-foreground">
-            <span className="font-black uppercase tracking-wider text-foreground/70">Sources · </span>
-            {course.sources}
-          </p>
-        )}
       </header>
 
 

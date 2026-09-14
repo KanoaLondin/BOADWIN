@@ -8,7 +8,7 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 import {
   useAppState, equipOutfit, equipStreakColor, equipProfileBg, equipBadgeFrame,
 } from "@/lib/app-state";
-import { allLevels } from "@/lib/course-data";
+import { certificateProgress, courseTitle } from "@/lib/course-data";
 import { getLevelInfo, getProgressToNext } from "@/lib/level-system";
 
 export const Route = createFileRoute("/profile")({
@@ -53,8 +53,8 @@ function Profile() {
   const skipTokens = useAppState((s) => s.skipTokens);
   const hintTokens = useAppState((s) => s.hintTokens);
 
-  const totalLessons = allLevels.flatMap((l) => l.units.flatMap((u) => u.lessons)).length;
-  const certProgress = Math.min(100, Math.round((completed.length / totalLessons) * 100));
+  const readingLevel = useAppState((s) => s.readingLevel);
+  const certificates = certificateProgress(completed);
   const userLevel = getLevelInfo(xp);
   const lvlProgress = getProgressToNext(xp);
   const planName = premium ? PLAN_LABEL[premium] : "Free";
@@ -217,18 +217,39 @@ function Profile() {
         </div>
       </section>
 
-      {/* Certificate progress */}
-      <section className="mt-5 overflow-hidden rounded-3xl border-2 border-warning/40 bg-gradient-to-br from-warning/15 via-card to-warning/5 p-5 shadow-soft">
-        <div className="flex items-center gap-3">
-          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-warning/20"><GraduationCap className="h-6 w-6 text-warning" /></div>
-          <div className="flex-1">
-            <p className="text-sm font-black">AIED Prompt Engineering Certificate</p>
-            <p className="text-[11px] text-muted-foreground">{completed.length} of {totalLessons} lessons complete</p>
-          </div>
-          <span className="text-2xl font-black text-warning">{certProgress}%</span>
-        </div>
-        <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-secondary">
-          <div className="h-full rounded-full bg-gradient-to-r from-warning to-amber-300 transition-all" style={{ width: `${certProgress}%` }} />
+      {/* Certificates — one per course */}
+      <section className="mt-5">
+        <h2 className="mb-3 text-sm font-black uppercase tracking-wider text-muted-foreground">Certificates</h2>
+        <div className="space-y-3">
+          {certificates.map((c) => (
+            <div
+              key={c.course.id}
+              className={`overflow-hidden rounded-3xl border-2 p-4 shadow-soft ${
+                c.earned
+                  ? "border-warning bg-gradient-to-br from-warning/20 via-card to-warning/5"
+                  : "border-border bg-card"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl ${c.earned ? "bg-warning/25" : "bg-muted"}`}>
+                  <GraduationCap className={`h-5 w-5 ${c.earned ? "text-warning" : "text-muted-foreground"}`} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-black">{courseTitle(c.course, readingLevel)}</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {c.earned ? "Certificate earned 🎉" : `${c.completed} of ${c.total} lessons`}
+                  </p>
+                </div>
+                <span className={`text-xl font-black ${c.earned ? "text-warning" : "text-muted-foreground"}`}>{c.percent}%</span>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-secondary">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-warning to-amber-300 transition-all"
+                  style={{ width: `${c.percent}%` }}
+                />
+              </div>
+            </div>
+          ))}
         </div>
         <Link to="/courses" className="mt-4 block rounded-2xl border-2 border-warning/40 bg-card px-4 py-2.5 text-center text-xs font-black text-warning">
           Continue your pathway →
