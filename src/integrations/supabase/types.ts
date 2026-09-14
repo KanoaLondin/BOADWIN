@@ -106,6 +106,7 @@ export type Database = {
           lesson_id: string
           payload: Json
           persona_key: string
+          reading_level: string
         }
         Insert: {
           created_at?: string
@@ -113,6 +114,7 @@ export type Database = {
           lesson_id: string
           payload: Json
           persona_key: string
+          reading_level?: string
         }
         Update: {
           created_at?: string
@@ -120,6 +122,7 @@ export type Database = {
           lesson_id?: string
           payload?: Json
           persona_key?: string
+          reading_level?: string
         }
         Relationships: []
       }
@@ -249,6 +252,7 @@ export type Database = {
           premium: string
           premium_renewal_at: string | null
           profile_bg: string
+          reading_level: string
           referral_code: string
           referred_by: string | null
           role: string
@@ -289,6 +293,7 @@ export type Database = {
           premium?: string
           premium_renewal_at?: string | null
           profile_bg?: string
+          reading_level?: string
           referral_code: string
           referred_by?: string | null
           role?: string
@@ -329,6 +334,7 @@ export type Database = {
           premium?: string
           premium_renewal_at?: string | null
           profile_bg?: string
+          reading_level?: string
           referral_code?: string
           referred_by?: string | null
           role?: string

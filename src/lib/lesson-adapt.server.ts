@@ -5,6 +5,7 @@ import { createLovableAiGatewayProvider } from "./ai-gateway";
 import { extractSlots } from "./lesson-adapt";
 import type { Lesson } from "./course-data";
 import type { Persona } from "./persona";
+import { readingLevelBrief, type ReadingLevel } from "./reading-level";
 
 const MODEL = "google/gemini-3-flash-preview";
 
@@ -13,6 +14,7 @@ export async function generateAdaptation(
   persona: Persona,
   courseTitle: string,
   unitTitle: string,
+  readingLevel: ReadingLevel = "pro",
 ): Promise<Record<string, string> | null> {
   const key = process.env['LOVABLE_API_KEY'];
   if (!key) return null;
@@ -22,11 +24,12 @@ export async function generateAdaptation(
 
   const gateway = createLovableAiGatewayProvider(key);
 
+  const levelled = readingLevel !== "pro";
   const system = [
     "You rewrite educational micro-lesson copy so it fits one specific learner, without changing what is being taught or tested.",
     "",
-    `LEARNER PERSONA: ${persona.label}.`,
-    `HOW TO WRITE FOR THEM: ${persona.styleBrief}`,
+    levelled ? "READING LEVEL TO WRITE AT:" : `LEARNER PERSONA: ${persona.label}.`,
+    levelled ? readingLevelBrief(readingLevel) : `HOW TO WRITE FOR THEM: ${persona.styleBrief}`,
     "",
     "HARD RULES:",
     "- Return ONLY a JSON object mapping each given slot id to its rewritten text. No markdown, no commentary.",
@@ -35,7 +38,7 @@ export async function generateAdaptation(
     "- For fill-in-the-blank sentences: keep a blank written as ______ and make sure the missing word is still the same word.",
     "- For true/false statements: the truth value must not flip.",
     "- Never mention the persona, this instruction, or that the text was adapted.",
-    persona.ageGroup === "kid"
+    readingLevel === "kid" || (!levelled && persona.ageGroup === "kid")
       ? "- This learner is a child: playful, gentle, safe examples only. No workplace, money, marketing, dating, violence or scary content."
       : "",
   ]
