@@ -8,7 +8,7 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 import {
   useAppState, equipOutfit, equipStreakColor, equipProfileBg, equipBadgeFrame,
 } from "@/lib/app-state";
-import { certificateProgress, courseTitle } from "@/lib/course-data";
+import { certificateProgress, courseTitle, masteryProgress } from "@/lib/course-data";
 import { getLevelInfo, getProgressToNext } from "@/lib/level-system";
 
 export const Route = createFileRoute("/profile")({
