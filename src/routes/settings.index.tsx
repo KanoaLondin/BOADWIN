@@ -240,27 +240,14 @@ function Settings() {
         <div className="rounded-2xl border border-border bg-card p-4">
           <p className="text-[10px] font-bold uppercase text-muted-foreground">Reading level</p>
           <p className="mb-3 mt-1 text-[11px] text-muted-foreground">
-            Changes how lessons are written. Same facts, same answers — just easier or fuller
-            wording.
+            Changes how course names and lessons are written. Same facts, same answers — just
+            easier or fuller wording. Picking an age group above sets this automatically; you can
+            override it here.
           </p>
           <ReadingLevelPicker
             value={readingLevel}
             disabled={savingLevel}
-            onChange={async (lvl) => {
-              if (lvl === readingLevel) return;
-              const prev = readingLevel;
-              setReadingLevelLocal(lvl);
-              setSavingLevel(true);
-              try {
-                await saveReadingLevel({ data: { level: lvl } });
-                toast.success(`Reading level set to ${READING_LEVEL_META[lvl].label}.`);
-              } catch {
-                setReadingLevelLocal(prev);
-                toast.error("Couldn't save your reading level. Try again.");
-              } finally {
-                setSavingLevel(false);
-              }
-            }}
+            onChange={(lvl) => void applyReadingLevel(lvl)}
           />
         </div>
       </Section>
