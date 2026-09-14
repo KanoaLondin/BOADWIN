@@ -49,6 +49,7 @@ function Courses() {
   const { profile } = useAuth();
   const hasPaidAccess = hasPaidCourseAccess(profile?.premium, premiumState);
   const knowledgeLevel = useAppState((s) => s.knowledgeLevel);
+  const readingLevel = useAppState((s) => s.readingLevel);
   const [courseId, setCourseId] = useState(COURSES[0].id);
 
   const course = COURSES.find((c) => c.id === courseId) ?? COURSES[0];
