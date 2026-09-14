@@ -310,7 +310,10 @@ function UnitPath({
           {unit.lessons.map((l, i) => {
             const isDone = completed.has(l.id);
             const isCurrent = !isDone && l.id === current;
-            const isLocked = locked || (!isDone && !isCurrent);
+            // `locked` = the whole land needs a paid plan. Everything else is
+            // ordinary step-by-step progression, which must never send the
+            // learner to the shop.
+            const planLocked = locked;
             const state: NodeState = l.isQuiz
               ? isDone
                 ? "quiz-done"
@@ -321,17 +324,12 @@ function UnitPath({
               ? "current"
               : "locked";
             const pos = positions[i];
-            return (
-              <Link
-                key={l.id}
-                to={isLocked && !isCurrent ? "/shop" : "/lesson/$lessonId"}
-                params={isLocked && !isCurrent ? undefined : { lessonId: l.id }}
-                className="absolute -translate-x-1/2 -translate-y-1/2"
-                style={{ left: pos.x, top: pos.y }}
-                aria-label={l.title}
-              >
+            const wrapperClass = "absolute -translate-x-1/2 -translate-y-1/2";
+            const wrapperStyle = { left: pos.x, top: pos.y } as const;
+            const inner = (
+              <>
                 <NodeButton state={state} ring={theme.ring} />
-                {isCurrent && (
+                {isCurrent && !planLocked && (
                   <div className="absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-black text-primary-foreground shadow-glow animate-pop">
                     START
                   </div>
@@ -339,6 +337,47 @@ function UnitPath({
                 {state === "quiz-done" && (
                   <Crown className="absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 text-warning fill-current" />
                 )}
+              </>
+            );
+
+            if (planLocked) {
+              return (
+                <Link
+                  key={l.id}
+                  to="/shop"
+                  className={wrapperClass}
+                  style={wrapperStyle}
+                  aria-label={`${l.title} — upgrade to unlock`}
+                >
+                  {inner}
+                </Link>
+              );
+            }
+
+            if (!isDone && !isCurrent) {
+              return (
+                <div
+                  key={l.id}
+                  className={`${wrapperClass} cursor-not-allowed opacity-90`}
+                  style={wrapperStyle}
+                  aria-label={`${l.title} — finish the previous lesson first`}
+                  aria-disabled
+                >
+                  {inner}
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={l.id}
+                to="/lesson/$lessonId"
+                params={{ lessonId: l.id }}
+                className={wrapperClass}
+                style={wrapperStyle}
+                aria-label={l.title}
+              >
+                {inner}
               </Link>
             );
           })}
