@@ -8,7 +8,7 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 import {
   useAppState, equipOutfit, equipStreakColor, equipProfileBg, equipBadgeFrame,
 } from "@/lib/app-state";
-import { certificateProgress, courseTitle } from "@/lib/course-data";
+import { certificateProgress, courseTitle, masteryProgress } from "@/lib/course-data";
 import { getLevelInfo, getProgressToNext } from "@/lib/level-system";
 
 export const Route = createFileRoute("/profile")({
@@ -55,6 +55,7 @@ function Profile() {
 
   const readingLevel = useAppState((s) => s.readingLevel);
   const certificates = certificateProgress(completed);
+  const mastery = masteryProgress(completed);
   const userLevel = getLevelInfo(xp);
   const lvlProgress = getProgressToNext(xp);
   const planName = premium ? PLAN_LABEL[premium] : "Free";
@@ -221,6 +222,32 @@ function Profile() {
       <section className="mt-5">
         <h2 className="mb-3 text-sm font-black uppercase tracking-wider text-muted-foreground">Certificates</h2>
         <div className="space-y-3">
+          {/* Top-tier: app-wide mastery certificate */}
+          <div className="relative overflow-hidden rounded-3xl border-2 border-warning bg-gradient-to-br from-warning/30 via-amber-200/20 to-primary/15 p-5 shadow-glow">
+            <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-warning/20 blur-2xl" />
+            <div className="relative flex items-center gap-3">
+              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-amber-300 to-warning text-white shadow-glow">
+                <Crown className="h-7 w-7" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-warning">Top tier</p>
+                <p className="truncate text-base font-black">AIED Mastery Certificate</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {mastery.earned
+                    ? "Every course complete 🏆"
+                    : `${mastery.completed} of ${mastery.total} lessons · all courses`}
+                </p>
+              </div>
+              <span className="text-2xl font-black text-warning">{mastery.percent}%</span>
+            </div>
+            <div className="relative mt-3 h-2.5 overflow-hidden rounded-full bg-background/60">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-amber-300 via-warning to-primary transition-all"
+                style={{ width: `${mastery.percent}%` }}
+              />
+            </div>
+          </div>
+
           {certificates.map((c) => (
             <div
               key={c.course.id}
