@@ -13,3 +13,8 @@
 
 ## Testing access
 - [x] Give coleklondin@icloud.com the highest tier in the data model (no billing flow); leave defaults and other users untouched
+
+## Current improvements
+- [ ] Fix top-plan access for all 10 courses and verify as Cole's account
+- [ ] Reduce bottom navigation to Home, Courses, and Profile; move Ranks and Shop into Profile
+- [ ] Group all 10 courses into Start Here, Build Skills, and Go Deeper
