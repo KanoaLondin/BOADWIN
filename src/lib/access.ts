@@ -11,5 +11,7 @@ export function hasPaidCourseAccess(
   profilePlan: string | null | undefined,
   localPlan: AppState["premium"],
 ): boolean {
-  return PAID_PLANS.has(profilePlan ?? "") || localPlan !== false;
+  // Once the account profile is available it is authoritative. The local
+  // value is only the startup fallback while that profile is loading.
+  return profilePlan != null ? PAID_PLANS.has(profilePlan) : localPlan !== false;
 }
