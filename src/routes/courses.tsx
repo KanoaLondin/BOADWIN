@@ -2,9 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Lock, Check, Star, Trophy, Crown } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { COURSES, type Unit, type Level } from "@/lib/course-data";
+import { COURSES, COURSE_GROUPS, type Unit, type Level } from "@/lib/course-data";
 import { useAppState } from "@/lib/app-state";
 import { recommendedUnitId } from "@/lib/cohort";
+import { useAuth } from "@/lib/auth";
+import { hasPaidCourseAccess } from "@/lib/access";
+import { Button } from "@/components/ui/button";
 
 
 export const Route = createFileRoute("/courses")({
@@ -43,6 +46,8 @@ function Courses() {
   const completedList = useAppState((s) => s.completedLessons);
   const completed = useMemo(() => new Set(completedList), [completedList]);
   const premiumState = useAppState((s) => s.premium);
+  const { profile } = useAuth();
+  const hasPaidAccess = hasPaidCourseAccess(profile?.premium, premiumState);
   const knowledgeLevel = useAppState((s) => s.knowledgeLevel);
   const [courseId, setCourseId] = useState(COURSES[0].id);
 
@@ -50,13 +55,13 @@ function Courses() {
   const courseLevels = course.levels;
 
   // Cohort recommendation — a highlight only, nothing extra gets locked.
-  const recommendedUnit = recommendedUnitId(knowledgeLevel, !!premiumState, course.id);
+  const recommendedUnit = recommendedUnitId(knowledgeLevel, hasPaidAccess, course.id);
 
   // Current lesson = first non-completed in the recommended unit, else the
   // first non-completed lesson in the first unlocked level.
   let current: string | null = null;
   for (const lv of courseLevels) {
-    if (lv.tier !== "Free" && !premiumState) break;
+    if (lv.tier !== "Free" && !hasPaidAccess) break;
     const unit = lv.units.find((u) => u.id === recommendedUnit);
     const lesson = unit?.lessons.find((l) => !completed.has(l.id));
     if (lesson) {
@@ -66,7 +71,7 @@ function Courses() {
   }
   if (!current) {
     outer: for (const lv of courseLevels) {
-      if (lv.tier !== "Free" && !premiumState) break;
+      if (lv.tier !== "Free" && !hasPaidAccess) break;
       for (const u of lv.units) {
         for (const l of u.lessons) {
           if (!completed.has(l.id)) {
@@ -116,41 +121,56 @@ function Courses() {
 
 
       {/* Course track switcher */}
-      <div className="mb-6 grid grid-cols-2 gap-2">
-        {COURSES.map((c) => {
-          const active = c.id === course.id;
-          const done = c.levels.reduce(
-            (n, lv) => n + lv.units.reduce((m, u) => m + u.lessons.filter((l) => completed.has(l.id)).length, 0),
-            0,
-          );
-          const total = c.levels.reduce(
-            (n, lv) => n + lv.units.reduce((m, u) => m + u.lessons.length, 0),
-            0,
-          );
-          return (
-            <button
-              key={c.id}
-              type="button"
-              onClick={() => setCourseId(c.id)}
-              className={`rounded-2xl border-2 p-3 text-left transition-all ${
-                active
-                  ? "border-primary bg-primary/10 shadow-glow"
-                  : "border-border bg-card hover:border-primary/40"
-              }`}
-            >
-              <p className="text-xl">{c.emoji}</p>
-              <p className="mt-1 text-sm font-black leading-tight">{c.title}</p>
-              <p className="text-[11px] text-muted-foreground">
-                {done}/{total} lessons
-              </p>
-            </button>
-          );
-        })}
+      <div className="mb-7 space-y-5">
+        {COURSE_GROUPS.map((group) => (
+          <section key={group.id} aria-labelledby={`course-group-${group.id}`}>
+            <div className="mb-2">
+              <h2 id={`course-group-${group.id}`} className="text-sm font-black uppercase tracking-wider text-foreground">
+                {group.title}
+              </h2>
+              <p className="text-[11px] text-muted-foreground">{group.description}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {group.courseIds.map((id) => COURSES.find((item) => item.id === id)).filter((item) => item !== undefined).map((c) => {
+                const active = c.id === course.id;
+                const done = c.levels.reduce(
+                  (n, lv) => n + lv.units.reduce((m, u) => m + u.lessons.filter((l) => completed.has(l.id)).length, 0),
+                  0,
+                );
+                const total = c.levels.reduce(
+                  (n, lv) => n + lv.units.reduce((m, u) => m + u.lessons.length, 0),
+                  0,
+                );
+                return (
+                  <Button
+                    key={c.id}
+                    type="button"
+                    variant="outline"
+                    onClick={() => setCourseId(c.id)}
+                    className={`h-auto min-h-24 whitespace-normal rounded-2xl border-2 p-3 text-left transition-all ${
+                      active
+                        ? "border-primary bg-primary/10 shadow-glow hover:bg-primary/10"
+                        : "border-border bg-card hover:border-primary/40 hover:bg-card"
+                    }`}
+                  >
+                    <span className="block w-full">
+                      <span className="block text-xl">{c.emoji}</span>
+                      <span className="mt-1 block text-sm font-black leading-tight">{c.title}</span>
+                      <span className="block text-[11px] font-normal text-muted-foreground">
+                        {done}/{total} lessons
+                      </span>
+                    </span>
+                  </Button>
+                );
+              })}
+            </div>
+          </section>
+        ))}
       </div>
 
       <div className="space-y-10">
         {courseLevels.map((level, li) => {
-          const levelLocked = level.tier !== "Free" && !premiumState;
+          const levelLocked = level.tier !== "Free" && !hasPaidAccess;
           return (
             <section key={level.id} className="space-y-6">
               <LevelBanner level={level} index={li} locked={levelLocked} />
