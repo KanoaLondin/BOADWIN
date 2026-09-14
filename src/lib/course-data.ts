@@ -2286,6 +2286,30 @@ export function certificateProgress(completedIds: Iterable<string>): CourseCerti
     });
 }
 
+export type MasteryProgress = {
+  completed: number;
+  total: number;
+  percent: number;
+  earned: boolean;
+};
+
+/**
+ * App-wide mastery: every lesson in every course, counted from the real
+ * course data so it stays correct as content grows.
+ */
+export function masteryProgress(completedIds: Iterable<string>): MasteryProgress {
+  const done = new Set(completedIds);
+  const ids = COURSES.flatMap((c) => courseLessonIds(c));
+  const completed = ids.filter((id) => done.has(id)).length;
+  const total = ids.length;
+  return {
+    completed,
+    total,
+    percent: total > 0 ? Math.round((completed / total) * 100) : 0,
+    earned: total > 0 && completed >= total,
+  };
+}
+
 export function courseForUnit(unitId: string): Course | null {
   for (const c of COURSES)
     for (const lv of c.levels) if (lv.units.some((u) => u.id === unitId)) return c;
