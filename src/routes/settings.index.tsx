@@ -27,7 +27,7 @@ import {
   type AppState,
 } from "@/lib/app-state";
 import { ReadingLevelPicker } from "@/components/ReadingLevelPicker";
-import { READING_LEVEL_META } from "@/lib/reading-level";
+import { READING_LEVEL_BY_AGE_GROUP, READING_LEVEL_META } from "@/lib/reading-level";
 import { setReadingLevelServer } from "@/lib/lesson-adapt.functions";
 import { changeUsername, signOut, useAuth } from "@/lib/auth";
 import { accountSafety } from "@/lib/child-safety";
@@ -65,6 +65,25 @@ function Settings() {
   useEffect(() => {
     if (profile?.username) setUsernameInput(profile.username);
   }, [profile?.username]);
+
+  async function applyReadingLevel(
+    lvl: AppState["readingLevel"],
+    opts?: { silent?: boolean },
+  ) {
+    if (lvl === readingLevel) return;
+    const prev = readingLevel;
+    setReadingLevelLocal(lvl);
+    setSavingLevel(true);
+    try {
+      await saveReadingLevel({ data: { level: lvl } });
+      if (!opts?.silent) toast.success(`Reading level set to ${READING_LEVEL_META[lvl].label}.`);
+    } catch {
+      setReadingLevelLocal(prev);
+      toast.error("Couldn't save your reading level. Try again.");
+    } finally {
+      setSavingLevel(false);
+    }
+  }
 
   async function saveUsername() {
     setSavingUsername(true);
