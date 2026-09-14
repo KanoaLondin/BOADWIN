@@ -45,6 +45,7 @@ function Home() {
   const knowledgeLevel = useAppState((s) => s.knowledgeLevel);
   const cohortAge = useAppState((s) => s.cohortAgeGroup);
   const premium = useAppState((s) => s.premium);
+  const readingLevel = useAppState((s) => s.readingLevel);
 
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
