@@ -55,6 +55,7 @@ function Profile() {
 
   const readingLevel = useAppState((s) => s.readingLevel);
   const certificates = certificateProgress(completed);
+  const mastery = masteryProgress(completed);
   const userLevel = getLevelInfo(xp);
   const lvlProgress = getProgressToNext(xp);
   const planName = premium ? PLAN_LABEL[premium] : "Free";
