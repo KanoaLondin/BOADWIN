@@ -2246,6 +2246,46 @@ export const COURSE_GROUPS: CourseGroup[] = [
 /** Every level across every course track. */
 export const allLevels: Level[] = COURSES.flatMap((c) => c.levels);
 
+/**
+ * Courses that award their own completion certificate. AI Ethics is
+ * deliberately excluded until that track has more content.
+ */
+export const CERTIFICATE_COURSE_IDS: string[] = COURSES.map((c) => c.id).filter(
+  (id) => id !== "ai-ethics",
+);
+
+/** Every lesson id belonging to one course. */
+export function courseLessonIds(course: Course): string[] {
+  return course.levels.flatMap((lv) => lv.units.flatMap((u) => u.lessons.map((l) => l.id)));
+}
+
+export type CourseCertificateProgress = {
+  course: Course;
+  completed: number;
+  total: number;
+  percent: number;
+  earned: boolean;
+};
+
+/** Per-course certificate progress, scoped to that course's own lessons. */
+export function certificateProgress(completedIds: Iterable<string>): CourseCertificateProgress[] {
+  const done = new Set(completedIds);
+  return CERTIFICATE_COURSE_IDS.map((id) => COURSES.find((c) => c.id === id))
+    .filter((c): c is Course => c !== undefined)
+    .map((course) => {
+      const ids = courseLessonIds(course);
+      const completed = ids.filter((id) => done.has(id)).length;
+      const total = ids.length;
+      return {
+        course,
+        completed,
+        total,
+        percent: total > 0 ? Math.round((completed / total) * 100) : 0,
+        earned: total > 0 && completed >= total,
+      };
+    });
+}
+
 export function courseForUnit(unitId: string): Course | null {
   for (const c of COURSES)
     for (const lv of c.levels) if (lv.units.some((u) => u.id === unitId)) return c;
