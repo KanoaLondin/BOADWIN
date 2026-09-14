@@ -148,6 +148,7 @@ function Settings() {
                     return;
                   }
                   setAgeGroup(a.id);
+                  applyReadingLevel(READING_LEVEL_BY_AGE_GROUP[a.id], { silent: true });
                 }}
                 className={`rounded-full border-2 px-3 py-1.5 text-xs font-black transition-all ${
                   ageGroup === a.id
