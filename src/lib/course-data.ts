@@ -2386,3 +2386,25 @@ export function wordBankFor(
   const distractors = seededShuffle(pool, seed).slice(0, Math.max(1, size - 1));
   return seededShuffle([exercise.answer, ...distractors], seed + 7);
 }
+
+// ---- Reading-level course display names ----
+// Professional ("pro") always uses the course's own `title`. Kid and Teen get
+// plain-language names for the same course; lesson/unit titles are untouched.
+export const COURSE_TITLE_BY_READING_LEVEL: Record<string, { teen: string; kid: string }> = {
+  "prompt-engineering": { teen: "Prompt Engineering", kid: "Asking AI for Help" },
+  "how-ai-works": { teen: "How AI Actually Works", kid: "What's Inside AI?" },
+  "media-literacy": { teen: "Spotting AI Fakes", kid: "Spotting Fake Pictures & Videos" },
+  "agentic-coding": { teen: "AI That Helps You Code", kid: "Robot Helpers for Building Things" },
+  "ai-agents": { teen: "AI That Works On Its Own", kid: "Robot Helper Teams" },
+  "implementing-ai": { teen: "Using AI Every Day", kid: "AI at Home & School" },
+  "no-code-ai-data": { teen: "AI for Numbers & Spreadsheets", kid: "AI Number Detective" },
+  "ai-evaluation": { teen: "Testing AI's Work", kid: "Is AI Right? Checking Its Answers" },
+  "ai-security": { teen: "Keeping AI Safe from Tricks", kid: "AI Safety Detectives" },
+  "ai-ethics": { teen: "Using AI the Right Way", kid: "Being Fair and Kind with AI" },
+};
+
+/** Course name to display for a reading level ("pro" keeps the original). */
+export function courseTitle(course: Course, level: "kid" | "teen" | "pro"): string {
+  if (level === "pro") return course.title;
+  return COURSE_TITLE_BY_READING_LEVEL[course.id]?.[level] ?? course.title;
+}
