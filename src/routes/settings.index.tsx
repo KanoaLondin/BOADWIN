@@ -27,7 +27,7 @@ import {
   type AppState,
 } from "@/lib/app-state";
 import { ReadingLevelPicker } from "@/components/ReadingLevelPicker";
-import { READING_LEVEL_META } from "@/lib/reading-level";
+import { READING_LEVEL_BY_AGE_GROUP, READING_LEVEL_META } from "@/lib/reading-level";
 import { setReadingLevelServer } from "@/lib/lesson-adapt.functions";
 import { changeUsername, signOut, useAuth } from "@/lib/auth";
 import { accountSafety } from "@/lib/child-safety";
@@ -65,6 +65,25 @@ function Settings() {
   useEffect(() => {
     if (profile?.username) setUsernameInput(profile.username);
   }, [profile?.username]);
+
+  async function applyReadingLevel(
+    lvl: AppState["readingLevel"],
+    opts?: { silent?: boolean },
+  ) {
+    if (lvl === readingLevel) return;
+    const prev = readingLevel;
+    setReadingLevelLocal(lvl);
+    setSavingLevel(true);
+    try {
+      await saveReadingLevel({ data: { level: lvl } });
+      if (!opts?.silent) toast.success(`Reading level set to ${READING_LEVEL_META[lvl].label}.`);
+    } catch {
+      setReadingLevelLocal(prev);
+      toast.error("Couldn't save your reading level. Try again.");
+    } finally {
+      setSavingLevel(false);
+    }
+  }
 
   async function saveUsername() {
     setSavingUsername(true);
@@ -148,6 +167,7 @@ function Settings() {
                     return;
                   }
                   setAgeGroup(a.id);
+                  applyReadingLevel(READING_LEVEL_BY_AGE_GROUP[a.id], { silent: true });
                 }}
                 className={`rounded-full border-2 px-3 py-1.5 text-xs font-black transition-all ${
                   ageGroup === a.id
@@ -220,27 +240,14 @@ function Settings() {
         <div className="rounded-2xl border border-border bg-card p-4">
           <p className="text-[10px] font-bold uppercase text-muted-foreground">Reading level</p>
           <p className="mb-3 mt-1 text-[11px] text-muted-foreground">
-            Changes how lessons are written. Same facts, same answers — just easier or fuller
-            wording.
+            Changes how course names and lessons are written. Same facts, same answers — just
+            easier or fuller wording. Picking an age group above sets this automatically; you can
+            override it here.
           </p>
           <ReadingLevelPicker
             value={readingLevel}
             disabled={savingLevel}
-            onChange={async (lvl) => {
-              if (lvl === readingLevel) return;
-              const prev = readingLevel;
-              setReadingLevelLocal(lvl);
-              setSavingLevel(true);
-              try {
-                await saveReadingLevel({ data: { level: lvl } });
-                toast.success(`Reading level set to ${READING_LEVEL_META[lvl].label}.`);
-              } catch {
-                setReadingLevelLocal(prev);
-                toast.error("Couldn't save your reading level. Try again.");
-              } finally {
-                setSavingLevel(false);
-              }
-            }}
+            onChange={(lvl) => void applyReadingLevel(lvl)}
           />
         </div>
       </Section>

@@ -37,6 +37,21 @@ export const READING_LEVEL_META: Record<ReadingLevel, ReadingLevelMeta> = {
 
 export const DEFAULT_READING_LEVEL: ReadingLevel = "pro";
 
+/**
+ * Picking an age group in Settings also picks the matching reading level, so the
+ * age buttons and the reading-level cards can never disagree.
+ */
+export const READING_LEVEL_BY_AGE_GROUP: Record<
+  "kids" | "tweens" | "teens" | "adults" | "pro",
+  ReadingLevel
+> = {
+  kids: "kid",
+  tweens: "kid",
+  teens: "teen",
+  adults: "teen",
+  pro: "pro",
+};
+
 export function isReadingLevel(v: unknown): v is ReadingLevel {
   return v === "kid" || v === "teen" || v === "pro";
 }

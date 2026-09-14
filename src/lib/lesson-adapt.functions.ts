@@ -67,6 +67,10 @@ export const getAdaptedLesson = createServerFn({ method: "POST" })
       lesson: found.lesson,
     };
 
+    // Professional is the baseline: the lesson exactly as authored. No persona
+    // rewriting happens there, so this text never drifts from the source.
+    if (readingLevel === "pro") return base;
+
     const { data: cached } = await context.supabase
       .from("lesson_adaptations")
       .select("payload")
