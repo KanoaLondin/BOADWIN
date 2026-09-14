@@ -16,6 +16,8 @@ export type AppState = {
   // Onboarding cohort (mirrors the cloud profile columns).
   cohortAgeGroup: "kid" | "teen" | "adult" | null;
   knowledgeLevel: "new" | "some" | "experienced" | null;
+  /** Reading level for lesson wording: kid / teen / pro (baseline). */
+  readingLevel: "kid" | "teen" | "pro";
   xp: number;
 
   gems: number;
@@ -62,6 +64,7 @@ const DEFAULT_STATE: AppState = {
   ageGroup: "teens",
   cohortAgeGroup: null,
   knowledgeLevel: null,
+  readingLevel: "pro",
   xp: 60,
 
   gems: 120,
@@ -248,6 +251,10 @@ export function hydrateFromCloud(profile: CloudProfile) {
     ageGroup: (profile.age_group as AppState["ageGroup"]) || DEFAULT_STATE.ageGroup,
     cohortAgeGroup: (profile.cohort_age_group as AppState["cohortAgeGroup"]) ?? null,
     knowledgeLevel: (profile.knowledge_level as AppState["knowledgeLevel"]) ?? null,
+    // Existing accounts default to the professional baseline, so their lessons
+    // read exactly as they do today until they pick another level.
+    readingLevel:
+      ((profile as { reading_level?: unknown }).reading_level as AppState["readingLevel"]) ?? "pro",
 
     // Admins see every level and lesson unlocked locally, regardless of
     // their actual `premium` column — this is never written back to the
@@ -345,6 +352,11 @@ export function setCohort(cohort: {
 
 export function setAgeGroup(ageGroup: AppState["ageGroup"]) {
   setState((s) => ({ ...s, ageGroup }));
+}
+
+/** Local mirror of the reading level; the cloud profile is the source of truth. */
+export function setReadingLevelLocal(readingLevel: AppState["readingLevel"]) {
+  setState((s) => ({ ...s, readingLevel }));
 }
 
 // ---------- Power-ups ----------

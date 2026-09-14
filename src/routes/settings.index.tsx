@@ -23,8 +23,12 @@ import {
   useAppState,
   setAgeGroup,
   setBgAnimationsOff,
+  setReadingLevelLocal,
   type AppState,
 } from "@/lib/app-state";
+import { ReadingLevelPicker } from "@/components/ReadingLevelPicker";
+import { READING_LEVEL_META } from "@/lib/reading-level";
+import { setReadingLevelServer } from "@/lib/lesson-adapt.functions";
 import { changeUsername, signOut, useAuth } from "@/lib/auth";
 import { accountSafety } from "@/lib/child-safety";
 import { toast } from "sonner";
@@ -47,6 +51,9 @@ function Settings() {
   const ageGroup = useAppState((s) => s.ageGroup);
   const premium = useAppState((s) => s.premium);
   const bgAnimOff = useAppState((s) => s.bgAnimationsOff);
+  const readingLevel = useAppState((s) => s.readingLevel);
+  const [savingLevel, setSavingLevel] = useState(false);
+  const saveReadingLevel = setReadingLevelServer;
 
   const [dark, setDark] = useState(false);
   const [notif, setNotif] = useState(true);
@@ -210,6 +217,32 @@ function Settings() {
           label="Language"
           right={<span className="text-sm font-bold text-muted-foreground">English</span>}
         />
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <p className="text-[10px] font-bold uppercase text-muted-foreground">Reading level</p>
+          <p className="mb-3 mt-1 text-[11px] text-muted-foreground">
+            Changes how lessons are written. Same facts, same answers — just easier or fuller
+            wording.
+          </p>
+          <ReadingLevelPicker
+            value={readingLevel}
+            disabled={savingLevel}
+            onChange={async (lvl) => {
+              if (lvl === readingLevel) return;
+              const prev = readingLevel;
+              setReadingLevelLocal(lvl);
+              setSavingLevel(true);
+              try {
+                await saveReadingLevel({ data: { level: lvl } });
+                toast.success(`Reading level set to ${READING_LEVEL_META[lvl].label}.`);
+              } catch {
+                setReadingLevelLocal(prev);
+                toast.error("Couldn't save your reading level. Try again.");
+              } finally {
+                setSavingLevel(false);
+              }
+            }}
+          />
+        </div>
       </Section>
 
       {/* Family */}

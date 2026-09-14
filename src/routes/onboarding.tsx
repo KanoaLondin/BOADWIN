@@ -14,6 +14,10 @@ import {
   type PersonaGoal,
 } from "@/lib/persona";
 import { refreshProfile, useAuth } from "@/lib/auth";
+import { ReadingLevelPicker } from "@/components/ReadingLevelPicker";
+import type { ReadingLevel } from "@/lib/reading-level";
+import { setReadingLevelLocal } from "@/lib/app-state";
+import { setReadingLevelServer } from "@/lib/lesson-adapt.functions";
 
 /** Age band implied by the date of birth captured at sign-up, if we have one. */
 function ageGroupFromProfile(
@@ -44,7 +48,7 @@ const GOALS = [
   { mins: 20, xp: 200, label: "Intense", desc: "20 min/day" },
 ];
 
-const BASE_STEPS = 3; // age, name, daily goal
+const BASE_STEPS = 4; // age, name, daily goal, reading level
 /** Persona questions, asked only of teens and adults (never children). */
 const PERSONA_STEPS = ["usedAi", "context", "goal"] as const;
 
@@ -63,6 +67,7 @@ function Onboarding() {
     KNOWLEDGE_QUESTIONS.map(() => -1),
   );
   const [saving, setSaving] = useState(false);
+  const [pickedLevel, setPickedLevel] = useState<ReadingLevel | null>(null);
   const [persona, setPersona] = useState<PersonaAnswers>({
     usedAi: null,
     context: null,
@@ -72,6 +77,10 @@ function Onboarding() {
   const nameError = nameVal.trim() ? validateUsername(nameVal, 2) : null;
   const ageGroup: CohortAgeGroup =
     dobGroup ?? AGE_BANDS.find((b) => b.id === band)?.group ?? "adult";
+  // Suggested by age band, but the learner always has the final say.
+  const suggestedLevel: ReadingLevel =
+    ageGroup === "kid" ? "kid" : ageGroup === "teen" ? "teen" : "pro";
+  const readingLevel = pickedLevel ?? suggestedLevel;
   const personaOn = asksQuestionnaire(ageGroup);
   const personaCount = personaOn ? PERSONA_STEPS.length : 0;
   const QUIZ_START = BASE_STEPS + personaCount;
@@ -102,6 +111,8 @@ function Onboarding() {
         },
       });
       setCohort({ cohortAgeGroup: result.ageGroup, knowledgeLevel: result.knowledgeLevel });
+      setReadingLevelLocal(readingLevel);
+      await setReadingLevelServer({ data: { level: readingLevel } });
       await refreshProfile();
     } catch (err) {
       console.error("[onboarding] cohort save failed", err);
@@ -115,6 +126,7 @@ function Onboarding() {
     (step === 0 && !!band && !dobGroup) ||
     (step === 1 && nameVal.trim().length >= 2 && !nameError) ||
     (step === 2 && goal != null) ||
+    step === 3 ||
     (personaStep === "usedAi" && persona.usedAi !== null) ||
     (personaStep === "context" && persona.context !== null) ||
     (personaStep === "goal" && persona.goal !== null) ||
@@ -236,6 +248,22 @@ function Onboarding() {
                   <p className="mt-1 text-[11px] font-black text-warning">+{g.xp} XP</p>
                 </button>
               ))}
+            </div>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="animate-fade-in">
+            <div className="text-center">
+              <Mascot size={72} />
+              <h1 className="mt-5 text-3xl font-black">How should lessons read?</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Same lessons and the same answers — just the wording that suits you. You can change
+                this anytime in Settings.
+              </p>
+            </div>
+            <div className="mt-6">
+              <ReadingLevelPicker value={readingLevel} onChange={setPickedLevel} />
             </div>
           </div>
         )}
