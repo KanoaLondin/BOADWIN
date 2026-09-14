@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ChevronRight, Sparkles, Zap } from "lucide-react";
 import { StreakFlame } from "@/components/StreakFlame";
 import { AppShell } from "@/components/AppShell";
-import { COURSES, allLevels, courseForUnit } from "@/lib/course-data";
+import { COURSES, allLevels, courseForUnit, courseTitle } from "@/lib/course-data";
 import { useAppState } from "@/lib/app-state";
 import { isKidCohort, recommendedUnitId } from "@/lib/cohort";
 
@@ -215,7 +215,7 @@ function Home() {
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">{c.emoji}</span>
                   <div className="flex-1">
-                    <p className="text-sm font-black">{c.title}</p>
+                    <p className="text-sm font-black">{courseTitle(c, readingLevel)}</p>
                     <p className="text-xs text-muted-foreground">{c.subtitle}</p>
                   </div>
                   <span className="text-xs font-black text-muted-foreground">{pct}%</span>

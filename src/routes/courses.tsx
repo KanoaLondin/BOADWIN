@@ -87,7 +87,7 @@ function Courses() {
     <AppShell>
       <header className="mb-4">
         <p className="text-xs font-bold uppercase tracking-widest text-purple">Adventure Map</p>
-        <h1 className="text-3xl font-black">{course.title}</h1>
+        <h1 className="text-3xl font-black">{courseTitle(course, readingLevel)}</h1>
         <p className="text-sm text-muted-foreground">
           {course.subtitle} · {courseLevels.length} lands · {unitCount} worlds · {lessonCount} lessons
         </p>
@@ -147,7 +147,7 @@ function Courses() {
                   >
                     <span className="block w-full">
                       <span className="block text-xl">{c.emoji}</span>
-                      <span className="mt-1 block text-sm font-black leading-tight">{c.title}</span>
+                      <span className="mt-1 block text-sm font-black leading-tight">{courseTitle(c, readingLevel)}</span>
                       <span className="block text-[11px] font-normal text-muted-foreground">
                         {done}/{total} lessons
                       </span>
