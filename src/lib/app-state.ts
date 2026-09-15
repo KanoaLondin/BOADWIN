@@ -1,4 +1,4 @@
-// Client-side app state for AIED — backed by localStorage, and mirrored to
+// Client-side app state for Boadwin — backed by localStorage, and mirrored to
 // the signed-in user's Supabase profile so progress follows them across devices.
 import { useSyncExternalStore } from "react";
 import { getLevelInfo } from "./level-system";

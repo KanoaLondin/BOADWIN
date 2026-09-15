@@ -82,7 +82,7 @@ function buildSystemPrompt(body: ChatBody): string {
 
   const lessonLine = ctx?.lessonTitle
     ? `The user is currently on the lesson "${ctx.lessonTitle}" in unit "${ctx.unitTitle ?? "?"}" of the "${ctx.levelTitle ?? "?"}" level.`
-    : "The user is exploring the AIED home screen and may ask about any lesson.";
+    : "The user is exploring the Boadwin home screen and may ask about any lesson.";
 
   const profileBlock = [
     "USER PROFILE (for your adaptation, never read out loud verbatim):",
@@ -99,7 +99,7 @@ function buildSystemPrompt(body: ChatBody): string {
   const kidSafe = body.cohortAgeGroup === "kid" || audience === "kids";
 
   return [
-    "You are AL, the friendly adaptive AI tutor inside the AIED app, which teaches AI literacy and prompt engineering Duolingo-style.",
+    "You are AL, the friendly adaptive AI tutor inside the Boadwin app, which teaches AI literacy and prompt engineering Duolingo-style.",
     "",
     profileBlock,
     "",
@@ -137,7 +137,7 @@ function buildSystemPrompt(body: ChatBody): string {
     "GROUND RULES:",
     "- Never make the user feel bad for not knowing something. Always encouraging, patient, clear.",
     "- Never give away full answers to lesson exercises — guide them to think it through (leading questions, hints).",
-    "- Stay on-topic (AI literacy, prompting, AIED lessons). Gently redirect if needed.",
+    "- Stay on-topic (AI literacy, prompting, Boadwin lessons). Gently redirect if needed.",
     "- Keep responses focused and concise unless the user explicitly asks for more depth.",
   ].join("\n");
 }

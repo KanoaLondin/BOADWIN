@@ -1,4 +1,4 @@
-// Course data for AIED: Prompt Engineering
+// Course data for Boadwin: Prompt Engineering
 import { howAiWorksLevels } from "./course-how-ai-works";
 import { agenticCodingLevels } from "./course-agentic-coding";
 import { aiAgentsLevels } from "./course-ai-agents";
@@ -1863,7 +1863,7 @@ export const levels: Level[] = [
       {
         id: "u10",
         title: "Certification Prep",
-        description: "Earn your AIED certificate",
+        description: "Earn your Boadwin certificate",
         lessons: [
           {
             id: "u10l1",
@@ -1995,7 +1995,7 @@ export const levels: Level[] = [
           },
           {
             id: "final",
-            title: "FINAL EXAM: AIED Prompt Engineering Certificate",
+            title: "FINAL EXAM: Boadwin Prompt Engineering Certificate",
             xp: 200,
             isQuiz: true,
             exercises: [

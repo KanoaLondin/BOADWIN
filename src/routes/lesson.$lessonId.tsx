@@ -29,7 +29,7 @@ import {
 
 export const Route = createFileRoute("/lesson/$lessonId")({
   component: LessonPage,
-  head: () => ({ meta: [{ title: "Lesson — AIED" }] }),
+  head: () => ({ meta: [{ title: "Lesson — Boadwin" }] }),
 });
 
 function LessonPage() {

@@ -24,7 +24,7 @@ export function UpgradeRequiredModal() {
         </div>
         <h2 className="mt-4 text-xl font-black">Premium feature</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          This feature is part of <b>Super AIED</b> or <b>AIED Max</b>. Upgrade in your Profile to unlock it.
+          This feature is part of <b>Super Boadwin</b> or <b>Boadwin Max</b>. Upgrade in your Profile to unlock it.
         </p>
         <div className="mt-5 flex flex-col gap-2">
           <Link

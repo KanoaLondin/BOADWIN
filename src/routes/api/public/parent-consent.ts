@@ -67,7 +67,7 @@ function page(body: string, status: number) {
     `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
       <meta name="robots" content="noindex"/>
-      <title>Parent approval — AIED</title></head>
+      <title>Parent approval — Boadwin</title></head>
       <body style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.55;color:#1f2233;max-width:640px;margin:0 auto;padding:28px 20px">${body}</body></html>`,
     { status, headers: { "Content-Type": "text/html; charset=utf-8" } },
   );
@@ -82,7 +82,7 @@ function list(items: string[]) {
 function consentBody(childName: string, token: string) {
   const s = noticeSections({ childName });
   return `
-    <h1 style="font-size:24px;margin:0 0 6px">Approve ${escapeHtml(childName)}'s AIED account</h1>
+    <h1 style="font-size:24px;margin:0 0 6px">Approve ${escapeHtml(childName)}'s Boadwin account</h1>
     <p style="color:#555">${escapeHtml(s.intro)}</p>
     <h2 style="font-size:17px">What we collect</h2>${list(s.collect)}
     <h2 style="font-size:17px">Why we collect it</h2>${list(s.why)}
@@ -100,7 +100,7 @@ function consentBody(childName: string, token: string) {
 
 function doneBody(childName: string) {
   return `<h1 style="font-size:24px">Thank you — ${escapeHtml(childName)}'s account is approved</h1>
-    <p style="color:#555">They can now use AIED. Child-safety defaults are already on: no tracking, no ads, and their real name is never shown publicly.</p>
+    <p style="color:#555">They can now use Boadwin. Child-safety defaults are already on: no tracking, no ads, and their real name is never shown publicly.</p>
     <p style="color:#555">You can review, change or delete their data at any time from the Parent Dashboard inside the app, or by emailing ${PRIVACY_CONTACT_EMAIL}.</p>`;
 }
 

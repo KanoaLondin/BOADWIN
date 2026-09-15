@@ -8,7 +8,7 @@ import { AppShell } from "@/components/AppShell";
 
 export const Route = createFileRoute("/parent")({
   component: ParentGate,
-  head: () => ({ meta: [{ title: "Parent Dashboard — AIED" }] }),
+  head: () => ({ meta: [{ title: "Parent Dashboard — Boadwin" }] }),
 });
 
 const PIN_KEY = "aied:parentPin";
@@ -235,7 +235,7 @@ function ParentDash({ onLock }: { onLock: () => void }) {
       </div>
 
       <p className="mt-6 text-center text-[11px] text-muted-foreground">
-        AIED Family · Up to 6 kids · Private to your device
+        Boadwin Family · Up to 6 kids · Private to your device
       </p>
     </AppShell>
   );

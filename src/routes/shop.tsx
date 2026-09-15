@@ -24,7 +24,7 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 
 export const Route = createFileRoute("/shop")({
   component: Shop,
-  head: () => ({ meta: [{ title: "Shop — AIED" }] }),
+  head: () => ({ meta: [{ title: "Shop — Boadwin" }] }),
 });
 
 type PowerUp = {

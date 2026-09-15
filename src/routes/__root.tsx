@@ -79,13 +79,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "AIED — Saving futures through AI literacy" },
+      { title: "Boadwin — Saving futures through AI literacy" },
       {
         name: "description",
         content:
-          "AIED teaches AI literacy and prompt engineering through fun, Duolingo-style lessons for every age.",
+          "Boadwin teaches AI literacy and prompt engineering through fun, Duolingo-style lessons for every age.",
       },
-      { property: "og:title", content: "AIED — Saving futures through AI literacy" },
+      { property: "og:title", content: "Boadwin — Saving futures through AI literacy" },
       {
         property: "og:description",
         content: "Learn AI literacy and prompt engineering the fun way. Free to start.",

@@ -11,16 +11,16 @@ export const Route = createFileRoute("/parent-consent")({
   component: ParentConsent,
   head: () => ({
     meta: [
-      { title: "Parent approval needed — AIED" },
+      { title: "Parent approval needed — Boadwin" },
       {
         name: "description",
         content:
-          "AIED accounts for under-13s need a parent or guardian's approval before they can be used.",
+          "Boadwin accounts for under-13s need a parent or guardian's approval before they can be used.",
       },
-      { property: "og:title", content: "Parent approval needed — AIED" },
+      { property: "og:title", content: "Parent approval needed — Boadwin" },
       {
         property: "og:description",
-        content: "A parent or guardian must approve a child's AIED account before it activates.",
+        content: "A parent or guardian must approve a child's Boadwin account before it activates.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

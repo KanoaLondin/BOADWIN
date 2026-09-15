@@ -7,16 +7,16 @@ export const Route = createFileRoute("/settings/terms")({
   component: TermsOfService,
   head: () => ({
     meta: [
-      { title: "Terms of Service — AIED" },
+      { title: "Terms of Service — Boadwin" },
       {
         name: "description",
         content:
-          "The rules for using AIED: acceptable use, subscription and billing terms, and how accounts can be closed.",
+          "The rules for using Boadwin: acceptable use, subscription and billing terms, and how accounts can be closed.",
       },
-      { property: "og:title", content: "Terms of Service — AIED" },
+      { property: "og:title", content: "Terms of Service — Boadwin" },
       {
         property: "og:description",
-        content: "Acceptable use, billing, and account terms for AIED.",
+        content: "Acceptable use, billing, and account terms for Boadwin.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -33,7 +33,7 @@ function TermsOfService() {
 
       <Prose>
         <P>
-          AIED is operated by Coleklondin. By creating an account and using AIED, you agree to
+          Boadwin is operated by Coleklondin. By creating an account and using Boadwin, you agree to
           these terms. If you're under 18, a
           parent or guardian should read them with you and agree on your behalf. Accounts for
           under-13s are not activated at all until we've emailed a parent or guardian a notice and
@@ -67,40 +67,40 @@ function TermsOfService() {
         <H>Subscriptions and billing</H>
         <P>
           Our order process is conducted by our online reseller and Merchant of Record,
-          Paddle.com. Paddle is the seller of record for all AIED subscriptions and handles
+          Paddle.com. Paddle is the seller of record for all Boadwin subscriptions and handles
           payment, billing, tax and refunds. Your purchase is also subject to Paddle's own terms
           and buyer terms, and your receipts and card statements will show Paddle.
         </P>
         <Ul
           items={[
-            "Free gives you the beginner levels. Super AIED, AIED Max and AIED Family unlock further levels and features, described on the Plans page.",
+            "Free gives you the beginner levels. Super Boadwin, Boadwin Max and Boadwin Family unlock further levels and features, described on the Plans page.",
             "Paid plans are billed in advance on a recurring basis — monthly or yearly, depending on the plan you pick — and renew automatically until you cancel.",
             "Prices shown on the Plans page are in US dollars; Paddle adds any sales tax or VAT that applies where you live.",
             "You can switch between paid plans at any time from the Plans page. A switch takes effect immediately and is pro-rated.",
             "You can cancel at any time from the Plans page. Your paid features stay active until the end of the period you've already paid for, then the account moves to Free.",
             "You can request a full refund within 14 days of any payment. Cancelling on its own is not a refund — see the Refund Policy for how to request one.",
             "Billing questions and refund requests can go to billing@aied.app, or directly to Paddle at paddle.net.",
-            "AIED Family covers up to six accounts under one payer. The payer is responsible for the plan.",
+            "Boadwin Family covers up to six accounts under one payer. The payer is responsible for the plan.",
           ]}
         />
 
         <H>Your progress and purchases</H>
         <P>
-          XP, gems, streaks, hearts and cosmetics live inside AIED. They have no cash value, can't be
+          XP, gems, streaks, hearts and cosmetics live inside Boadwin. They have no cash value, can't be
           transferred between accounts, and can't be exchanged for money. Moving to Free keeps your
           progress — it just locks the lessons and features that need a paid plan.
         </P>
 
         <H>Content and AI answers</H>
         <P>
-          AIED teaches AI literacy; it isn't professional, legal, security or career advice. AL is an
+          Boadwin teaches AI literacy; it isn't professional, legal, security or career advice. AL is an
           AI tutor and can be wrong. Check anything important before you act on it.
         </P>
 
         <H>Ending your account</H>
         <Ul
           items={[
-            "You can stop using AIED at any time, and you or a parent can ask for the account and its data to be deleted.",
+            "You can stop using Boadwin at any time, and you or a parent can ask for the account and its data to be deleted.",
             "We may suspend or close an account that breaks the acceptable-use rules above, abuses the payment system, or puts other learners at risk.",
             "A parent or guardian can withdraw permission for a child's account at any time, which closes it and deletes its data.",
             "We close accounts we find belong to an under-13 with no approved parental permission.",
@@ -111,7 +111,7 @@ function TermsOfService() {
         <H>Changes</H>
         <P>
           We may update these terms as the app grows. Meaningful changes will be reflected on this
-          page with a new date at the top, and continuing to use AIED means you accept them.
+          page with a new date at the top, and continuing to use Boadwin means you accept them.
         </P>
       </Prose>
 

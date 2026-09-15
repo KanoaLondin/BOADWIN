@@ -8,10 +8,10 @@ export const Route = createFileRoute("/reset-password")({
   component: ResetPassword,
   head: () => ({
     meta: [
-      { title: "Set a new password — AIED" },
-      { name: "description", content: "Choose a new password for your AIED account and get back to learning." },
-      { property: "og:title", content: "Set a new password — AIED" },
-      { property: "og:description", content: "Choose a new password for your AIED account." },
+      { title: "Set a new password — Boadwin" },
+      { name: "description", content: "Choose a new password for your Boadwin account and get back to learning." },
+      { property: "og:title", content: "Set a new password — Boadwin" },
+      { property: "og:description", content: "Choose a new password for your Boadwin account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

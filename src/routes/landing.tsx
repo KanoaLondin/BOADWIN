@@ -11,13 +11,13 @@ export const Route = createFileRoute("/landing")({
   component: Landing,
   head: () => ({
     meta: [
-      { title: "AIED — Saving futures through AI literacy" },
+      { title: "Boadwin — Saving futures through AI literacy" },
       {
         name: "description",
         content:
-          "AIED is the Duolingo-style app that teaches AI literacy and prompt engineering for every age. Download for iOS and Android.",
+          "Boadwin is the Duolingo-style app that teaches AI literacy and prompt engineering for every age. Download for iOS and Android.",
       },
-      { property: "og:title", content: "AIED — The AI literacy app for every age" },
+      { property: "og:title", content: "Boadwin — The AI literacy app for every age" },
       { property: "og:description", content: "Learn prompt engineering through fun, gamified lessons. Free to start." },
     ],
   }),
@@ -48,7 +48,7 @@ function MobileGate() {
           </div>
           <Sparkles className="absolute -right-2 -top-2 h-6 w-6 text-warning fill-current animate-twinkle" />
         </div>
-        <h1 className="text-5xl font-black text-gradient">AIED</h1>
+        <h1 className="text-5xl font-black text-gradient">Boadwin</h1>
         <p className="mt-2 text-base font-semibold text-foreground">
           Saving futures through AI literacy
         </p>
@@ -85,7 +85,7 @@ function SmartBanner() {
         🤖
       </div>
       <div className="flex-1 leading-tight">
-        <p className="text-sm font-black">AIED</p>
+        <p className="text-sm font-black">Boadwin</p>
         <p className="text-[10px] text-muted-foreground">Get the full app · Free</p>
       </div>
       <a
@@ -140,7 +140,7 @@ function Nav() {
           <div className="grid h-9 w-9 place-items-center rounded-xl gradient-hero text-white shadow-glow">
             <span className="text-lg">🤖</span>
           </div>
-          <span className="text-2xl font-black text-gradient">AIED</span>
+          <span className="text-2xl font-black text-gradient">Boadwin</span>
         </div>
         <nav className="flex items-center gap-7 text-sm font-bold text-muted-foreground">
           <a href="#features" className="hover:text-foreground">Features</a>
@@ -173,7 +173,7 @@ function Hero() {
             it's a <span className="text-gradient">game.</span>
           </h1>
           <p className="mt-5 max-w-md text-lg text-muted-foreground">
-            AIED teaches prompt engineering and AI literacy through fun,
+            Boadwin teaches prompt engineering and AI literacy through fun,
             bite-size lessons — for kids, teens, and adults.
           </p>
           <div id="download" className="mt-8 flex flex-wrap gap-3">
@@ -213,7 +213,7 @@ function PhoneMockup() {
           <div className="absolute left-1/2 top-2 z-10 h-6 w-28 -translate-x-1/2 rounded-full bg-foreground" />
           <img
             src={courseMapShot}
-            alt="The AIED app's course map, showing completed lessons along a path through the What is AI? unit"
+            alt="The Boadwin app's course map, showing completed lessons along a path through the What is AI? unit"
             width={585}
             height={1060}
             loading="lazy"
@@ -238,7 +238,7 @@ function Features() {
     <section id="features" className="bg-secondary/40 px-6 py-20">
       <div className="mx-auto max-w-6xl">
         <p className="text-center text-xs font-black uppercase tracking-widest text-purple">Features</p>
-        <h2 className="mt-2 text-center text-4xl font-black">Why learners love AIED</h2>
+        <h2 className="mt-2 text-center text-4xl font-black">Why learners love Boadwin</h2>
         <div className="mt-12 grid gap-4 md:grid-cols-3">
           {items.map((f) => (
             <div key={f.title} className="rounded-3xl border border-border bg-card p-6 shadow-soft transition-transform hover:-translate-y-1 hover:shadow-card">
@@ -284,10 +284,10 @@ function AgeGroups() {
 
 function Pricing() {
   const tiers = [
-    { name: "AIED Free",   price: "$0",     tag: "Start here", perks: ["2 free levels", "Daily streaks", "Hearts system"] },
-    { name: "Super AIED",  price: "$6.99",  tag: "Most popular", perks: ["All levels", "Unlimited hearts", "Streak freezes"], featured: true },
-    { name: "AIED Max",    price: "$12.99", tag: "With AL tutor", perks: ["Everything in Super", "AL personal tutor", "Premium chests"] },
-    { name: "AIED Family", price: "$19.99", tag: "Up to 6 kids", perks: ["Parent dashboard", "Up to 6 profiles", "All Max features"] },
+    { name: "Boadwin Free",   price: "$0",     tag: "Start here", perks: ["2 free levels", "Daily streaks", "Hearts system"] },
+    { name: "Super Boadwin",  price: "$6.99",  tag: "Most popular", perks: ["All levels", "Unlimited hearts", "Streak freezes"], featured: true },
+    { name: "Boadwin Max",    price: "$12.99", tag: "With AL tutor", perks: ["Everything in Super", "AL personal tutor", "Premium chests"] },
+    { name: "Boadwin Family", price: "$19.99", tag: "Up to 6 kids", perks: ["Parent dashboard", "Up to 6 profiles", "All Max features"] },
   ];
   return (
     <section id="pricing" className="bg-secondary/40 px-6 py-20">
@@ -352,7 +352,7 @@ function Footer() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-2">
           <div className="grid h-7 w-7 place-items-center rounded-lg gradient-hero text-white">🤖</div>
-          <span className="font-black text-foreground">AIED</span>
+          <span className="font-black text-foreground">Boadwin</span>
           <span>· Saving futures through AI literacy</span>
         </div>
         <div className="flex flex-wrap gap-5 font-bold">

@@ -16,16 +16,16 @@ export const Route = createFileRoute("/account")({
   component: AccountPage,
   head: () => ({
     meta: [
-      { title: "Your account — AIED" },
+      { title: "Your account — Boadwin" },
       {
         name: "description",
         content:
-          "Manage your AIED account on the web: profile details, subscription and billing, and your password.",
+          "Manage your Boadwin account on the web: profile details, subscription and billing, and your password.",
       },
-      { property: "og:title", content: "Your AIED account" },
+      { property: "og:title", content: "Your Boadwin account" },
       {
         property: "og:description",
-        content: "Update your profile, manage your AIED subscription, and change your password.",
+        content: "Update your profile, manage your Boadwin subscription, and change your password.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -35,9 +35,9 @@ export const Route = createFileRoute("/account")({
 
 const PLANS = [
   { id: "free" as const, name: "Free", price: "$0", period: "forever", icon: Sparkles },
-  { id: "super" as const, name: "Super AIED", price: "$7.99", period: "/mo", icon: Zap },
-  { id: "max" as const, name: "AIED Max", price: "$12.99", period: "/mo", icon: Crown },
-  { id: "family" as const, name: "AIED Family", price: "$99.99", period: "/yr", icon: Users },
+  { id: "super" as const, name: "Super Boadwin", price: "$7.99", period: "/mo", icon: Zap },
+  { id: "max" as const, name: "Boadwin Max", price: "$12.99", period: "/mo", icon: Crown },
+  { id: "family" as const, name: "Boadwin Family", price: "$99.99", period: "/yr", icon: Users },
 ];
 
 function AccountPage() {
@@ -175,7 +175,7 @@ function AccountPage() {
             <div className="grid h-9 w-9 place-items-center rounded-xl gradient-hero text-white shadow-glow">
               <span className="text-lg">🤖</span>
             </div>
-            <span className="text-2xl font-black text-gradient">AIED</span>
+            <span className="text-2xl font-black text-gradient">Boadwin</span>
           </Link>
           <button
             onClick={() => {
@@ -199,7 +199,7 @@ function AccountPage() {
         <h1 className="mt-3 text-4xl font-black">Your account</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Manage your profile, subscription, and password here. Lessons and courses live in the
-          AIED mobile app.
+          Boadwin mobile app.
         </p>
 
         {/* Profile */}
@@ -321,7 +321,7 @@ function AccountPage() {
         </section>
 
         <p className="mt-8 text-center text-xs text-muted-foreground">
-          Looking for your lessons? Open the AIED app on your phone — courses are mobile only.
+          Looking for your lessons? Open the Boadwin app on your phone — courses are mobile only.
         </p>
       </main>
 

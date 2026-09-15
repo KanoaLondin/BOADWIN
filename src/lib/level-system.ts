@@ -1,4 +1,4 @@
-// XP / Level system for AIED.
+// XP / Level system for Boadwin.
 
 export type LevelInfo = {
   level: number;
@@ -23,7 +23,7 @@ export const LEVELS: LevelInfo[] = [
   { level: 12, name: "AI Master",       minXp: 8501,  maxXp: 11000,  tier: "master" },
   { level: 13, name: "AI Visionary",    minXp: 11001, maxXp: 14000,  tier: "master" },
   { level: 14, name: "AI Pioneer",      minXp: 14001, maxXp: 18000,  tier: "master" },
-  { level: 15, name: "AIED Elite",      minXp: 18001, maxXp: Infinity, tier: "elite" },
+  { level: 15, name: "Boadwin Elite",      minXp: 18001, maxXp: Infinity, tier: "elite" },
 ];
 
 export function getLevelInfo(xp: number): LevelInfo {

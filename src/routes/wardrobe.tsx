@@ -14,7 +14,7 @@ import {
 
 export const Route = createFileRoute("/wardrobe")({
   component: Wardrobe,
-  head: () => ({ meta: [{ title: "Wardrobe — AIED" }] }),
+  head: () => ({ meta: [{ title: "Wardrobe — Boadwin" }] }),
 });
 
 const OUTFITS = [

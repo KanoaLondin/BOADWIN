@@ -194,7 +194,7 @@ function Mouth({ mood, color }: { mood: AlMood; color: string }) {
 }
 
 function ChestIcon({ outfit, color }: { outfit: string; color: string }) {
-  // AIED logo by default; outfit may override (handled here too).
+  // Boadwin logo by default; outfit may override (handled here too).
   if (outfit === "scientist") {
     // beaker
     return (
@@ -227,11 +227,11 @@ function ChestIcon({ outfit, color }: { outfit: string; color: string }) {
       </g>
     );
   }
-  // default AIED chip
+  // default Boadwin chip
   return (
     <g transform="translate(60,107)" textAnchor="middle">
       <text y="3.5" fontSize="9" fontWeight="900" fill={color} fontFamily="ui-sans-serif,system-ui">
-        AIED
+        Boadwin
       </text>
     </g>
   );
