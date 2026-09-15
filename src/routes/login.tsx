@@ -1,19 +1,29 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Loader2, Mail } from "lucide-react";
 import { Mascot } from "@/components/Mascot";
-import { signIn } from "@/lib/auth";
+import { sendSignInLink, signIn } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
   component: Login,
-  head: () => ({ meta: [{ title: "Log in — Boadwin" }] }),
+  head: () => ({
+    meta: [
+      { title: "Log in — Boadwin" },
+      { name: "description", content: "Log in to Boadwin and continue your AI literacy courses." },
+      { property: "og:title", content: "Log in — Boadwin" },
+      { property: "og:description", content: "Continue learning with your Boadwin account." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
 });
 
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -70,6 +80,25 @@ function Login() {
     }
   }
 
+  async function handleEmailLink() {
+    if (submitting) return;
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("Enter your email above first, then tap Email me a sign-in link.");
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    setNotice(null);
+    try {
+      await sendSignInLink(email);
+      setNotice("Check your email for a secure sign-in link. It will not change your password.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't send the sign-in link.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
 
   return (
     <div className="grid min-h-screen place-items-center bg-gradient-to-br from-purple/5 via-background to-cyan/5 px-4 py-10">
@@ -90,6 +119,9 @@ function Login() {
             <input
               autoFocus
               type="email"
+              name="email"
+              autoComplete="email"
+              inputMode="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
@@ -98,13 +130,26 @@ function Login() {
           </div>
           <div>
             <label className="mb-1 block text-xs font-bold text-muted-foreground">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Your password"
-              className="w-full rounded-2xl border-2 border-border bg-card px-5 py-3.5 text-base font-semibold outline-none focus:border-primary"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Your password"
+                className="w-full rounded-2xl border-2 border-border bg-card py-3.5 pl-5 pr-14 text-base font-semibold outline-none focus:border-primary"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((visible) => !visible)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                title={showPassword ? "Hide password" : "Show password"}
+                className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-muted-foreground hover:text-foreground"
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
+            </div>
           </div>
 
           {error && (
@@ -139,6 +184,22 @@ function Login() {
             className="w-full py-1 text-center text-sm font-bold text-muted-foreground underline-offset-4 hover:underline disabled:opacity-40"
           >
             Forgot password?
+          </button>
+
+          <div className="flex items-center gap-3 py-1" aria-hidden="true">
+            <span className="h-px flex-1 bg-border" />
+            <span className="text-xs font-bold text-muted-foreground">OR</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleEmailLink}
+            disabled={submitting}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-primary bg-card px-6 py-3.5 font-black text-primary transition-colors hover:bg-primary/5 disabled:opacity-40"
+          >
+            <Mail className="h-5 w-5" />
+            Email me a sign-in link
           </button>
 
         </form>
