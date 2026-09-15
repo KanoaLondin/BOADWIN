@@ -29,7 +29,7 @@ export function TopBar({
       <div className="flex items-center justify-between gap-2">
         {showLogo ? (
           <Link to="/" className="text-xl font-black text-gradient">
-            AIED
+            Boadwin
           </Link>
         ) : (
           <span />

@@ -16,12 +16,12 @@ export type NoticeParams = {
   parentDashboardUrl: string;
 };
 
-export const NOTICE_SUBJECT = "Please approve your child's AIED account";
+export const NOTICE_SUBJECT = "Please approve your child's Boadwin account";
 
 /** The plain-language direct notice required before a child account activates. */
 export function noticeSections({ childName }: { childName: string }) {
   return {
-    intro: `${childName} has asked to create an account on AIED, an app that teaches AI literacy through short lessons. Because they told us they are under 13, we need a parent or guardian's permission before the account can be used, and we have to tell you exactly what we collect first.`,
+    intro: `${childName} has asked to create an account on Boadwin, an app that teaches AI literacy through short lessons. Because they told us they are under 13, we need a parent or guardian's permission before the account can be used, and we have to tell you exactly what we collect first.`,
     collect: [
       "Email address and a username — to create the account and sign in.",
       "Month and year of birth — only to work out whether the account belongs to a child.",
@@ -53,7 +53,7 @@ export function noticeHtml(p: NoticeParams): string {
       .map((i) => `<li style="margin:4px 0">${escapeHtml(i)}</li>`)
       .join("")}</ul>`;
   return `<!doctype html><html><body style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.55;color:#1f2233;max-width:640px;margin:0 auto;padding:24px">
-    <h1 style="font-size:22px;margin:0 0 4px">Approve ${escapeHtml(p.childName)}'s AIED account</h1>
+    <h1 style="font-size:22px;margin:0 0 4px">Approve ${escapeHtml(p.childName)}'s Boadwin account</h1>
     <p style="color:#555">${escapeHtml(s.intro)}</p>
     <h2 style="font-size:16px;margin-top:20px">What we collect</h2>${list(s.collect)}
     <h2 style="font-size:16px;margin-top:20px">Why we collect it</h2>${list(s.why)}
@@ -78,7 +78,7 @@ export function escapeHtml(s: string): string {
 export type DeliveryResult = { delivered: boolean; error?: string };
 
 /**
- * Sends the notice if an email sender is configured. AIED has no verified
+ * Sends the notice if an email sender is configured. Boadwin has no verified
  * sending domain yet, so in that case we report back honestly instead of
  * pretending the parent was emailed — the consent link is then shown in-app
  * for the parent to open on the device.

@@ -35,7 +35,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/settings/")({
   component: Settings,
-  head: () => ({ meta: [{ title: "Settings — AIED" }] }),
+  head: () => ({ meta: [{ title: "Settings — Boadwin" }] }),
 });
 
 const AGES: { id: AppState["ageGroup"]; label: string }[] = [
@@ -198,11 +198,11 @@ function Settings() {
               }`}
             >
               {premium === "max"
-                ? "AIED Max"
+                ? "Boadwin Max"
                 : premium === "family"
-                  ? "AIED Family"
+                  ? "Boadwin Family"
                   : premium === "super"
-                    ? "Super AIED"
+                    ? "Super Boadwin"
                     : "Free"}
             </span>
           }
@@ -320,7 +320,7 @@ function Settings() {
       </button>
 
       <p className="mt-6 text-center text-[11px] text-muted-foreground">
-        AIED · Saving futures through AI literacy
+        Boadwin · Saving futures through AI literacy
       </p>
     </AppShell>
   );

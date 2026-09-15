@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
   component: Login,
-  head: () => ({ meta: [{ title: "Log in — AIED" }] }),
+  head: () => ({ meta: [{ title: "Log in — Boadwin" }] }),
 });
 
 function Login() {
@@ -77,7 +77,7 @@ function Login() {
         <div className="text-center">
           <Mascot size={80} />
           <h1 className="mt-5 text-3xl font-black">
-            Welcome back to <span className="text-gradient">AIED</span>
+            Welcome back to <span className="text-gradient">Boadwin</span>
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Log in to pick up right where you left off.

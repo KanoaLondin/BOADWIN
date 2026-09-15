@@ -35,8 +35,8 @@ export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
   head: () => ({
     meta: [
-      { title: "Welcome — AIED" },
-      { name: "description", content: "Set up your AIED learning profile in under a minute." },
+      { title: "Welcome — Boadwin" },
+      { name: "description", content: "Set up your Boadwin learning profile in under a minute." },
     ],
   }),
 });
@@ -170,7 +170,7 @@ function Onboarding() {
             <div className="text-center">
               <Mascot size={88} />
               <h1 className="mt-5 text-3xl font-black">
-                Welcome to <span className="text-gradient">AIED</span>
+                Welcome to <span className="text-gradient">Boadwin</span>
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 Saving futures through AI literacy

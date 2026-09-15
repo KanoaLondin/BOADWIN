@@ -5,7 +5,7 @@ import { useAppState } from "@/lib/app-state";
 
 export const Route = createFileRoute("/achievements")({
   component: AchievementsPage,
-  head: () => ({ meta: [{ title: "Achievements — AIED" }] }),
+  head: () => ({ meta: [{ title: "Achievements — Boadwin" }] }),
 });
 
 type Achievement = {
@@ -37,7 +37,7 @@ const achievements: Achievement[] = [
   { id: "prompt-thinker", emoji: "🧠", name: "Prompt Thinker", description: "Complete Prompt Basics", category: "Skill", earned: false },
   { id: "prompt-engineer", emoji: "⚡", name: "Prompt Engineer", description: "Complete the Intermediate level", category: "Skill", earned: false },
   { id: "prompt-master", emoji: "🌟", name: "Prompt Master", description: "Complete the Advanced level", category: "Skill", earned: false },
-  { id: "aied-elite", emoji: "👑", name: "AIED Elite", description: "Complete all levels and earn certificate", category: "Skill", earned: false },
+  { id: "aied-elite", emoji: "👑", name: "Boadwin Elite", description: "Complete all levels and earn certificate", category: "Skill", earned: false },
   // Social
   { id: "family-first", emoji: "👨‍👩‍👧", name: "Family First", description: "Join on a family plan", category: "Social", earned: false },
   { id: "top-10", emoji: "🏅", name: "Top 10", description: "Reach top 10 on the leaderboard", category: "Social", earned: false, progress: { current: 42, goal: 10 } },

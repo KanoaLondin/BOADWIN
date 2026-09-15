@@ -26,7 +26,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/subscription")({
   component: SubscriptionPage,
-  head: () => ({ meta: [{ title: "Plans — AIED" }] }),
+  head: () => ({ meta: [{ title: "Plans — Boadwin" }] }),
 });
 
 const PLANS = [
@@ -42,35 +42,35 @@ const PLANS = [
   },
   {
     id: "super" as const,
-    name: "Super AIED",
+    name: "Super Boadwin",
     price: "$7.99",
     period: "/mo · $59.99/yr",
     icon: Zap,
     tone: "border-primary shadow-glow",
     badge: "Most popular",
     features: ["All 5 levels unlocked", "No ads", "Offline access", "Unlimited hearts"],
-    cta: "Upgrade to Super AIED",
+    cta: "Upgrade to Super Boadwin",
   },
   {
     id: "max" as const,
-    name: "AIED Max",
+    name: "Boadwin Max",
     price: "$12.99",
     period: "/mo",
     icon: Crown,
     tone: "border-accent",
     badge: "Includes AL tutor",
-    features: ["Everything in Super AIED", "AL — your personal AI tutor", "Industry-recognized AIED certificate", "Priority new content"],
-    cta: "Go AIED Max",
+    features: ["Everything in Super Boadwin", "AL — your personal AI tutor", "Industry-recognized Boadwin certificate", "Priority new content"],
+    cta: "Go Boadwin Max",
   },
   {
     id: "family" as const,
-    name: "AIED Family",
+    name: "Boadwin Family",
     price: "$99.99",
     period: "/yr",
     icon: Users,
     tone: "border-warning",
-    features: ["Up to 6 accounts", "Parent dashboard", "All AIED Max features"],
-    cta: "Get AIED Family",
+    features: ["Up to 6 accounts", "Parent dashboard", "All Boadwin Max features"],
+    cta: "Get Boadwin Family",
   },
 ];
 
@@ -232,7 +232,7 @@ function SubscriptionPage() {
       </div>
 
       <p className="mt-6 text-center text-xs text-muted-foreground">
-        Plans are billed through your AIED account. You can switch plans or cancel any time right
+        Plans are billed through your Boadwin account. You can switch plans or cancel any time right
         here — no app store required.
       </p>
 
@@ -254,7 +254,7 @@ function SubscriptionPage() {
                   <li>Access to every level above Elementary</li>
                   <li>Unlimited hearts and offline access</li>
                   {(current === "max" || current === "family") && (
-                    <li>AL, your personal AI tutor, and your AIED certificate track</li>
+                    <li>AL, your personal AI tutor, and your Boadwin certificate track</li>
                   )}
                   {current === "family" && <li>Family accounts and the parent dashboard</li>}
                 </ul>

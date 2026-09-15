@@ -242,7 +242,7 @@ function City() {
       <div className="absolute top-[35%] left-0 h-1 w-6 rounded-full bg-cyan-300 shadow-[0_0_10px_2px_rgba(34,211,238,0.8)] animate-flyer" />
       {/* neon sign */}
       <div className="absolute bottom-1/4 left-1/3 rounded-md border border-fuchsia-400 px-2 py-0.5 text-[10px] font-black text-fuchsia-200 shadow-[0_0_10px_rgba(217,70,239,0.7)] animate-pulse">
-        AIED
+        Boadwin
       </div>
     </div>
   );

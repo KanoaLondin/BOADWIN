@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/courses")({
   component: Courses,
-  head: () => ({ meta: [{ title: "Adventure Map — AIED" }] }),
+  head: () => ({ meta: [{ title: "Adventure Map — Boadwin" }] }),
 });
 
 // ---- Themes per unit (cycles when more units than themes) ----
@@ -208,7 +208,7 @@ function LevelBanner({ level, index, locked }: { level: Level; index: number; lo
         </span>
         {locked && (
           <span className="flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold text-muted-foreground">
-            <Lock className="h-3 w-3" /> Unlock with AIED Max
+            <Lock className="h-3 w-3" /> Unlock with Boadwin Max
           </span>
         )}
       </div>

@@ -6,16 +6,16 @@ export const Route = createFileRoute("/settings/privacy")({
   component: PrivacyPolicy,
   head: () => ({
     meta: [
-      { title: "Privacy Policy — AIED" },
+      { title: "Privacy Policy — Boadwin" },
       {
         name: "description",
         content:
-          "How AIED collects, uses and protects learner data, and how parents can review or delete a child's information.",
+          "How Boadwin collects, uses and protects learner data, and how parents can review or delete a child's information.",
       },
-      { property: "og:title", content: "Privacy Policy — AIED" },
+      { property: "og:title", content: "Privacy Policy — Boadwin" },
       {
         property: "og:description",
-        content: "What data AIED collects, why we collect it, and your choices.",
+        content: "What data Boadwin collects, why we collect it, and your choices.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -36,7 +36,7 @@ function PrivacyPolicy() {
 
       <Prose>
         <P>
-          AIED is operated by Coleklondin. It is used by kids, tweens, teens and adults, so we keep
+          Boadwin is operated by Coleklondin. It is used by kids, tweens, teens and adults, so we keep
           this short and plain. This page explains what we collect, why we collect it, and what you
           can do about it.
         </P>
@@ -51,7 +51,7 @@ function PrivacyPolicy() {
             "A parent or guardian's email address, for accounts belonging to under-13s — used to send the parental notice and let them manage the account.",
             "Learning progress — XP, level, streak, hearts, gems, lessons completed and cosmetics you own.",
             "Quiz and lesson answers — including which questions you got right, wrong, or used a hint on.",
-            "Subscription tier — whether you are on Free, Super AIED, AIED Max or AIED Family.",
+            "Subscription tier — whether you are on Free, Super Boadwin, Boadwin Max or Boadwin Family.",
           ]}
         />
 
@@ -77,15 +77,15 @@ function PrivacyPolicy() {
         <P>
           Our order process is conducted by our online reseller and Merchant of Record,
           Paddle.com. Paddle handles all payments, subscription billing, taxes and refunds for
-          AIED, and is the data controller for the billing information you enter at checkout.
+          Boadwin, and is the data controller for the billing information you enter at checkout.
         </P>
         <Ul
           items={[
-            "Card numbers and bank details are entered directly with Paddle and never reach AIED — we never see or store them.",
+            "Card numbers and bank details are entered directly with Paddle and never reach Boadwin — we never see or store them.",
             "Paddle collects the billing details it needs to take payment and charge the right tax, such as your name, email address, country and postcode.",
             "We receive back from Paddle only what we need to run your account: which plan you're on, whether it's active, and when it renews or ends.",
             "Paddle handles this data under its own privacy notice, available at paddle.com.",
-            "Children do not pay for anything in AIED. Only a grown-up account holder can start a subscription.",
+            "Children do not pay for anything in Boadwin. Only a grown-up account holder can start a subscription.",
           ]}
         />
 

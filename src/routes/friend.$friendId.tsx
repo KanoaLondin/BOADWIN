@@ -11,7 +11,7 @@ export const Route = createFileRoute("/friend/$friendId")({
   component: FriendProfile,
   head: ({ params }) => {
     const f = getFriend(params.friendId);
-    return { meta: [{ title: f ? `${f.name} — AIED` : "Friend — AIED" }] };
+    return { meta: [{ title: f ? `${f.name} — Boadwin` : "Friend — Boadwin" }] };
   },
   notFoundComponent: () => (
     <AppShell>

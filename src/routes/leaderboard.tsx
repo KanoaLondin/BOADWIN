@@ -9,7 +9,7 @@ import { FRIENDS } from "@/lib/friends";
 
 export const Route = createFileRoute("/leaderboard")({
   component: Leaderboard,
-  head: () => ({ meta: [{ title: "Leaderboard — AIED" }] }),
+  head: () => ({ meta: [{ title: "Leaderboard — Boadwin" }] }),
 });
 
 type Row = { id?: string; name: string; xp: number; streak: number; you?: boolean; trend: "up" | "down" | "same" };

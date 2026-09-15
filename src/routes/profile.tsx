@@ -13,7 +13,7 @@ import { getLevelInfo, getProgressToNext } from "@/lib/level-system";
 
 export const Route = createFileRoute("/profile")({
   component: Profile,
-  head: () => ({ meta: [{ title: "Profile — AIED" }] }),
+  head: () => ({ meta: [{ title: "Profile — Boadwin" }] }),
 });
 
 const ALL_OUTFITS = [
@@ -26,9 +26,9 @@ const ALL_OUTFITS = [
 ];
 
 const PLAN_LABEL: Record<string, string> = {
-  super: "Super AIED",
-  max: "AIED Max",
-  family: "AIED Family",
+  super: "Super Boadwin",
+  max: "Boadwin Max",
+  family: "Boadwin Family",
 };
 
 function Profile() {
@@ -88,7 +88,7 @@ function Profile() {
             {renewalDate ? (
               <p className="text-[11px] text-muted-foreground">Renews {renewalDate}</p>
             ) : (
-              <p className="text-[11px] text-muted-foreground">Unlock more with Super AIED</p>
+              <p className="text-[11px] text-muted-foreground">Unlock more with Super Boadwin</p>
             )}
           </div>
         </div>
@@ -231,7 +231,7 @@ function Profile() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-warning">Top tier</p>
-                <p className="truncate text-base font-black">AIED Mastery Certificate</p>
+                <p className="truncate text-base font-black">Boadwin Mastery Certificate</p>
                 <p className="text-[11px] text-muted-foreground">
                   {mastery.earned
                     ? "Every course complete 🏆"

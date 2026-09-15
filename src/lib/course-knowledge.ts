@@ -66,7 +66,7 @@ export function lessonDetail(lesson: Lesson): string {
  */
 export function curriculumContext(lessonId?: string | null): string {
   const parts: string[] = [
-    "AIED CURRICULUM (live, generated from the app's own course data):",
+    "Boadwin CURRICULUM (live, generated from the app's own course data):",
     courseCatalogOutline(),
   ];
 

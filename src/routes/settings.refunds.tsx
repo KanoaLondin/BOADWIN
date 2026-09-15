@@ -7,16 +7,16 @@ export const Route = createFileRoute("/settings/refunds")({
   component: RefundPolicy,
   head: () => ({
     meta: [
-      { title: "Refund Policy — AIED" },
+      { title: "Refund Policy — Boadwin" },
       {
         name: "description",
         content:
-          "AIED's refund policy: how to request a refund within 14 days, how cancellations work, and how to contact Paddle, our payment processor.",
+          "Boadwin's refund policy: how to request a refund within 14 days, how cancellations work, and how to contact Paddle, our payment processor.",
       },
-      { property: "og:title", content: "Refund Policy — AIED" },
+      { property: "og:title", content: "Refund Policy — Boadwin" },
       {
         property: "og:description",
-        content: "14-day refunds on AIED subscriptions, and how to request one.",
+        content: "14-day refunds on Boadwin subscriptions, and how to request one.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -33,9 +33,9 @@ function RefundPolicy() {
 
       <Prose>
         <P>
-          AIED is operated by Coleklondin. Our order process is conducted by our online reseller
+          Boadwin is operated by Coleklondin. Our order process is conducted by our online reseller
           and Merchant of Record, Paddle.com, which handles all payments, billing enquiries, taxes
-          and refunds for AIED subscriptions.
+          and refunds for Boadwin subscriptions.
         </P>
 
         <H>14-day refunds</H>
@@ -75,7 +75,7 @@ function RefundPolicy() {
         <H>Free plan</H>
         <P>
           The Free plan costs nothing and involves no charge, so there is nothing to refund. You can
-          try AIED on Free for as long as you like before paying.
+          try Boadwin on Free for as long as you like before paying.
         </P>
 
         <H>Contact</H>

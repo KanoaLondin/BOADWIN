@@ -94,7 +94,7 @@ export const getAdaptedLesson = createServerFn({ method: "POST" })
       slots = await generateAdaptation(
         found.lesson,
         persona,
-        course?.title ?? "AIED",
+        course?.title ?? "Boadwin",
         found.unit.title,
         readingLevel,
       );

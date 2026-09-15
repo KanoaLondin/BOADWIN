@@ -22,7 +22,7 @@ function ageFrom(month: number, year: number): number {
 
 export const Route = createFileRoute("/signup")({
   component: SignUp,
-  head: () => ({ meta: [{ title: "Sign up — AIED" }] }),
+  head: () => ({ meta: [{ title: "Sign up — Boadwin" }] }),
 });
 
 function SignUp() {
@@ -92,7 +92,7 @@ function SignUp() {
         <div className="text-center">
           <Mascot size={80} />
           <h1 className="mt-5 text-3xl font-black">
-            Create your <span className="text-gradient">AIED</span> account
+            Create your <span className="text-gradient">Boadwin</span> account
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Your progress is saved and follows you anywhere you sign in.

@@ -120,7 +120,7 @@ function PremiumChat({
             type: "text",
             text: lessonContext
               ? `Hey ${userName}! I'm AL, your AI tutor. I see you're on "${lessonContext.lessonTitle}". Ask me anything — I'm here to help! ✨`
-              : `Hey ${userName}! I'm AL, your AI tutor. Ask me anything about AI, prompts, or any lesson in AIED. ✨`,
+              : `Hey ${userName}! I'm AL, your AI tutor. Ask me anything about AI, prompts, or any lesson in Boadwin. ✨`,
           },
         ],
       } as UIMessage,
@@ -213,7 +213,7 @@ function LockedPreview({ onClose }: { onClose: () => void }) {
       <div className="shrink-0 border-t border-border p-5" style={{ backgroundColor: CHAT_SURFACE }}>
         <div className="flex items-center gap-2 text-primary">
           <Lock className="h-4 w-4" />
-          <p className="text-sm font-bold">AL is part of AIED Max</p>
+          <p className="text-sm font-bold">AL is part of Boadwin Max</p>
         </div>
         <p className="mt-1 text-xs text-muted-foreground">
           Unlock your personal AI tutor for personalized hints, explanations, and progress coaching.
@@ -223,7 +223,7 @@ function LockedPreview({ onClose }: { onClose: () => void }) {
           onClick={onClose}
           className="mt-3 block rounded-2xl gradient-hero px-4 py-3 text-center text-sm font-bold text-white shadow-glow"
         >
-          Upgrade to AIED Max
+          Upgrade to Boadwin Max
         </Link>
       </div>
     </ChatShell>
@@ -276,7 +276,7 @@ function ChatShell({
           <div className="pointer-events-none absolute left-1/2 top-2 flex -translate-x-1/2 flex-col items-center">
             <AlAvatar />
             <p className="mt-1 text-sm font-bold leading-tight">AL</p>
-            <p className="text-[10px] text-muted-foreground">Your AIED Tutor</p>
+            <p className="text-[10px] text-muted-foreground">Your Boadwin Tutor</p>
           </div>
           <div className="ml-auto shrink-0">
             <HeaderAlButton />
