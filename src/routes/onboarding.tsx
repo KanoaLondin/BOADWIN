@@ -13,7 +13,7 @@ import {
   type PersonaContext,
   type PersonaGoal,
 } from "@/lib/persona";
-import { refreshProfile, useAuth } from "@/lib/auth";
+import { changeUsername, refreshProfile, useAuth } from "@/lib/auth";
 import { ReadingLevelPicker } from "@/components/ReadingLevelPicker";
 import type { ReadingLevel } from "@/lib/reading-level";
 import { setReadingLevelLocal } from "@/lib/app-state";
@@ -102,6 +102,14 @@ function Onboarding() {
       localStorage.setItem("aied:dailyGoalXp", String(goal));
     }
     try {
+      // "What should AL call you?" sets the account's actual username (not
+      // just the local display name) so it's consistent everywhere in the
+      // app. Best-effort: a taken/invalid name here shouldn't block signup.
+      if (nameVal.trim()) {
+        await changeUsername(nameVal.trim()).catch((err) => {
+          console.error("[onboarding] username update failed", err);
+        });
+      }
       // Scored server-side; the user never sees a score, just personalization.
       const result = await saveCohort({
         data: {
