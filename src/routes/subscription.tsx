@@ -48,7 +48,7 @@ const PLANS = [
     icon: Zap,
     tone: "border-primary shadow-glow",
     badge: "Most popular",
-    features: ["All 5 levels unlocked", "No ads", "Offline access", "Unlimited hearts"],
+    features: ["All levels unlocked", "No ads", "Offline access", "Unlimited hearts"],
     cta: "Upgrade to Super Boadwin",
   },
   {
