@@ -221,6 +221,17 @@ export async function signIn(opts: { email: string; password: string }) {
   return data;
 }
 
+export async function sendSignInLink(email: string) {
+  const { error } = await supabase.auth.signInWithOtp({
+    email: email.trim().toLowerCase(),
+    options: {
+      shouldCreateUser: false,
+      emailRedirectTo: `${window.location.origin}/login`,
+    },
+  });
+  if (error) throw error;
+}
+
 export async function signOut() {
   await supabase.auth.signOut();
 }
