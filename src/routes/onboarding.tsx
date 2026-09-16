@@ -200,9 +200,9 @@ function Onboarding() {
         {step === 1 && (
           <div className="animate-fade-in text-center">
             <Mascot size={88} />
-            <h1 className="mt-5 text-3xl font-black">What should AL call you?</h1>
+            <h1 className="mt-5 text-3xl font-black">What should we call you?</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Your personal AI tutor will use this name.
+              This is the name you'll see around Boadwin.
             </p>
             <input
               autoFocus
