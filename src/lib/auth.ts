@@ -199,8 +199,9 @@ export async function signUp(opts: SignUpOptions) {
         birth_year: opts.birthYear,
         ...(opts.parentEmail ? { parent_email: opts.parentEmail } : {}),
       },
+      emailRedirectTo:
+        typeof window !== "undefined" ? `${window.location.origin}/welcome` : undefined,
     },
-
   });
   if (error) throw error;
 

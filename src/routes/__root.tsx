@@ -143,6 +143,7 @@ const PUBLIC_ROUTES = new Set<string>([
   "/landing",
   "/login",
   "/signup",
+  "/welcome",
   "/reset-password",
   "/settings/privacy",
   "/settings/terms",

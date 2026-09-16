@@ -37,6 +37,7 @@ function SignUp() {
   const [adminCode, setAdminCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [awaitingVerification, setAwaitingVerification] = useState(false);
 
   const usernameError = username.trim() ? validateUsername(username) : null;
   const bm = Number(birthMonth);
@@ -61,7 +62,7 @@ function SignUp() {
     setSubmitting(true);
     setError(null);
     try {
-      await signUp({
+      const data = await signUp({
         email: email.trim(),
         password,
         username: username.trim(),
@@ -71,7 +72,15 @@ function SignUp() {
         ...(isChild ? { parentEmail: parentEmail.trim().toLowerCase() } : {}),
         adminCode: adminCode.trim() || undefined,
       });
-      navigate({ to: isChild ? "/parent-consent" : "/onboarding" });
+      // With email confirmation on (the normal case) there's no session yet —
+      // show the "check your email" step. The /welcome link picks up from
+      // there once they've verified. If confirmation is off, Supabase hands
+      // back a session immediately, so continue straight in.
+      if (data.session) {
+        navigate({ to: isChild ? "/parent-consent" : "/onboarding" });
+      } else {
+        setAwaitingVerification(true);
+      }
     } catch (err) {
       const raw = err instanceof Error ? err.message : "";
       // The database runs the same safety check; surface it in plain English
@@ -84,6 +93,28 @@ function SignUp() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (awaitingVerification) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-gradient-to-br from-purple/5 via-background to-cyan/5 px-4 py-10">
+        <div className="w-full max-w-md text-center">
+          <Mascot size={80} />
+          <h1 className="mt-5 text-3xl font-black">Check your email</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            We sent a verification link to <span className="font-bold text-foreground">{email}</span>.
+            Click it to confirm your account — you'll come right back here to finish setting up
+            your profile.
+          </p>
+          <p className="mt-5 text-center text-sm text-muted-foreground">
+            Already verified?{" "}
+            <Link to="/login" className="font-bold text-primary">
+              Log in
+            </Link>
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (

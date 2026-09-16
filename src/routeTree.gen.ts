@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WardrobeRouteImport } from './routes/wardrobe'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -36,6 +37,11 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiPublicParentConsentRouteImport } from './routes/api/public/parent-consent'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WardrobeRoute = WardrobeRouteImport.update({
   id: '/wardrobe',
   path: '/wardrobe',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/subscription': typeof SubscriptionRoute
   '/wardrobe': typeof WardrobeRoute
+  '/welcome': typeof WelcomeRoute
   '/api/chat': typeof ApiChatRoute
   '/api/redeem-admin-code': typeof ApiRedeemAdminCodeRoute
   '/friend/$friendId': typeof FriendFriendIdRoute
@@ -213,6 +220,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/subscription': typeof SubscriptionRoute
   '/wardrobe': typeof WardrobeRoute
+  '/welcome': typeof WelcomeRoute
   '/api/chat': typeof ApiChatRoute
   '/api/redeem-admin-code': typeof ApiRedeemAdminCodeRoute
   '/friend/$friendId': typeof FriendFriendIdRoute
@@ -242,6 +250,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/subscription': typeof SubscriptionRoute
   '/wardrobe': typeof WardrobeRoute
+  '/welcome': typeof WelcomeRoute
   '/api/chat': typeof ApiChatRoute
   '/api/redeem-admin-code': typeof ApiRedeemAdminCodeRoute
   '/friend/$friendId': typeof FriendFriendIdRoute
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/subscription'
     | '/wardrobe'
+    | '/welcome'
     | '/api/chat'
     | '/api/redeem-admin-code'
     | '/friend/$friendId'
@@ -300,6 +310,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/subscription'
     | '/wardrobe'
+    | '/welcome'
     | '/api/chat'
     | '/api/redeem-admin-code'
     | '/friend/$friendId'
@@ -328,6 +339,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/subscription'
     | '/wardrobe'
+    | '/welcome'
     | '/api/chat'
     | '/api/redeem-admin-code'
     | '/friend/$friendId'
@@ -357,6 +369,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SubscriptionRoute: typeof SubscriptionRoute
   WardrobeRoute: typeof WardrobeRoute
+  WelcomeRoute: typeof WelcomeRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiRedeemAdminCodeRoute: typeof ApiRedeemAdminCodeRoute
   FriendFriendIdRoute: typeof FriendFriendIdRoute
@@ -371,6 +384,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/wardrobe': {
       id: '/wardrobe'
       path: '/wardrobe'
@@ -573,6 +593,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SubscriptionRoute: SubscriptionRoute,
   WardrobeRoute: WardrobeRoute,
+  WelcomeRoute: WelcomeRoute,
   ApiChatRoute: ApiChatRoute,
   ApiRedeemAdminCodeRoute: ApiRedeemAdminCodeRoute,
   FriendFriendIdRoute: FriendFriendIdRoute,
