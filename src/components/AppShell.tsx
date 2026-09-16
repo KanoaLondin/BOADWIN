@@ -53,7 +53,7 @@ export function AppShell({
   return (
     <div className={`min-h-screen overflow-x-hidden pb-28 ${bg ?? ""}`}>
       <div className="mx-auto max-w-2xl px-4 pt-3">
-        {showTopBar && <TopBar lessonContext={lessonContext} />}
+        {showTopBar && <TopBar />}
         <div key={pathname} className={anim} style={{ willChange: "transform, opacity" }}>
           {children}
         </div>

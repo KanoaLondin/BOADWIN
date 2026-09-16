@@ -58,8 +58,8 @@ const PLANS = [
     period: "/mo",
     icon: Crown,
     tone: "border-accent",
-    badge: "Includes AL tutor",
-    features: ["Everything in Super Boadwin", "AL — your personal AI tutor", "Industry-recognized Boadwin certificate", "Priority new content"],
+    badge: "Top tier",
+    features: ["Everything in Super Boadwin", "Industry-recognized Boadwin certificate", "Priority new content"],
     cta: "Go Boadwin Max",
   },
   {
@@ -254,7 +254,7 @@ function SubscriptionPage() {
                   <li>Access to every level above Elementary</li>
                   <li>Unlimited hearts and offline access</li>
                   {(current === "max" || current === "family") && (
-                    <li>AL, your personal AI tutor, and your Boadwin certificate track</li>
+                    <li>Your Boadwin certificate track</li>
                   )}
                   {current === "family" && <li>Family accounts and the parent dashboard</li>}
                 </ul>

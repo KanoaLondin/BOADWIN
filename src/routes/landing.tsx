@@ -229,7 +229,7 @@ function Features() {
   const items = [
     { icon: <Brain />,    title: "Prompt mastery", desc: "Learn the techniques pros use, from clarity to chain-of-thought." },
     { icon: <Trophy />,   title: "Gamified XP",    desc: "Streaks, gems, badges, and chests keep learning addictive." },
-    { icon: <Sparkles />, title: "AL, your tutor", desc: "Premium personal AI tutor explains anything, anytime." },
+    { icon: <Sparkles />, title: "Adaptive reading levels", desc: "Every lesson reworded to fit you, from kid-friendly to pro." },
     { icon: <Shield />,   title: "Kid-safe",       desc: "Age-appropriate content with parent dashboard & PIN gate." },
     { icon: <BookOpen />, title: "5 levels",       desc: "From Ages 6 to Pro — earn a certificate at Master." },
     { icon: <Heart />,    title: "Built with care", desc: "Designed by educators. No ads. Privacy-first." },
@@ -286,7 +286,7 @@ function Pricing() {
   const tiers = [
     { name: "Boadwin Free",   price: "$0",     tag: "Start here", perks: ["2 free levels", "Daily streaks", "Hearts system"] },
     { name: "Super Boadwin",  price: "$6.99",  tag: "Most popular", perks: ["All levels", "Unlimited hearts", "Streak freezes"], featured: true },
-    { name: "Boadwin Max",    price: "$12.99", tag: "With AL tutor", perks: ["Everything in Super", "AL personal tutor", "Premium chests"] },
+    { name: "Boadwin Max",    price: "$12.99", tag: "Top tier", perks: ["Everything in Super", "Boadwin certificate track", "Premium chests"] },
     { name: "Boadwin Family", price: "$19.99", tag: "Up to 6 kids", perks: ["Parent dashboard", "Up to 6 profiles", "All Max features"] },
   ];
   return (

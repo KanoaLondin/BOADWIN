@@ -1,25 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { useAppState } from "@/lib/app-state";
-import { ALAvatar } from "@/components/ALAvatar";
 import { StreakFlame } from "@/components/StreakFlame";
 import { GemBadge } from "@/components/GemBadge";
 
 
-type LessonContext = {
-  lessonTitle: string;
-  unitTitle: string;
-  levelTitle: string;
-};
-
 // Persistent top bar shown above the page content (mobile-first).
-// Shows logo, streak, gems, hearts, and AL avatar in the top-right.
+// Shows logo, streak, gems, and hearts.
 export function TopBar({
   showLogo = true,
-  lessonContext,
 }: {
   showLogo?: boolean;
-  lessonContext?: LessonContext;
 }) {
   const streak = useAppState((s) => s.streak);
   const hearts = useAppState((s) => s.hearts);
@@ -46,7 +37,6 @@ export function TopBar({
             value={hearts}
             color="bg-heart/12 text-heart"
           />
-          <ALAvatar lessonContext={lessonContext} />
         </div>
       </div>
     </div>

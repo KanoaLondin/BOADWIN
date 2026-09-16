@@ -142,37 +142,15 @@ function buildSystemPrompt(body: ChatBody): string {
   ].join("\n");
 }
 
+// AL (the AI tutor) is temporarily disabled — pulled pre-launch pending a
+// real moderation layer and an age gate (kids/tweens should never reach an
+// unmoderated LLM chat). See conversation history for the reasoning. The
+// prompt/model plumbing below is left intact so re-enabling is a small diff.
 export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
-      POST: async ({ request }: { request: Request }) => {
-        const body = (await request.json()) as ChatBody;
-        const messages = body.messages;
-        if (!Array.isArray(messages)) {
-          return new Response("Messages are required", { status: 400 });
-        }
-
-        const key = process.env.LOVABLE_API_KEY;
-        if (!key) {
-          return new Response("Missing LOVABLE_API_KEY", { status: 500 });
-        }
-
-        const gateway = createLovableAiGatewayProvider(key);
-        const model = gateway("google/gemini-3-flash-preview");
-
-        try {
-          const result = streamText({
-            model,
-            system: buildSystemPrompt(body),
-            messages: await convertToModelMessages(messages as UIMessage[]),
-          });
-          return result.toUIMessageStreamResponse({
-            originalMessages: messages as UIMessage[],
-          });
-        } catch (err) {
-          console.error("AL chat error", err);
-          return new Response("AI service error", { status: 500 });
-        }
+      POST: async () => {
+        return new Response("AL is temporarily unavailable.", { status: 404 });
       },
     },
   },
