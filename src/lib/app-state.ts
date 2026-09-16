@@ -1,6 +1,7 @@
 // Client-side app state for Boadwin — backed by localStorage, and mirrored to
 // the signed-in user's Supabase profile so progress follows them across devices.
 import { useSyncExternalStore } from "react";
+import { toast } from "sonner";
 import { getLevelInfo } from "./level-system";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -170,6 +171,13 @@ let cloudUserId: string | null = null;
 let cloudIsAdmin = false;
 let hydrating = false;
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
+let consecutiveSaveFailures = 0;
+let lastSaveFailureToastAt = 0;
+// Only warn the learner once their progress has failed to sync repeatedly —
+// a single blip (e.g. a dropped connection) shouldn't interrupt them, but
+// they should find out before they lose real progress switching devices.
+const SAVE_FAILURE_WARNING_THRESHOLD = 3;
+const SAVE_FAILURE_TOAST_COOLDOWN_MS = 60_000;
 
 export function isAdmin(): boolean {
   return cloudIsAdmin;
@@ -201,7 +209,22 @@ function scheduleCloudSave() {
       })
       .eq("id", userId)
       .then(({ error }) => {
-        if (error) console.error("[app-state] cloud save failed", error);
+        if (error) {
+          console.error("[app-state] cloud save failed", error);
+          consecutiveSaveFailures += 1;
+          const now = Date.now();
+          if (
+            consecutiveSaveFailures >= SAVE_FAILURE_WARNING_THRESHOLD &&
+            now - lastSaveFailureToastAt > SAVE_FAILURE_TOAST_COOLDOWN_MS
+          ) {
+            lastSaveFailureToastAt = now;
+            toast("Your progress isn't saving", {
+              description: "Check your internet connection — recent progress may not be synced.",
+            });
+          }
+        } else {
+          consecutiveSaveFailures = 0;
+        }
       });
   }, 800);
 }
